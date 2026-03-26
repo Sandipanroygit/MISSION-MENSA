@@ -32,7 +32,11 @@
       "@/lib/*": ["src/lib/*"],
       "@/lib": ["src/lib"],
       "@/pages/*": ["src/pages/*"],
-      "@/pages": ["src/pages"]
+      "@/pages": ["src/pages"],
+      "@/api/*": ["src/api/*"],
+      "@/api": ["src/api"],
+      "@/constants/*": ["src/constants/*"],
+      "@/constants": ["src/constants"]
     },
 
     /* Linting */

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Menu,
   X,
@@ -6,17 +6,103 @@ import {
   Info,
   GraduationCap,
   BookOpen,
-  Users,
-  Contact,
-  DollarSign,
+  LayoutDashboard,
+  ChevronDown,
+  LogOut,
 } from "lucide-react";
 import Logo from "../../assets/finwit_kids_logo_clear.png";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useAuthContext } from "@/context/AuthContext";
+import { useLogout } from "@/hooks/useAuth";
+// ─── User chip (avatar + dropdown) shown in the public header when logged in ──
+
+const UserChip: React.FC = () => {
+  const { user } = useAuthContext();
+  const navigate = useNavigate();
+  const logout = useLogout();
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  // Close on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  const initials = user?.name
+    ? user.name
+        .split(" ")
+        .map((n) => n[0])
+        .slice(0, 2)
+        .join("")
+        .toUpperCase()
+    : "?";
+
+  return (
+    <div className="relative" ref={ref}>
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className="flex items-center gap-2 rounded-full border border-[#2CA4A4]/20 bg-white/80 px-3 py-1.5 text-sm font-medium text-[#2F3E3E] shadow-sm hover:border-[#2CA4A4]/40 transition-all duration-200"
+      >
+        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#2CA4A4] text-xs font-bold text-white">
+          {initials}
+        </span>
+        <span className="hidden sm:block max-w-[120px] truncate">
+          {user?.name ?? "Account"}
+        </span>
+        <ChevronDown
+          size={14}
+          className={`text-gray-400 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+        />
+      </button>
+
+      {open && (
+        <div className="absolute right-0 top-full mt-2 w-52 rounded-xl border border-gray-100 bg-white shadow-xl z-50 overflow-hidden">
+          <div className="border-b border-gray-100 px-4 py-3">
+            <p className="text-xs text-gray-400">Signed in as</p>
+            <p className="truncate text-sm font-semibold text-[#2F3E3E]">
+              {user?.email}
+            </p>
+          </div>
+          <button
+            onClick={() => {
+              setOpen(false);
+              navigate("/dashboard");
+            }}
+            className="flex w-full items-center gap-2.5 px-4 py-3 text-sm text-[#2F3E3E] hover:bg-[#FAF7F2] transition-colors"
+          >
+            <LayoutDashboard size={15} className="text-[#2CA4A4]" />
+            Dashboard
+          </button>
+          <button
+            onClick={() => {
+              setOpen(false);
+              logout.mutate();
+            }}
+            className="flex w-full items-center gap-2.5 px-4 py-3 text-sm text-red-500 hover:bg-red-50 transition-colors"
+          >
+            <LogOut size={15} />
+            Sign out
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ─── Main Header ──────────────────────────────────────────────────────────────
+
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isSticky, setIsSticky] = useState(false);
   const location = useLocation();
+  const { isAuthenticated } = useAuthContext();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -33,7 +119,9 @@ const Header: React.FC = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-  const NoSign: React.FC = () => null;
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const NoSign: React.FC<any> = () => null;
 
   const mainNavItems = [
     { name: "Home", href: "/", icon: Home },
@@ -435,8 +523,8 @@ const Header: React.FC = () => {
                           ? "text-white bg-gradient-to-r from-[#FFC94B] to-[#A5C85A] shadow-md"
                           : "text-[#2CA4A4] bg-[#2CA4A4]/10"
                         : isPricing
-                        ? "text-[#2F3E3E] bg-[#FFC94B]/20 hover:bg-gradient-to-r hover:from-[#FFC94B] hover:to-[#A5C85A] hover:text-white hover:shadow-md"
-                        : "text-[#2F3E3E] hover:text-[#2CA4A4] hover:bg-[#2CA4A4]/5"
+                          ? "text-[#2F3E3E] bg-[#FFC94B]/20 hover:bg-gradient-to-r hover:from-[#FFC94B] hover:to-[#A5C85A] hover:text-white hover:shadow-md"
+                          : "text-[#2F3E3E] hover:text-[#2CA4A4] hover:bg-[#2CA4A4]/5"
                     }`}
                   >
                     <IconComponent
@@ -453,13 +541,25 @@ const Header: React.FC = () => {
               })}
             </div>
 
-            {/* CTA Button */}
-            <Link
-              to="/pricing"
-              className="bg-[#FFC94B] hover:bg-[#A5C85A] text-[#2F3E3E] font-semibold px-6 py-2.5 rounded-full transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-xl whitespace-nowrap text-sm"
-            >
-              Get Started
-            </Link>
+            {/* Auth actions */}
+            {isAuthenticated ? (
+              <UserChip />
+            ) : (
+              <div className="flex items-center gap-3">
+                <Link
+                  to="/login"
+                  className="text-sm font-medium text-[#2F3E3E] hover:text-[#2CA4A4] transition-colors duration-200 whitespace-nowrap"
+                >
+                  Sign in
+                </Link>
+                <Link
+                  to="/register"
+                  className="bg-[#FFC94B] hover:bg-[#A5C85A] text-[#2F3E3E] font-semibold px-6 py-2.5 rounded-full transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-xl whitespace-nowrap text-sm"
+                >
+                  Get Started
+                </Link>
+              </div>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -498,8 +598,8 @@ const Header: React.FC = () => {
                           ? "text-white bg-gradient-to-r from-[#FFC94B] to-[#A5C85A] shadow-md"
                           : "text-[#2CA4A4] bg-[#2CA4A4]/10 border-l-4 border-[#2CA4A4]"
                         : isPricing
-                        ? "text-[#2F3E3E] bg-[#FFC94B]/10 hover:bg-[#FFC94B]/20"
-                        : "text-[#2F3E3E] hover:text-[#2CA4A4] hover:bg-[#FAF7F2] hover:translate-x-1"
+                          ? "text-[#2F3E3E] bg-[#FFC94B]/10 hover:bg-[#FFC94B]/20"
+                          : "text-[#2F3E3E] hover:text-[#2CA4A4] hover:bg-[#FAF7F2] hover:translate-x-1"
                     }`}
                     onClick={() => setIsMenuOpen(false)}
                   >
@@ -509,8 +609,8 @@ const Header: React.FC = () => {
                         isActive && isPricing
                           ? "text-white"
                           : isActive
-                          ? "text-[#2CA4A4]"
-                          : ""
+                            ? "text-[#2CA4A4]"
+                            : ""
                       }`}
                     />
                     <span className="font-medium">{item.name}</span>
@@ -522,15 +622,35 @@ const Header: React.FC = () => {
             {/* Divider */}
             <div className="h-px bg-gradient-to-r from-transparent via-[#2CA4A4]/20 to-transparent mx-4"></div>
 
-            {/* CTA Button */}
-            <div className="px-4 pt-2">
-              <Link
-                to="/pricing"
-                className="w-full flex items-center justify-center bg-[#FFC94B] hover:bg-[#A5C85A] text-[#2F3E3E] font-semibold px-6 py-3 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Get Started
-              </Link>
+            {/* Mobile auth actions */}
+            <div className="px-4 pt-2 space-y-2">
+              {isAuthenticated ? (
+                <Link
+                  to="/dashboard"
+                  className="w-full flex items-center justify-center gap-2 bg-[#2CA4A4] text-white font-semibold px-6 py-3 rounded-full transition-all duration-300 shadow-lg"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <LayoutDashboard size={16} />
+                  Dashboard
+                </Link>
+              ) : (
+                <>
+                  <Link
+                    to="/register"
+                    className="w-full flex items-center justify-center bg-[#FFC94B] hover:bg-[#A5C85A] text-[#2F3E3E] font-semibold px-6 py-3 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Get Started
+                  </Link>
+                  <Link
+                    to="/login"
+                    className="w-full flex items-center justify-center border border-[#2CA4A4]/30 text-[#2CA4A4] font-medium px-6 py-3 rounded-full transition-all duration-300 hover:bg-[#2CA4A4]/5"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Sign in
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>
