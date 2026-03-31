@@ -82,7 +82,9 @@ const UserChip: React.FC = () => {
           <button
             onClick={() => {
               setOpen(false);
-              logout.mutate();
+              logout.mutate(undefined, {
+                onSettled: () => (window.location.href = "/login"),
+              });
             }}
             className="flex w-full items-center gap-2.5 px-4 py-3 text-sm text-red-500 hover:bg-red-50 transition-colors"
           >

@@ -30,7 +30,11 @@ export default function RoleGuard({
   redirectTo = "/",
   children,
 }: Props) {
-  const { hasRole } = useAuthContext();
+  const { hasRole, isLoading } = useAuthContext();
+
+  // Wait for the /me query to resolve before evaluating roles.
+  // Without this, an empty role list triggers a false redirect on first render.
+  if (isLoading) return null;
 
   if (!hasRole(...roles)) {
     return <Navigate to={redirectTo} replace />;

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
   Users,
@@ -15,18 +15,24 @@ import {
 import Logo from "@/assets/finwit_kids_logo_clear.png";
 import { useAuthContext } from "@/context/AuthContext";
 import { useLogout } from "@/hooks/useAuth";
+import LearnerSwitcher from "@/components/dashboard/LearnerSwitcher";
 
-const navItems = [
-  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+const parentNavItems = [
+  { name: "Overview", href: "/dashboard/overview", icon: LayoutDashboard },
   { name: "Learners", href: "/dashboard/learners", icon: Users },
-  { name: "Progress", href: "/dashboard/progress", icon: TrendingUp },
+  { name: "Subscriptions", href: "/dashboard/subscriptions", icon: TrendingUp },
+  { name: "Resources", href: "/resources", icon: BookOpen },
+];
+
+const childNavItems = [
+  { name: "My Dashboard", href: "/dashboard/child", icon: LayoutDashboard },
   { name: "Resources", href: "/resources", icon: BookOpen },
 ];
 
 export default function DashboardHeader() {
   const location = useLocation();
-  const navigate = useNavigate();
   const { user, isParent, isAdmin } = useAuthContext();
+  const navItems = isParent || isAdmin ? parentNavItems : childNavItems;
   const logout = useLogout();
 
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -83,10 +89,7 @@ export default function DashboardHeader() {
         {/* ── Desktop nav ───────────────────────────────────────────────── */}
         <nav className="hidden md:flex items-center gap-1">
           {navItems.map(({ name, href, icon: Icon }) => {
-            const isActive =
-              href === "/dashboard"
-                ? location.pathname === "/dashboard"
-                : location.pathname.startsWith(href);
+            const isActive = location.pathname.startsWith(href);
             return (
               <Link
                 key={name}
@@ -103,22 +106,10 @@ export default function DashboardHeader() {
               </Link>
             );
           })}
-          {/* Admin-only link */}
-          {(isParent || isAdmin) && (
-            <Link
-              to="/dashboard/settings"
-              className={`flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200
-                ${
-                  location.pathname.startsWith("/dashboard/settings")
-                    ? "bg-[#2CA4A4]/10 text-[#2CA4A4]"
-                    : "text-gray-500 hover:bg-gray-100 hover:text-[#2F3E3E]"
-                }`}
-            >
-              <Settings size={15} />
-              Settings
-            </Link>
-          )}
         </nav>
+
+        {/* ── Learner switcher (parent only) ────────────────────────────── */}
+        {(isParent || isAdmin) && <LearnerSwitcher />}
 
         {/* ── Right actions ─────────────────────────────────────────────── */}
         <div className="flex items-center gap-3">
@@ -210,10 +201,7 @@ export default function DashboardHeader() {
       >
         <nav className="border-t border-gray-100 bg-white px-4 py-3 space-y-1">
           {navItems.map(({ name, href, icon: Icon }) => {
-            const isActive =
-              href === "/dashboard"
-                ? location.pathname === "/dashboard"
-                : location.pathname.startsWith(href);
+            const isActive = location.pathname.startsWith(href);
             return (
               <Link
                 key={name}
@@ -233,20 +221,6 @@ export default function DashboardHeader() {
               </Link>
             );
           })}
-          {(isParent || isAdmin) && (
-            <Link
-              to="/dashboard/settings"
-              className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200
-                ${
-                  location.pathname.startsWith("/dashboard/settings")
-                    ? "bg-[#2CA4A4]/10 text-[#2CA4A4] border-l-4 border-[#2CA4A4]"
-                    : "text-[#2F3E3E] hover:bg-[#FAF7F2]"
-                }`}
-            >
-              <Settings size={18} className="text-gray-400" />
-              Settings
-            </Link>
-          )}
           <div className="border-t border-gray-100 pt-2 mt-2">
             <button
               onClick={handleLogout}

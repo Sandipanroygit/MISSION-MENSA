@@ -68,10 +68,11 @@ export const useQuiz = (learnerId: string, assessmentId: string) =>
 
 // ─── Mutations ────────────────────────────────────────────────────────────────
 
-export const useCreateLearner = () => {
+export const useCreateLearner = (householdId: string) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (payload: CreateLearnerPayload) => learnersApi.create(payload),
+    mutationFn: (payload: CreateLearnerPayload) =>
+      learnersApi.create(householdId, payload),
     onSuccess: () => {
       // Invalidate /me so the household learners list refreshes
       void queryClient.invalidateQueries({ queryKey: ["auth", "me"] });

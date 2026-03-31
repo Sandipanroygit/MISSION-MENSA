@@ -22,6 +22,7 @@ export const CATALOG = {
 
 export const LEARNERS = {
   BASE: "/api/learners",
+  CREATE: (householdId: string) => `/api/households/${householdId}/learners`,
   DETAIL: (id: string) => `/api/learners/${id}`,
   ROADMAP: (id: string) => `/api/learners/${id}/roadmap`,
   REPORT: (id: string) => `/api/learners/${id}/report`,

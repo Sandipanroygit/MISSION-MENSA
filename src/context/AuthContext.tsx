@@ -38,9 +38,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo<AuthContextValue>(() => {
     const user = data?.user ?? null;
-    const roles = data?.roles ?? [];
+    // Backend may return roles as a plain object or array — normalize to array.
+
+    const rawRoles = data?.roles;
+    const roles: Role[] = Array.isArray(rawRoles)
+      ? rawRoles
+      : rawRoles && typeof rawRoles === "object"
+        ? [rawRoles as Role]
+        : [];
     const households = data?.households ?? [];
-    const roleNames = new Set(roles.map((r) => r.name));
+    // Uppercase role names to match our RoleName union regardless of backend casing.
+    const roleNames = new Set(roles.map((r) => r.role.toUpperCase()));
 
     return {
       user,

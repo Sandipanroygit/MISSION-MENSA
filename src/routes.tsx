@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Home from "@/components/Home";
 import DomainDetail from "@/components/DomainDetail";
 import ProgramsPage from "./pages/Programs";
@@ -19,6 +19,14 @@ import RegisterPage from "./pages/auth/Register";
 import ForgotPasswordPage from "./pages/auth/ForgotPassword";
 import ResetPasswordPage from "./pages/auth/ResetPassword";
 
+// Dashboard pages
+import DashboardRedirect from "./pages/dashboard/DashboardRedirect";
+import ParentOverview from "./pages/dashboard/ParentOverview";
+import ChildDashboard from "./pages/dashboard/ChildDashboard";
+import LearnerDetailPage from "./pages/dashboard/LearnerDetailPage";
+import LearnerManagementPage from "./pages/dashboard/LearnerManagementPage";
+import SubscriptionsPage from "./pages/dashboard/SubscriptionsPage";
+
 const AppRoutes = () => {
   return (
     <Routes>
@@ -38,31 +46,35 @@ const AppRoutes = () => {
         <Route path="/learning-plans" element={<LearningPlans />} />
       </Route>
 
-      {/* ── Auth routes — no nav chrome (AuthLayout handles its own layout) ── */}
+      {/* ── Auth routes — no nav chrome ── */}
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/forgot-password" element={<ForgotPasswordPage />} />
       <Route path="/reset-password" element={<ResetPasswordPage />} />
 
-      {/* ── Protected dashboard routes ─────────────────────────────────────
-           ProtectedRoute guards auth, DashboardLayout provides the nav/chrome.
-           Add all authenticated pages as children of DashboardLayout below.
-      ──────────────────────────────────────────────────────────────────── */}
+      {/* ── Protected dashboard routes ── */}
       <Route element={<ProtectedRoute />}>
         <Route element={<DashboardLayout />}>
-          {/* Placeholder — replace with real dashboard page when ready */}
+          {/* Role-aware redirect at /dashboard root */}
+          <Route path="/dashboard" element={<DashboardRedirect />} />
+
+          {/* Parent views */}
+          <Route path="/dashboard/overview" element={<ParentOverview />} />
           <Route
-            path="/dashboard"
-            element={
-              <div className="flex h-full items-center justify-center p-12 text-gray-400">
-                Dashboard coming soon
-              </div>
-            }
+            path="/dashboard/learners"
+            element={<LearnerManagementPage />}
           />
-          {/* Add more dashboard child routes here, e.g.: */}
-          {/* <Route path="/dashboard/learners" element={<LearnersPage />} /> */}
-          {/* <Route path="/dashboard/progress" element={<ProgressPage />} /> */}
-          {/* <Route path="/dashboard/settings" element={<SettingsPage />} /> */}
+          <Route
+            path="/dashboard/learners/:learnerId"
+            element={<LearnerDetailPage />}
+          />
+          <Route
+            path="/dashboard/subscriptions"
+            element={<SubscriptionsPage />}
+          />
+
+          {/* Child view */}
+          <Route path="/dashboard/child" element={<ChildDashboard />} />
         </Route>
       </Route>
 

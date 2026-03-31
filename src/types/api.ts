@@ -45,14 +45,15 @@ export type RoleName =
 export type RoleScopeType = "platform" | "household" | "school";
 
 export interface Role {
-  name: RoleName;
+  role: RoleName;
   scope_type: RoleScopeType;
   scope_id: string;
 }
 
 export interface Learner {
   id: string; // UUID
-  name: string;
+  first_name: string;
+  last_name?: string;
   date_of_birth?: string;
   year_level_id?: string;
   household_id: string;
@@ -149,13 +150,13 @@ export interface WeeksParams {
 // ─── Learner (Parent CRUD) ────────────────────────────────────────────────────
 
 export interface CreateLearnerPayload {
-  name: string;
+  first_name: string;
   date_of_birth?: string;
   year_level_id?: string;
 }
 
 export interface UpdateLearnerPayload {
-  name?: string;
+  first_name?: string;
   date_of_birth?: string;
   year_level_id?: string;
 }

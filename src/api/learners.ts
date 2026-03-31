@@ -20,8 +20,14 @@ import type {
 export const learnersApi = {
   // ── Parent CRUD ─────────────────────────────────────────────────────────────
 
-  create: async (payload: CreateLearnerPayload): Promise<Learner> => {
-    const { data } = await apiClient.post<Learner>(LEARNERS.BASE, payload);
+  create: async (
+    householdId: string,
+    payload: CreateLearnerPayload,
+  ): Promise<Learner> => {
+    const { data } = await apiClient.post<Learner>(
+      LEARNERS.CREATE(householdId),
+      payload,
+    );
     return data;
   },
 
