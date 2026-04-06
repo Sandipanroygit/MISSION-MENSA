@@ -1,28 +1,6 @@
-import React, { useState } from "react";
-import { Mail, Send } from "lucide-react";
+import React from "react";
 
 const NewsletterSection: React.FC = () => {
-  const [email, setEmail] = useState("");
-  const [isSubscribed, setIsSubscribed] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email) return;
-
-    setIsLoading(true);
-
-    // Simulate API call
-    setTimeout(() => {
-      setIsSubscribed(true);
-      setIsLoading(false);
-      setEmail("");
-
-      // Reset after 3 seconds
-      setTimeout(() => setIsSubscribed(false), 3000);
-    }, 1000);
-  };
-
   return (
     <section className="py-20 bg-white relative overflow-hidden">
       {/* Sleek Animated SVG Background - Newsletter Theme */}
@@ -523,91 +501,33 @@ const NewsletterSection: React.FC = () => {
         {/* Header */}
         <div className="mb-12 animate-fadeInUp">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#2F3E3E] mb-6 leading-tight">
-            Stay smart. Get tips for growing{" "}
+            A new paradigm of{" "}
             <span className="bg-gradient-to-r from-[#2CA4A4] to-[#5EC1E8] bg-clip-text text-transparent">
-              brilliant kids.
+              AI-age education.
             </span>
           </h2>
 
           <div className="w-32 h-1 bg-gradient-to-r from-[#FFC94B] via-[#A5C85A] to-[#2CA4A4] mx-auto rounded-full"></div>
         </div>
 
-        {/* Newsletter Form */}
+        {/* Summary Panel */}
         <div className="animate-fadeInUp" style={{ animationDelay: "0.3s" }}>
-          {!isSubscribed ? (
-            <div className="max-w-md mx-auto">
-              <div className="relative group">
-                <div className="flex bg-[#FAF7F2] border border-gray-200 rounded-full p-2 shadow-lg hover:shadow-xl transition-all duration-300 group-hover:border-[#2CA4A4]/30">
-                  {/* Email Input */}
-                  <div className="flex items-center flex-1 px-4">
-                    <Mail className="w-5 h-5 text-[#2CA4A4] mr-3" />
-                    <input
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="Enter your email"
-                      className="flex-1 bg-transparent text-[#2F3E3E] placeholder-[#2F3E3E]/60 focus:outline-none text-sm"
-                    />
-                  </div>
-
-                  {/* Subscribe Button */}
-                  <button
-                    onClick={handleSubmit}
-                    disabled={isLoading || !email}
-                    className="bg-[#FFC94B] hover:bg-[#A5C85A] disabled:bg-gray-300 text-[#2F3E3E] font-semibold px-6 py-3 rounded-full transition-all duration-300 transform hover:scale-105 disabled:hover:scale-100 shadow-md hover:shadow-lg flex items-center space-x-2 min-w-[120px] justify-center"
-                  >
-                    {isLoading ? (
-                      <div className="w-5 h-5 border-2 border-[#2F3E3E]/30 border-t-[#2F3E3E] rounded-full animate-spin"></div>
-                    ) : (
-                      <>
-                        <span>Subscribe</span>
-                        <Send className="w-4 h-4" />
-                      </>
-                    )}
-                  </button>
-                </div>
-
-                {/* Focus ring */}
-                <div className="absolute inset-0 rounded-full border-2 border-[#2CA4A4] opacity-0 group-focus-within:opacity-20 transition-opacity duration-300 pointer-events-none"></div>
-              </div>
-
-              {/* Privacy notice */}
-              <p className="text-xs text-[#2F3E3E]/60 mt-4 leading-relaxed">
-                Join hundreds of parents receiving weekly tips, activities, and
-                insights to help their children thrive.
-                <br />
-                No spam, unsubscribe anytime.
+          <div className="max-w-3xl mx-auto">
+            <div className="bg-gradient-to-r from-[#A5C85A]/10 to-[#2CA4A4]/10 border border-[#2CA4A4]/20 rounded-3xl p-8 shadow-lg">
+              <h3 className="text-xl font-bold text-[#2F3E3E] mb-4">
+                Mission aligned
+              </h3>
+              <p className="text-[#2F3E3E]/80 leading-relaxed">
+                Mission MENSA represents a step toward reimagining education
+                itself, from a system that produces average outcomes to one
+                that identifies and empowers individuals capable of shaping the
+                future. Advanced AI systems, disciplined mentorship, and
+                innovation-driven learning come together here to support
+                long-term nation-building through the development of
+                exceptional individuals.
               </p>
             </div>
-          ) : (
-            /* Success Message */
-            <div className="max-w-md mx-auto animate-fadeInUp">
-              <div className="bg-gradient-to-r from-[#A5C85A]/10 to-[#2CA4A4]/10 border border-[#A5C85A]/30 rounded-2xl p-8">
-                <div className="w-16 h-16 bg-[#A5C85A] rounded-full flex items-center justify-center mx-auto mb-4">
-                  <svg
-                    className="w-8 h-8 text-white"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                </div>
-                <h3 className="text-xl font-bold text-[#2F3E3E] mb-2">
-                  Welcome aboard! 🎉
-                </h3>
-                <p className="text-[#2F3E3E]/80">
-                  You're now subscribed to our newsletter. Get ready for amazing
-                  parenting tips and insights!
-                </p>
-              </div>
-            </div>
-          )}
+          </div>
         </div>
 
         {/* Benefits */}
@@ -618,20 +538,22 @@ const NewsletterSection: React.FC = () => {
           <div className="grid sm:grid-cols-3 gap-8 max-w-3xl mx-auto">
             {[
               {
-                icon: "📚",
-                title: "Weekly Tips",
-                description: "Expert advice on child development and learning",
-              },
-              {
-                icon: "🎯",
-                title: "Activities",
-                description: "Fun, educational activities for the whole family",
-              },
-              {
-                icon: "💡",
-                title: "Insights",
+                icon: "AI",
+                title: "AI Systems",
                 description:
-                  "Research-backed strategies for raising brilliant kids",
+                  "Advanced AI companions personalise learning and accelerate analytical development.",
+              },
+              {
+                icon: "IQ",
+                title: "Human Mentorship",
+                description:
+                  "Mentors cultivate discipline, ethics, emotional resilience, and purpose alongside technical growth.",
+              },
+              {
+                icon: "LAB",
+                title: "Nation Building",
+                description:
+                  "The project seeks to prototype a new model of schooling that develops exceptional individuals for long-term societal impact.",
               },
             ].map((benefit, index) => (
               <div

@@ -7,15 +7,13 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import sophia from "@/assets/sophia.png";
-import leo from "@/assets/leo.png";
-import { useNavigate } from "react-router-dom";
 const HowItWorksSection: React.FC = () => {
   const steps = [
     {
       icon: User,
-      title: "Parent",
-      description: "Access resources and track your child's progress.",
+      title: "Assess",
+      description:
+        "The program begins with baseline cognitive and behavioural assessments to identify exceptional potential and establish learning baselines.",
       color: "from-[#2CA4A4] to-[#5EC1E8]",
       bgColor: "bg-gradient-to-br from-[#2CA4A4] to-[#5EC1E8]",
       hoverColor: "group-hover:from-[#5EC1E8] group-hover:to-[#2CA4A4]",
@@ -23,8 +21,9 @@ const HowItWorksSection: React.FC = () => {
     },
     {
       icon: Smile,
-      title: "Child",
-      description: "Engage in interactive lessons and activities.",
+      title: "Observe",
+      description:
+        "Student behaviour, academic growth, AI interaction patterns, and creative output are continuously tracked inside a live experimental Human Lab.",
       color: "from-[#FFC94B] to-[#A5C85A]",
       bgColor: "bg-gradient-to-br from-[#FFC94B] to-[#FBBF24]",
       hoverColor: "group-hover:from-[#FBBF24] group-hover:to-[#FFC94B]",
@@ -32,9 +31,9 @@ const HowItWorksSection: React.FC = () => {
     },
     {
       icon: GraduationCap,
-      title: "Teacher",
+      title: "Innovate",
       description:
-        "Guide students through the curriculum and monitor their development.",
+        "Students engage in design thinking, problem-solving challenges, and early innovation projects aimed at future contributions to science, technology, entrepreneurship, and society.",
       color: "from-[#8B5FBF] to-[#2CA4A4]",
       bgColor: "bg-gradient-to-br from-[#8B5FBF] to-[#A855F7]",
       hoverColor: "group-hover:from-[#A855F7] group-hover:to-[#8B5FBF]",
@@ -42,22 +41,6 @@ const HowItWorksSection: React.FC = () => {
     },
   ];
 
-  const testimonials = [
-    {
-      image: sophia,
-      quote: "Finwit Kids changed how my child learns...",
-      name: "Sophia, Parent",
-      role: "Parent",
-    },
-    {
-      image: leo,
-      quote:
-        "I love the lessons and activities! They're so much fun and I'm learning a lot.",
-      name: "Leo, Child",
-      role: "Child",
-    },
-  ];
-  const navigate = useNavigate();
   return (
     <section className="py-20 bg-[#FAF7F2] relative overflow-hidden">
       {/* Animated SVG Background - Spans Entire Component */}
@@ -710,9 +693,9 @@ const HowItWorksSection: React.FC = () => {
           {/* Section Header */}
           <div className="text-center mb-16 animate-fadeInUp">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#2F3E3E] mb-6">
-              How It{" "}
+              How Mission{" "}
               <span className="bg-gradient-to-r from-[#2CA4A4] to-[#5EC1E8] bg-clip-text text-transparent">
-                Works
+                MENSA Works
               </span>
             </h2>
             <div className="w-24 h-1 bg-gradient-to-r from-[#FFC94B] to-[#A5C85A] mx-auto rounded-full"></div>
@@ -847,19 +830,6 @@ const HowItWorksSection: React.FC = () => {
             })}
           </div>
 
-          {/* Choose a Plan Button */}
-          <div
-            className="text-center animate-fadeInUp"
-            style={{ animationDelay: "0.6s" }}
-          >
-            <button
-              onClick={() => navigate("/learning-plans")}
-              className="bg-[#FFC94B] hover:bg-[#A5C85A] text-[#2F3E3E] font-semibold px-8 py-3 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
-            >
-              Choose a Plan
-            </button>
-          </div>
-
           {/* Teacher-Guided Support Add-on */}
           <div
             className="mt-12 animate-fadeInUp"
@@ -868,85 +838,23 @@ const HowItWorksSection: React.FC = () => {
             <div className="bg-white rounded-2xl p-6 shadow-lg border border-[#2CA4A4]/10 flex flex-col sm:flex-row items-center justify-between">
               <div className="mb-4 sm:mb-0">
                 <h4 className="text-lg font-semibold text-[#2F3E3E] mb-2">
-                  Teacher-Guided Support (Add-on)
+                  Scalable Intelligence Ecosystem
                 </h4>
                 <p className="text-[#2F3E3E]/70">
-                  Get additional guidance from certified educators
+                  As the program evolves, Mission MENSA aims to move beyond a
+                  single cohort toward a scalable ecosystem for discovering and
+                  nurturing exceptional talent across multiple domains of
+                  intelligence.
                 </p>
               </div>
               <button className="bg-[#2CA4A4] hover:bg-[#5EC1E8] text-white font-medium px-6 py-2 rounded-full transition-all duration-300 transform hover:scale-105 flex items-center space-x-2">
                 <Plus className="w-4 h-4" />
-                <span>Add</span>
+                <span>Expand</span>
               </button>
             </div>
           </div>
         </div>
 
-        {/* Testimonials Section */}
-        <div className="animate-fadeInUp" style={{ animationDelay: "1s" }}>
-          {/* Section Header */}
-          <div className="text-left mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold text-[#2F3E3E] mb-4">
-              Testimonials
-            </h2>
-          </div>
-
-          {/* Testimonials Grid */}
-          <div className="grid md:grid-cols-2 gap-8 lg:gap-12 relative z-10">
-            {testimonials.map((testimonial, index) => (
-              <div
-                key={testimonial.name}
-                className={`group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:scale-105 border border-gray-100 hover:border-[#2CA4A4]/20 animate-fadeInUp`}
-                style={{ animationDelay: `${1.2 + index * 0.2}s` }}
-              >
-                <div className="flex flex-col items-center text-center space-y-6">
-                  {/* Image placeholder */}
-                  <div className="relative w-44 h-44 bg-gradient-to-br from-[#5EC1E8]/20 to-[#2CA4A4]/20 rounded-full overflow-hidden border-4 border-white shadow-lg group-hover:scale-110 transition-transform duration-300">
-                    {/* You can replace this div with an actual img tag */}
-                    <div className="w-full h-full bg-gradient-to-br from-[#2CA4A4] to-[#5EC1E8] flex items-center justify-center">
-                      <span className="text-white text-2xl font-bold">
-                        {testimonial.name.charAt(0)}
-                      </span>
-                      <img
-                        src={testimonial.image}
-                        alt={testimonial.name}
-                        className="absolute inset-0 w-full h-full object-cover"
-                      />
-                    </div>
-
-                    {/* Decorative ring */}
-                    <div className="absolute inset-0 rounded-full border-2 border-[#FFC94B] opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-pulse"></div>
-                  </div>
-
-                  {/* Quote */}
-                  <blockquote className="text-lg text-[#2F3E3E]/90 leading-relaxed font-medium italic">
-                    "{testimonial.quote}"
-                  </blockquote>
-
-                  {/* Attribution */}
-                  <div className="space-y-1">
-                    <p className="font-semibold text-[#2F3E3E]">
-                      {testimonial.name}
-                    </p>
-                    <p className="text-sm text-[#2F3E3E]/60">
-                      {testimonial.role}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Hover gradient overlay */}
-                <div className="absolute inset-0 bg-gradient-to-br from-[#2CA4A4]/5 to-[#5EC1E8]/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
-              </div>
-            ))}
-          </div>
-
-          {/* Navigation dots */}
-          <div className="flex justify-center mt-8 space-x-2">
-            <div className="w-2 h-2 bg-[#2CA4A4] rounded-full"></div>
-            <div className="w-2 h-2 bg-[#2CA4A4]/30 rounded-full"></div>
-            <div className="w-2 h-2 bg-[#2CA4A4]/30 rounded-full"></div>
-          </div>
-        </div>
       </div>
     </section>
   );

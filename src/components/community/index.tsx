@@ -249,7 +249,7 @@ const FeaturedKids: React.FC = () => {
             <span>Featured Kids</span>
           </h2>
           <p className="text-[#2F3E3E]/80 max-w-3xl mx-auto">
-            Meet some of the amazing children who are part of the Finwit Kids
+            Meet some of the amazing children who are part of the Mensa
             community! Learn about their achievements and stories.
           </p>
         </div>

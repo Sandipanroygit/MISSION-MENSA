@@ -53,7 +53,7 @@ export default function LearnerDetailPage() {
   const learner = learners.find((l) => l.id === learnerId);
 
   if (!learner) {
-    return <Navigate to="/dashboard/overview" replace />;
+    return <Navigate to="/dashboard/writing-blogs" replace />;
   }
 
   return (
@@ -61,7 +61,7 @@ export default function LearnerDetailPage() {
       {/* Breadcrumb */}
       <nav className="mb-6 flex items-center gap-1.5 text-sm text-gray-400">
         <Link
-          to="/dashboard/overview"
+          to="/dashboard/writing-blogs"
           className="hover:text-[#2CA4A4] transition-colors"
         >
           Dashboard

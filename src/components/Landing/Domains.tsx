@@ -1,19 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import type { LucideIcon } from "lucide-react";
 import {
-  DollarSign,
-  Cross,
-  Heart,
-  Palette,
+  Brain,
+  Bot,
+  Compass,
+  Lightbulb,
   Microscope,
-  Music,
-  Monitor,
-  Apple,
-  TreePine,
-  Dumbbell,
+  Network,
   Users,
-  BookOpen,
 } from "lucide-react";
 
 // Domain type definition
@@ -26,124 +21,61 @@ export interface Domain {
   hoverColor: string;
 }
 
-// Utility function to convert domain title to URL slug
-const titleToSlug = (title: string): string => {
-  return title
-    .toLowerCase()
-    .replace(/[^\w\s-]/g, "") // Remove special characters except hyphens
-    .replace(/\s+/g, "-") // Replace spaces with hyphens
-    .replace(/--+/g, "-") // Replace multiple hyphens with single hyphen
-    .trim();
-};
-
 // Domains data array - exported for reuse
 const DOMAINS: Domain[] = [
   {
-    icon: DollarSign,
-    title: "Financial Literacy",
+    icon: Network,
+    title: "Collective Intelligence",
     description:
-      "Building a strong foundation in financial literacy and responsible money management.",
+      "Integrating human intelligence, AI agents, and global knowledge systems to create a powerful new learning ecosystem.",
     color: "from-[#2CA4A4] to-[#5EC1E8]",
     bgColor: "bg-gradient-to-br from-[#2CA4A4] to-[#5EC1E8]",
     hoverColor: "group-hover:from-[#5EC1E8] group-hover:to-[#2CA4A4]",
   },
   {
-    icon: Cross,
-    title: "Spiritual Growth (Christianity)",
+    icon: Bot,
+    title: "AI-Powered Learning",
     description:
-      "Nurturing spiritual development through Christian values and teachings.",
+      "Personal AI agents deliver adaptive learning, real-time feedback, and continuous performance tracking for every student.",
     color: "from-[#8B5FBF] to-[#2CA4A4]",
     bgColor: "bg-gradient-to-br from-[#8B5FBF] to-[#A855F7]",
     hoverColor: "group-hover:from-[#A855F7] group-hover:to-[#8B5FBF]",
   },
   {
-    icon: Heart,
-    title: "Emotional & Mental Well-being",
+    icon: Users,
+    title: "Human Mentorship",
     description:
-      "Promoting emotional intelligence, resilience, and positive mental health.",
+      "Focused on discipline, ethics, and self-awareness, mentors shape character alongside intellectual growth.",
     color: "from-[#FFC94B] to-[#A5C85A]",
     bgColor: "bg-gradient-to-br from-[#FFC94B] to-[#FBBF24]",
     hoverColor: "group-hover:from-[#FBBF24] group-hover:to-[#FFC94B]",
   },
   {
-    icon: Palette,
-    title: "Creative Arts & Craft",
+    icon: Compass,
+    title: "Student Agency",
     description:
-      "Encouraging creativity, self-expression, and appreciation for the arts and crafts.",
+      "Students develop independent thinking, curiosity, and ownership of learning instead of passive dependence.",
     color: "from-[#8B5FBF] to-[#5EC1E8]",
     bgColor: "bg-gradient-to-br from-[#EC4899] to-[#F472B6]",
     hoverColor: "group-hover:from-[#F472B6] group-hover:to-[#EC4899]",
   },
   {
-    icon: Microscope,
-    title: "Science & Innovation",
+    icon: Lightbulb,
+    title: "Innovation & Design",
     description:
-      "Exploring scientific concepts and fostering innovative thinking.",
+      "Hands-on problem solving, design thinking, and real-world projects transform knowledge into creation.",
     color: "from-[#5EC1E8] to-[#2CA4A4]",
     bgColor: "bg-gradient-to-br from-[#3B82F6] to-[#60A5FA]",
     hoverColor: "group-hover:from-[#60A5FA] group-hover:to-[#3B82F6]",
   },
   {
-    icon: Music,
-    title: "Music, Film & Media",
+    icon: Microscope,
+    title: "Research & Analytics",
     description:
-      "Developing musical skills, appreciation, and creativity in music, film, and media.",
+      "Students engage in STEAM-based learning that blends science, technology, engineering, arts, and mathematics through hands-on exploration and creative problem solving.",
     color: "from-[#A5C85A] to-[#FFC94B]",
     bgColor: "bg-gradient-to-br from-[#F59E0B] to-[#FBBF24]",
     hoverColor: "group-hover:from-[#FBBF24] group-hover:to-[#F59E0B]",
-  },
-  {
-    icon: Monitor,
-    title: "Technology & Digital Literacy",
-    description:
-      "Understanding technology and developing digital literacy skills.",
-    color: "from-[#2CA4A4] to-[#8B5FBF]",
-    bgColor: "bg-gradient-to-br from-[#6366F1] to-[#8B5CF6]",
-    hoverColor: "group-hover:from-[#8B5CF6] group-hover:to-[#6366F1]",
-  },
-  {
-    icon: Apple,
-    title: "Food & Nutrition",
-    description:
-      "Learning about healthy eating habits and the importance of balanced nutrition.",
-    color: "from-[#FFC94B] to-[#5EC1E8]",
-    bgColor: "bg-gradient-to-br from-[#EF4444] to-[#F87171]",
-    hoverColor: "group-hover:from-[#F87171] group-hover:to-[#EF4444]",
-  },
-  {
-    icon: TreePine,
-    title: "Agriculture & Landscaping/Outdoors",
-    description:
-      "Connecting with nature, understanding agricultural practices, and promoting outdoor activities.",
-    color: "from-[#A5C85A] to-[#2CA4A4]",
-    bgColor: "bg-gradient-to-br from-[#10B981] to-[#34D399]",
-    hoverColor: "group-hover:from-[#34D399] group-hover:to-[#10B981]",
-  },
-  {
-    icon: Dumbbell,
-    title: "Physical Wellness (Play & Exercise)",
-    description:
-      "Promoting physical fitness, healthy play, and exercise habits.",
-    color: "from-[#5EC1E8] to-[#FFC94B]",
-    bgColor: "bg-gradient-to-br from-[#14B8A6] to-[#5EEAD4]",
-    hoverColor: "group-hover:from-[#5EEAD4] group-hover:to-[#14B8A6]",
-  },
-  {
-    icon: Users,
-    title: "Community and Leadership",
-    description: "Developing community engagement and leadership skills.",
-    color: "from-[#8B5FBF] to-[#A5C85A]",
-    bgColor: "bg-gradient-to-br from-[#8B5FBF] to-[#A855F7]",
-    hoverColor: "group-hover:from-[#A855F7] group-hover:to-[#8B5FBF]",
-  },
-  {
-    icon: BookOpen,
-    title: "Vernacular & Cultural Identity",
-    description:
-      "Celebrating and preserving cultural heritage and linguistic diversity.",
-    color: "from-[#2CA4A4] to-[#FFC94B]",
-    bgColor: "bg-gradient-to-br from-[#F97316] to-[#FB923C]",
-    hoverColor: "group-hover:from-[#FB923C] group-hover:to-[#F97316]",
   },
 ];
 
@@ -161,11 +93,9 @@ export const DomainsGrid: React.FC<DomainsGridProps> = ({
     <div className={`grid ${gridCols} gap-6 lg:gap-8`}>
       {domains.map((domain, index) => {
         const IconComponent = domain.icon;
-        const domainSlug = titleToSlug(domain.title);
         return (
-          <Link
+          <div
             key={domain.title}
-            to={`/domains-of-development/${domainSlug}`}
             className="block"
           >
             <div
@@ -259,7 +189,7 @@ export const DomainsGrid: React.FC<DomainsGridProps> = ({
               {/* Corner decoration */}
               <div className="absolute top-4 right-4 w-2 h-2 bg-[#A5C85A] rounded-full opacity-0 group-hover:opacity-100 group-hover:animate-bounce transition-all duration-300 delay-100"></div>
             </div>
-          </Link>
+          </div>
         );
       })}
     </div>
@@ -646,7 +576,7 @@ const DomainsSection: React.FC = () => {
                 isVisible ? "animate-slideInLeft" : ""
               }`}
             >
-              Our
+              Mission
             </span>{" "}
             <span
               className={`inline-block bg-gradient-to-r from-[#2CA4A4] to-[#5EC1E8] bg-clip-text text-transparent hover:from-[#5EC1E8] hover:to-[#2CA4A4] transition-all duration-500 hover:scale-110 cursor-pointer ${
@@ -654,7 +584,7 @@ const DomainsSection: React.FC = () => {
               }`}
               style={{ animationDelay: "0.3s" }}
             >
-              12 Domains
+              MENSA
             </span>{" "}
             <span
               className={`inline-block text-[#2F3E3E] hover:scale-110 transition-transform duration-300 cursor-pointer ${
@@ -662,7 +592,7 @@ const DomainsSection: React.FC = () => {
               }`}
               style={{ animationDelay: "0.6s" }}
             >
-              of Development
+              Framework
             </span>
           </h2>
           <div
@@ -680,10 +610,11 @@ const DomainsSection: React.FC = () => {
                 : "opacity-0 translate-y-5"
             }`}
           >
-            Finwit Kids goes beyond academics to nurture the whole child. Each
-            domain is designed to be engaging, age-appropriate, and build on
-            what children learned the year before. Choose individual domains or
-            the full curriculum
+            Mission MENSA is designed as a live framework for discovering and
+            nurturing exceptional potential through AI-powered learning,
+            continuous observation, and innovation-driven development. The
+            system is structured to generate both student growth and research
+            insight.
           </p>
           <div
             className={`w-32 h-1 bg-gradient-to-r from-[#FFC94B] via-[#A5C85A] to-[#2CA4A4] mx-auto rounded-full transition-all duration-1000 delay-500 ${
@@ -702,22 +633,22 @@ const DomainsSection: React.FC = () => {
         >
           <div className="bg-gradient-to-r from-[#FAF7F2] to-white rounded-3xl p-8 shadow-lg border border-[#2CA4A4]/10 max-w-4xl mx-auto">
             <h3 className="text-2xl font-bold text-[#2F3E3E] mb-4">
-              Ready to Explore All Domains?
+              Ready to Explore the MENSA Framework?
             </h3>
             <p className="text-[#2F3E3E]/80 mb-6 max-w-2xl mx-auto">
-              Discover how our comprehensive approach helps children thrive in
-              every aspect of life through engaging, age-appropriate learning
-              experiences.
+              Explore the experimental model that integrates global knowledge
+              networks, dedicated AI companions, and disciplined human
+              mentorship into one operational learning environment.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
                 onClick={() => navigate("/programs")}
                 className="bg-[#2CA4A4] hover:bg-[#A5C85A] text-white font-semibold px-8 py-3 rounded-full transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg"
               >
-                View All Programs
+                View the Framework
               </button>
               <button className="bg-[#FFC94B] hover:bg-[#5EC1E8] text-[#2F3E3E] hover:text-white font-semibold px-8 py-3 rounded-full transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg">
-                Download Curriculum Guide
+                Review the Architecture
               </button>
             </div>
           </div>

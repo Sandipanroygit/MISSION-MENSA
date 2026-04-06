@@ -1,0 +1,40 @@
+<svg width="640" height="360" viewBox="0 0 640 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="640" height="360" fill="transparent"/>
+  <line x1="0" y1="142" x2="640" y2="142" stroke="#EAF5FC" stroke-width="8"/>
+  <line x1="0" y1="227" x2="640" y2="227" stroke="#F8F3DE" stroke-width="12"/>
+
+  <g filter="url(#shadow)">
+    <text x="145" y="125" font-family="'Trebuchet MS', 'Comic Sans MS', sans-serif" font-size="82" font-weight="900" letter-spacing="3">
+      <tspan fill="#FFC52E">M</tspan>
+      <tspan fill="#41BCD3">I</tspan>
+      <tspan fill="#2FA5C2">S</tspan>
+      <tspan fill="#F05A78">S</tspan>
+      <tspan fill="#FF8B2B">I</tspan>
+      <tspan fill="#F28AA8">O</tspan>
+      <tspan fill="#4B93D2">N</tspan>
+    </text>
+
+    <text x="170" y="262" font-family="'Trebuchet MS', 'Comic Sans MS', sans-serif" font-size="102" font-weight="900" letter-spacing="2" fill="#39B8CC">
+      MENSA
+    </text>
+  </g>
+
+  <circle cx="484" cy="132" r="14" fill="#C6E8FF"/>
+  <circle cx="472" cy="212" r="4" fill="#8A78C8"/>
+  <circle cx="326" cy="292" r="8" fill="#8A78C8"/>
+  <circle cx="292" cy="302" r="6" fill="#69D3F4"/>
+  <circle cx="162" cy="256" r="5" fill="#8A78C8"/>
+  <circle cx="206" cy="278" r="6" fill="#FFC52E"/>
+  <circle cx="362" cy="286" r="5" fill="#8A78C8"/>
+
+  <path d="M153 181L157 191L167 195L157 199L153 209L149 199L139 195L149 191L153 181Z" fill="#FFC52E"/>
+  <path d="M488 265L492 275L502 279L492 283L488 293L484 283L474 279L484 275L488 265Z" fill="#FFC52E"/>
+  <path d="M437 303L441 313L451 317L441 321L437 331L433 321L423 317L433 313L437 303Z" fill="#FFC52E"/>
+  <path d="M560 183L564 193L574 197L564 201L560 211L556 201L546 197L556 193L560 183Z" fill="#FFC52E"/>
+
+  <defs>
+    <filter id="shadow" x="120" y="47" width="426" height="286" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="4" stdDeviation="1.5" flood-color="#16798B" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+</svg>

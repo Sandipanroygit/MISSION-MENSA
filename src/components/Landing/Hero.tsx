@@ -691,7 +691,7 @@ const HeroSection: React.FC = () => {
                     animationDuration: "6s",
                   }}
                 >
-                  Smart
+                  Mission
                 </span>{" "}
                 <span className="inline-block">
                   <span className="relative inline-block group cursor-pointer">
@@ -703,7 +703,7 @@ const HeroSection: React.FC = () => {
                         backgroundSize: "200% auto",
                       }}
                     >
-                      Starts
+                      MENSA
                     </span>
                     <svg
                       className="absolute -bottom-2 left-0 w-full h-3 text-[#FFC94B] opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-drawLine group-hover:animate-pulse"
@@ -736,7 +736,7 @@ const HeroSection: React.FC = () => {
                     animationDuration: "6s",
                   }}
                 >
-                  Here
+                  Begins
                 </span>
               </h1>
 
@@ -745,38 +745,13 @@ const HeroSection: React.FC = () => {
                   className="text-base sm:text-lg lg:text-xl text-[#2F3E3E]/70 max-w-2xl leading-relaxed group cursor-pointer animate-fadeInUp"
                   style={{ animationDelay: "1s" }}
                 >
-                  <span className="inline-block hover:text-[#2CA4A4] hover:scale-105 transition-all duration-300">
-                    A holistic learning platform
-                  </span>{" "}
-                  <span className="inline-block hover:text-[#5EC1E8] hover:scale-105 transition-all duration-300">
-                    for kids aged
-                  </span>{" "}
-                  <span className="inline-block font-semibold text-[#8B5FBF] hover:scale-110 hover:text-[#FFC94B] transition-all duration-300">
-                    4 to 18
-                  </span>
-                  .{" "}
-                  <span className="inline-block hover:text-[#A5C85A] hover:scale-105 transition-all duration-300">
-                    Build
-                  </span>{" "}
-                  <span className="inline-block hover:text-[#2CA4A4] hover:scale-105 hover:font-semibold transition-all duration-300">
-                    wisdom
-                  </span>
-                  ,{" "}
-                  <span className="inline-block hover:text-[#5EC1E8] hover:scale-105 hover:font-semibold transition-all duration-300">
-                    character
-                  </span>
-                  ,{" "}
-                  <span className="inline-block hover:text-[#FFC94B] hover:scale-105 hover:font-semibold transition-all duration-300">
-                    creativity
-                  </span>
-                  ,{" "}
-                  <span className="inline-block hover:text-[#8B5FBF] hover:scale-105 transition-all duration-300">
-                    and smart money habits
-                  </span>{" "}
-                  <span className="inline-block hover:text-[#A5C85A] hover:scale-105 transition-all duration-300">
-                    from the start
-                  </span>
-                  .
+                  Mission MENSA is an advanced educational initiative designed
+                  to identify and cultivate exceptional human potential in the
+                  age of Artificial Intelligence. Developed under the vision of
+                  Indus Trust, Bangalore, it combines human intelligence,
+                  AI-powered learning systems, personal AI companions, and
+                  networked global knowledge to build a new model of education
+                  focused on discovering constructive outliers.
                 </p>
               </div>
             </div>
@@ -784,13 +759,13 @@ const HeroSection: React.FC = () => {
             <div className="flex flex-col sm:flex-row gap-4 lg:gap-6">
               <button className="group relative bg-gradient-to-r from-[#8B5FBF] to-[#5EC1E8] hover:from-[#5EC1E8] hover:to-[#8B5FBF] text-white font-bold px-8 py-4 rounded-full transition-all duration-500 transform hover:scale-110 shadow-xl hover:shadow-2xl flex items-center justify-center space-x-2 overflow-hidden">
                 <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></span>
-                <span className="relative z-10">View More</span>
+                <span className="relative z-10">Explore Mission MENSA</span>
                 <ArrowRight className="relative z-10 w-5 h-5 group-hover:translate-x-2 transition-transform duration-300" />
               </button>
 
               <button className="group bg-white hover:bg-gradient-to-r hover:from-[#2CA4A4] hover:to-[#5EC1E8] text-[#2CA4A4] hover:text-white border-2 border-[#2CA4A4] hover:border-transparent font-semibold px-8 py-4 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center justify-center space-x-2">
                 <Play className="w-5 h-5 group-hover:scale-125 group-hover:rotate-12 transition-all duration-300" />
-                <span>Try a Demo Lesson</span>
+                <span>View Human Lab Vision</span>
               </button>
             </div>
 
@@ -799,29 +774,28 @@ const HeroSection: React.FC = () => {
               <div className="group text-center bg-white/50 backdrop-blur-sm px-6 py-4 rounded-2xl hover:bg-white hover:shadow-lg transition-all duration-300 hover:scale-110 cursor-pointer">
                 <div className="text-3xl lg:text-4xl font-bold text-[#2CA4A4] group-hover:scale-125 transition-transform duration-300">
                   <CountUp
-                    end={9}
+                    end={1}
                     duration={2.5}
                     enableScrollSpy
                     scrollSpyOnce
                   />
                 </div>
                 <div className="text-xs lg:text-sm text-[#2F3E3E]/70 font-medium mt-1">
-                  Life Domains
+                  Human Lab
                 </div>
               </div>
               <div className="group text-center bg-white/50 backdrop-blur-sm px-6 py-4 rounded-2xl hover:bg-white hover:shadow-lg transition-all duration-300 hover:scale-110 cursor-pointer">
                 <div className="text-3xl lg:text-4xl font-bold text-[#A5C85A] group-hover:scale-125 transition-transform duration-300">
                   <CountUp
-                    start={4}
-                    end={18}
+                    start={1}
+                    end={1}
                     duration={2.5}
                     enableScrollSpy
                     scrollSpyOnce
-                    separator="-"
                   />
                 </div>
                 <div className="text-xs lg:text-sm text-[#2F3E3E]/70 font-medium mt-1">
-                  Age Range
+                  AI Companion
                 </div>
               </div>
               <div className="group text-center bg-white/50 backdrop-blur-sm px-6 py-4 rounded-2xl hover:bg-white hover:shadow-lg transition-all duration-300 hover:scale-110 cursor-pointer">
@@ -835,7 +809,7 @@ const HeroSection: React.FC = () => {
                   />
                 </div>
                 <div className="text-xs lg:text-sm text-[#2F3E3E]/70 font-medium mt-1">
-                  Holistic
+                  Intelligence Driven
                 </div>
               </div>
             </div>
@@ -865,7 +839,7 @@ const HeroSection: React.FC = () => {
                     <img
                       key={index}
                       src={image}
-                      alt={`Finwit Kids learning experience ${index + 1}`}
+                      alt={`Mensa learning experience ${index + 1}`}
                       className={`absolute inset-0 w-full h-full object-contain transition-all duration-1000 ease-in-out ${
                         index === currentImageIndex
                           ? "opacity-100 scale-100"

@@ -2,15 +2,13 @@ import React, { useState, useEffect, useRef } from "react";
 import {
   Menu,
   X,
-  Home,
   Info,
-  GraduationCap,
-  BookOpen,
+  MessageCircle,
   LayoutDashboard,
   ChevronDown,
   LogOut,
 } from "lucide-react";
-import Logo from "../../assets/finwit_kids_logo_clear.png";
+import Logo from "../../assets/missionmensa.png";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuthContext } from "@/context/AuthContext";
 import { useLogout } from "@/hooks/useAuth";
@@ -103,8 +101,10 @@ const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isSticky, setIsSticky] = useState(false);
+  const [isHeaderHidden, setIsHeaderHidden] = useState(false);
   const location = useLocation();
   const { isAuthenticated } = useAuthContext();
+  const lastScrollY = useRef(0);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -116,29 +116,21 @@ const Header: React.FC = () => {
 
       // Update scrolled state for additional styling
       setIsScrolled(scrollPosition > 10);
+      setIsHeaderHidden(
+        scrollPosition > lastScrollY.current && scrollPosition > 120,
+      );
+      lastScrollY.current = Math.max(scrollPosition, 0);
     };
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const NoSign: React.FC<any> = () => null;
-
   const mainNavItems = [
-    { name: "Home", href: "/", icon: Home },
-    { name: "About Us", href: "/about-us", icon: Info },
-    { name: "Programs", href: "/programs", icon: GraduationCap },
-    { name: "Resources", href: "/resources", icon: BookOpen },
+    { name: "Blogs", href: "/", icon: Info },
+    { name: "Discussion", href: "/programs", icon: MessageCircle },
     // { name: "Community", href: "/community", icon: Users },
   ];
-
-  const actionNavItems = [
-    { name: "Pricing", href: "/pricing", icon: NoSign },
-    // { name: "Contact", href: "/contact-us", icon: Contact },
-  ];
-
-  const allNavItems = [...mainNavItems, ...actionNavItems];
 
   return (
     <header
@@ -150,6 +142,8 @@ const Header: React.FC = () => {
       }}
       className={`w-full z-50 transition-all duration-300 ease-in-out ${
         isSticky ? "animate-slideDown" : ""
+      } ${
+        isHeaderHidden && !isMenuOpen ? "-translate-y-full" : "translate-y-0"
       } ${
         isScrolled
           ? "bg-white/95 backdrop-blur-sm shadow-lg"
@@ -456,15 +450,15 @@ const Header: React.FC = () => {
         </svg>
       </div>
       <div className="w-full px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto flex justify-between items-center h-24">
+        <div className="max-w-7xl mx-auto flex justify-between items-center min-h-18 py-2">
           {/* Logo - Left Side */}
           <Link to="/" className="flex-shrink-0">
             <div className="flex items-center space-x-2">
-              <div className="w-24 h-24 rounded-full flex items-center justify-center transform hover:scale-105 transition-transform duration-300">
+              <div className="w-[150px] sm:w-[180px] flex items-center justify-center transform hover:scale-105 transition-transform duration-300">
                 <img
                   src={Logo}
-                  alt="Finwit Kids Logo"
-                  className="w-24 h-24 object-contain"
+                  alt="Mission MENSA Logo"
+                  className="block w-full h-auto object-contain"
                 />
               </div>
             </div>
@@ -506,61 +500,16 @@ const Header: React.FC = () => {
               })}
             </nav>
 
-            {/* Divider */}
-            <div className="h-8 w-px bg-[#2CA4A4]/20"></div>
-
-            {/* Action Items */}
-            <div className="flex items-center space-x-2">
-              {actionNavItems.map((item) => {
-                const IconComponent = item.icon;
-                const isActive = location.pathname === item.href;
-                const isPricing = item.name === "Pricing";
-                return (
-                  <Link
-                    key={item.name}
-                    to={item.href}
-                    className={`flex items-center space-x-1.5 font-medium transition-all duration-300 relative group whitespace-nowrap px-4 py-2.5 rounded-lg ${
-                      isActive
-                        ? isPricing
-                          ? "text-white bg-gradient-to-r from-[#FFC94B] to-[#A5C85A] shadow-md"
-                          : "text-[#2CA4A4] bg-[#2CA4A4]/10"
-                        : isPricing
-                          ? "text-[#2F3E3E] bg-[#FFC94B]/20 hover:bg-gradient-to-r hover:from-[#FFC94B] hover:to-[#A5C85A] hover:text-white hover:shadow-md"
-                          : "text-[#2F3E3E] hover:text-[#2CA4A4] hover:bg-[#2CA4A4]/5"
-                    }`}
-                  >
-                    <IconComponent
-                      size={18}
-                      className={`transition-all duration-300 ${
-                        isActive && isPricing
-                          ? "text-white"
-                          : "group-hover:scale-110"
-                      }`}
-                    />
-                    <span className="text-sm font-semibold">{item.name}</span>
-                  </Link>
-                );
-              })}
-            </div>
-
             {/* Auth actions */}
             {isAuthenticated ? (
               <UserChip />
             ) : (
-              <div className="flex items-center gap-3">
-                <Link
-                  to="/login"
-                  className="text-sm font-medium text-[#2F3E3E] hover:text-[#2CA4A4] transition-colors duration-200 whitespace-nowrap"
-                >
-                  Sign in
-                </Link>
-                <Link
-                  to="/register"
-                  className="bg-[#FFC94B] hover:bg-[#A5C85A] text-[#2F3E3E] font-semibold px-6 py-2.5 rounded-full transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-xl whitespace-nowrap text-sm"
-                >
-                  Get Started
-                </Link>
-              </div>
+              <Link
+                to="/login"
+                className="bg-[#FFC94B] hover:bg-[#A5C85A] text-[#2F3E3E] font-semibold px-6 py-2.5 rounded-full transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-xl whitespace-nowrap text-sm"
+              >
+                Sign In
+              </Link>
             )}
           </div>
 
@@ -586,33 +535,24 @@ const Header: React.FC = () => {
           <div className="py-4 space-y-2 bg-white/95 backdrop-blur-sm rounded-2xl mt-2 shadow-xl border border-[#2CA4A4]/10">
             {/* Main Nav Items */}
             <div className="space-y-1">
-              {allNavItems.map((item) => {
+              {mainNavItems.map((item) => {
                 const IconComponent = item.icon;
                 const isActive = location.pathname === item.href;
-                const isPricing = item.name === "Pricing";
                 return (
                   <Link
                     key={item.name}
                     to={item.href}
                     className={`flex items-center space-x-3 px-4 py-3 mx-2 rounded-xl transition-all duration-300 ${
                       isActive
-                        ? isPricing
-                          ? "text-white bg-gradient-to-r from-[#FFC94B] to-[#A5C85A] shadow-md"
-                          : "text-[#2CA4A4] bg-[#2CA4A4]/10 border-l-4 border-[#2CA4A4]"
-                        : isPricing
-                          ? "text-[#2F3E3E] bg-[#FFC94B]/10 hover:bg-[#FFC94B]/20"
-                          : "text-[#2F3E3E] hover:text-[#2CA4A4] hover:bg-[#FAF7F2] hover:translate-x-1"
+                        ? "text-[#2CA4A4] bg-[#2CA4A4]/10 border-l-4 border-[#2CA4A4]"
+                        : "text-[#2F3E3E] hover:text-[#2CA4A4] hover:bg-[#FAF7F2] hover:translate-x-1"
                     }`}
                     onClick={() => setIsMenuOpen(false)}
                   >
                     <IconComponent
                       size={20}
                       className={`transition-transform duration-300 ${
-                        isActive && isPricing
-                          ? "text-white"
-                          : isActive
-                            ? "text-[#2CA4A4]"
-                            : ""
+                        isActive ? "text-[#2CA4A4]" : ""
                       }`}
                     />
                     <span className="font-medium">{item.name}</span>
@@ -636,22 +576,13 @@ const Header: React.FC = () => {
                   Dashboard
                 </Link>
               ) : (
-                <>
-                  <Link
-                    to="/register"
-                    className="w-full flex items-center justify-center bg-[#FFC94B] hover:bg-[#A5C85A] text-[#2F3E3E] font-semibold px-6 py-3 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Get Started
-                  </Link>
-                  <Link
-                    to="/login"
-                    className="w-full flex items-center justify-center border border-[#2CA4A4]/30 text-[#2CA4A4] font-medium px-6 py-3 rounded-full transition-all duration-300 hover:bg-[#2CA4A4]/5"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Sign in
-                  </Link>
-                </>
+                <Link
+                  to="/login"
+                  className="w-full flex items-center justify-center bg-[#FFC94B] hover:bg-[#A5C85A] text-[#2F3E3E] font-semibold px-6 py-3 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Sign In
+                </Link>
               )}
             </div>
           </div>

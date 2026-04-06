@@ -341,7 +341,7 @@ const Pricing: React.FC = () => {
           </h3>
           <p className="text-[#2F3E3E]/70 mb-8 max-w-2xl mx-auto">
             Join thousands of families investing in their children's holistic
-            development with Finwit Kids
+            development with Mensa
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">

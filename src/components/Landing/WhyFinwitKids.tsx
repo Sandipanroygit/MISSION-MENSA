@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Cross, Users, Clock, GraduationCap } from "lucide-react";
+import { Bot, Brain, Network, GraduationCap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const WhyFinwitKidsSection: React.FC = () => {
@@ -36,8 +36,9 @@ const WhyFinwitKidsSection: React.FC = () => {
   const features = [
     {
       icon: GraduationCap,
-      title: "Modular Learning",
-      description: "Modular learning across 11 domains + 1 digital portal",
+      title: "Constructive Outliers",
+      description:
+        "Mission MENSA is built to identify students with extraordinary curiosity, creativity, and problem-solving ability and place them in an environment that accelerates excellence.",
       color: "from-[#8B5FBF] to-[#2CA4A4]",
       cardBgColor: "bg-gradient-to-br from-[#8B5FBF] to-[#5EC1E8]",
       iconBgColor: "bg-white/20",
@@ -45,10 +46,10 @@ const WhyFinwitKidsSection: React.FC = () => {
       textColor: "text-white",
     },
     {
-      icon: Cross,
-      title: "Christian Values",
+      icon: Bot,
+      title: "Personal AI Companions",
       description:
-        "Rooted in Christian principles, fostering spiritual growth and ethical decision-making.",
+        "Each student operates with a dedicated AI agent that personalises learning pathways, enhances analytical thinking, and supports independent exploration.",
       color: "from-[#FFC94B] to-[#A5C85A]",
       cardBgColor: "bg-gradient-to-br from-[#FFC94B] to-[#A5C85A]",
       iconBgColor: "bg-white/20",
@@ -56,10 +57,10 @@ const WhyFinwitKidsSection: React.FC = () => {
       textColor: "text-white",
     },
     {
-      icon: Users,
-      title: "Parent-Child Co-Learning",
+      icon: Brain,
+      title: "Human Development",
       description:
-        "Encourages collaborative learning between parents and children, strengthening family bonds.",
+        "Human mentors cultivate discipline, ethical judgment, emotional resilience, and purpose so AI acceleration is matched by deep human development.",
       color: "from-[#2CA4A4] to-[#5EC1E8]",
       cardBgColor: "bg-gradient-to-br from-[#A855F7] to-[#C084FC]",
       iconBgColor: "bg-white/20",
@@ -67,10 +68,10 @@ const WhyFinwitKidsSection: React.FC = () => {
       textColor: "text-white",
     },
     {
-      icon: Clock,
-      title: "Age-Progressive Design",
+      icon: Network,
+      title: "Collective Intelligence",
       description:
-        "Curriculum adapts to the child's age and developmental stage, ensuring optimal learning.",
+        "Learning emerges from the interaction between human reasoning, intelligent machines, and global knowledge networks rather than classroom limits alone.",
       color: "from-[#A5C85A] to-[#FFC94B]",
       cardBgColor: "bg-gradient-to-br from-[#10B981] to-[#34D399]",
       iconBgColor: "bg-white/20",
@@ -782,7 +783,7 @@ const WhyFinwitKidsSection: React.FC = () => {
               }`}
               style={{ animationDelay: "0.3s" }}
             >
-              Finwit Kids
+              Mission MENSA
             </span>
             <span
               className={`inline-block text-[#2F3E3E] hover:scale-110 hover:rotate-12 transition-all duration-300 cursor-pointer ${
@@ -863,24 +864,25 @@ const WhyFinwitKidsSection: React.FC = () => {
         >
           <div className="bg-white rounded-3xl p-8 shadow-lg border border-[#2CA4A4]/10 max-w-4xl mx-auto">
             <h3 className="text-2xl font-bold text-[#2F3E3E] mb-4">
-              Ready to Empower Your Child's Future?
+              Reimagining Education Around Exceptional Potential
             </h3>
             <p className="text-[#2F3E3E]/80 mb-6 max-w-2xl mx-auto">
-              Join thousands of families already nurturing well-rounded,
-              spiritually grounded children through our comprehensive program.
+              Mission MENSA moves beyond average outcomes toward a system that
+              identifies and empowers individuals capable of shaping the future
+              through AI-driven learning and disciplined mentorship.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
                 onClick={() => navigate("/programs")}
                 className="bg-[#2CA4A4] hover:bg-[#A5C85A] text-white font-semibold px-8 py-3 rounded-full transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg"
               >
-                Explore Programs
+                Explore the Model
               </button>
               <button
                 onClick={() => navigate("/about-us")}
                 className="bg-transparent hover:bg-[#FFC94B] text-[#2CA4A4] hover:text-[#2F3E3E] border-2 border-[#2CA4A4] hover:border-[#FFC94B] font-semibold px-8 py-3 rounded-full transition-all duration-300 transform hover:scale-105"
               >
-                Learn More
+                Read the Vision
               </button>
             </div>
           </div>

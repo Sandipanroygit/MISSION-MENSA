@@ -1,10 +1,10 @@
 import { Routes, Route } from "react-router-dom";
-import Home from "@/components/Home";
 import DomainDetail from "@/components/DomainDetail";
 import ProgramsPage from "./pages/Programs";
-import ResourcesPage from "./pages/Resources";
 import CommunityPage from "./pages/Community";
 import AboutUsPage from "./pages/Aboutus";
+import PublicBlogReadPage from "./pages/PublicBlogRead";
+import PublicDiscussionReadPage from "./pages/PublicDiscussionRead";
 import ContactUs from "./pages/ContactUs";
 import PricingPage from "./pages/Pricing";
 import LearningPlans from "./components/LearningPlan";
@@ -24,18 +24,23 @@ import DashboardRedirect from "./pages/dashboard/DashboardRedirect";
 import ParentOverview from "./pages/dashboard/ParentOverview";
 import ChildDashboard from "./pages/dashboard/ChildDashboard";
 import LearnerDetailPage from "./pages/dashboard/LearnerDetailPage";
-import LearnerManagementPage from "./pages/dashboard/LearnerManagementPage";
 import SubscriptionsPage from "./pages/dashboard/SubscriptionsPage";
+import WritingBlogsPage from "./pages/dashboard/WritingBlogsPage";
+import BlogDraftEditorPage from "./pages/dashboard/BlogDraftEditorPage";
+import BlogReadPage from "./pages/dashboard/BlogReadPage";
+import DiscussionPage from "./pages/dashboard/DiscussionPage";
+import DiscussionTopicPage from "./pages/dashboard/DiscussionTopicPage";
 
 const AppRoutes = () => {
   return (
     <Routes>
       {/* ── Public marketing routes — wrapped in Header + Footer ── */}
       <Route element={<RootLayout />}>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<AboutUsPage />} />
         <Route path="/programs" element={<ProgramsPage />} />
+        <Route path="/programs/:topicId" element={<PublicDiscussionReadPage />} />
         <Route path="/about-us" element={<AboutUsPage />} />
-        <Route path="/resources" element={<ResourcesPage />} />
+        <Route path="/about-us/:slug" element={<PublicBlogReadPage />} />
         <Route path="/contact-us" element={<ContactUs />} />
         <Route path="/community" element={<CommunityPage />} />
         <Route path="/pricing" element={<PricingPage />} />
@@ -59,11 +64,24 @@ const AppRoutes = () => {
           <Route path="/dashboard" element={<DashboardRedirect />} />
 
           {/* Parent views */}
-          <Route path="/dashboard/overview" element={<ParentOverview />} />
           <Route
-            path="/dashboard/learners"
-            element={<LearnerManagementPage />}
+            path="/dashboard/writing-blogs"
+            element={<WritingBlogsPage />}
           />
+          <Route
+            path="/dashboard/writing-blogs/new"
+            element={<BlogDraftEditorPage />}
+          />
+          <Route
+            path="/dashboard/writing-blogs/read/:slug"
+            element={<BlogReadPage />}
+          />
+          <Route path="/dashboard/discussion" element={<DiscussionPage />} />
+          <Route
+            path="/dashboard/discussion/:topicId"
+            element={<DiscussionTopicPage />}
+          />
+          <Route path="/dashboard/overview" element={<ParentOverview />} />
           <Route
             path="/dashboard/learners/:learnerId"
             element={<LearnerDetailPage />}

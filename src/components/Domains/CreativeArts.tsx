@@ -269,7 +269,7 @@ const ActivitiesAndMilestones: React.FC = () => {
     {
       title: "Events",
       description:
-        "Finwit Kids Art Expo with virtual stages and animated performances",
+        "Mensa Art Expo with virtual stages and animated performances",
       icon: Users,
     },
   ];

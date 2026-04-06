@@ -31,5 +31,5 @@ export default function DashboardRedirect() {
     return <Navigate to="/dashboard/child" replace />;
   }
 
-  return <Navigate to="/dashboard/overview" replace />;
+  return <Navigate to="/dashboard/writing-blogs" replace />;
 }

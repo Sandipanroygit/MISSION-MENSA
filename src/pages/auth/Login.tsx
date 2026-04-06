@@ -70,7 +70,7 @@ export default function LoginPage() {
       <div className="mb-8">
         <h2 className="text-2xl font-black text-[#2F3E3E]">Welcome back</h2>
         <p className="mt-1 text-sm text-gray-500">
-          Sign in to your FinWit Kids account.
+          Sign in to your Mensa account.
         </p>
       </div>
 

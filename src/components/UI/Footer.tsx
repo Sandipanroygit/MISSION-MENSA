@@ -1,39 +1,6 @@
 import React from "react";
-import { Facebook, Instagram, Youtube } from "lucide-react";
-import Logo from "../../assets/finwit_kids_logo_clear.png";
+import Logo from "../../assets/missionmensa.png";
 const Footer: React.FC = () => {
-  const footerLinks = {
-    main: [
-      { name: "About", href: "/about-us" },
-      { name: "Domains", href: "/#domains" },
-      { name: "Pricing", href: "/pricing" },
-      { name: "Blog", href: "#blog" },
-      { name: "Events", href: "#events" },
-      { name: "Contact", href: "/contact-us" },
-    ],
-  };
-
-  const socialLinks = [
-    {
-      icon: Facebook,
-      href: "#facebook",
-      label: "Facebook",
-      color: "hover:text-[#1877F2]",
-    },
-    {
-      icon: Instagram,
-      href: "#instagram",
-      label: "Instagram",
-      color: "hover:text-[#E4405F]",
-    },
-    {
-      icon: Youtube,
-      href: "#youtube",
-      label: "YouTube",
-      color: "hover:text-[#FF0000]",
-    },
-  ];
-
   return (
     <footer className="bg-[#FAF7F2] border-t border-gray-200 relative overflow-hidden">
       {/* Sleek Animated SVG Background - Footer Theme */}
@@ -615,135 +582,16 @@ const Footer: React.FC = () => {
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Main Footer Content */}
-        <div className="grid grid-cols-2 md:grid-cols-6 gap-8 mb-8">
+        <div className="mb-8">
           {/* Logo and Description */}
-          <div className="col-span-2 md:col-span-2 animate-fadeInUp">
-            <div className="flex items-center space-x-2 mb-4">
-              <div className="w-20 h-20  rounded-full flex items-center justify-center">
-                <img src={Logo} alt="" />
+          <div className="animate-fadeInUp">
+            <div className="flex items-center space-x-3 mb-4">
+              <div className="w-[110px] flex items-center justify-center">
+                <img src={Logo} alt="Mission MENSA Logo" className="block w-full h-auto object-contain" />
               </div>
               <span className="text-[#2F3E3E] font-bold text-lg">
-                Finwit Kids
+                Mensa
               </span>
-            </div>
-            <p className="text-[#2F3E3E]/70 text-sm leading-relaxed mb-6 max-w-xs">
-              Empowering children from all backgrounds to thrive across nine
-              essential domains of development, anchored in Godly values.
-            </p>
-
-            {/* Social Media Links */}
-            <div className="flex space-x-4">
-              {socialLinks.map((social) => {
-                const IconComponent = social.icon;
-                return (
-                  <a
-                    key={social.label}
-                    href={social.href}
-                    aria-label={social.label}
-                    className={`w-10 h-10 bg-white hover:bg-[#2CA4A4]/10 rounded-full flex items-center justify-center text-[#2F3E3E]/60 ${social.color} transition-all duration-300 transform hover:scale-110 shadow-sm hover:shadow-md group`}
-                  >
-                    <IconComponent className="w-5 h-5 group-hover:scale-110 transition-transform duration-200" />
-                  </a>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Navigation Links */}
-          <div className="col-span-2 md:col-span-4">
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
-              {/* Column 1 */}
-              <div
-                className="animate-fadeInUp"
-                style={{ animationDelay: "0.1s" }}
-              >
-                <h4 className="font-semibold text-[#2F3E3E] mb-4">Company</h4>
-                <ul className="space-y-3">
-                  <li>
-                    <a
-                      href={footerLinks.main[0].href}
-                      className="text-[#2F3E3E]/70 hover:text-[#2CA4A4] text-sm transition-colors duration-200 relative group"
-                    >
-                      {footerLinks.main[0].name}
-                      <span className="absolute inset-x-0 -bottom-0.5 h-px bg-[#2CA4A4] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-200"></span>
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href={footerLinks.main[5].href}
-                      className="text-[#2F3E3E]/70 hover:text-[#2CA4A4] text-sm transition-colors duration-200 relative group"
-                    >
-                      {footerLinks.main[5].name}
-                      <span className="absolute inset-x-0 -bottom-0.5 h-px bg-[#2CA4A4] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-200"></span>
-                    </a>
-                  </li>
-                </ul>
-              </div>
-
-              {/* Column 2 */}
-              <div
-                className="animate-fadeInUp"
-                style={{ animationDelay: "0.2s" }}
-              >
-                <h4 className="font-semibold text-[#2F3E3E] mb-4">Programs</h4>
-                <ul className="space-y-3">
-                  <li>
-                    <a
-                      href={footerLinks.main[1].href}
-                      className="text-[#2F3E3E]/70 hover:text-[#2CA4A4] text-sm transition-colors duration-200 relative group"
-                    >
-                      {footerLinks.main[1].name}
-                      <span className="absolute inset-x-0 -bottom-0.5 h-px bg-[#2CA4A4] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-200"></span>
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href={footerLinks.main[2].href}
-                      className="text-[#2F3E3E]/70 hover:text-[#2CA4A4] text-sm transition-colors duration-200 relative group"
-                    >
-                      {footerLinks.main[2].name}
-                      <span className="absolute inset-x-0 -bottom-0.5 h-px bg-[#2CA4A4] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-200"></span>
-                    </a>
-                  </li>
-                </ul>
-              </div>
-
-              {/* Column 3 */}
-              <div
-                className="animate-fadeInUp"
-                style={{ animationDelay: "0.3s" }}
-              >
-                <h4 className="font-semibold text-[#2F3E3E] mb-4">Resources</h4>
-                <ul className="space-y-3">
-                  <li>
-                    <a
-                      href={footerLinks.main[3].href}
-                      className="text-[#2F3E3E]/70 hover:text-[#2CA4A4] text-sm transition-colors duration-200 relative group"
-                    >
-                      {footerLinks.main[3].name}
-                      <span className="absolute inset-x-0 -bottom-0.5 h-px bg-[#2CA4A4] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-200"></span>
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href={footerLinks.main[4].href}
-                      className="text-[#2F3E3E]/70 hover:text-[#2CA4A4] text-sm transition-colors duration-200 relative group"
-                    >
-                      {footerLinks.main[4].name}
-                      <span className="absolute inset-x-0 -bottom-0.5 h-px bg-[#2CA4A4] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-200"></span>
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href={"/community"}
-                      className="text-[#2F3E3E]/70 hover:text-[#2CA4A4] text-sm transition-colors duration-200 relative group"
-                    >
-                      Community
-                      <span className="absolute inset-x-0 -bottom-0.5 h-px bg-[#2CA4A4] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-200"></span>
-                    </a>
-                  </li>
-                </ul>
-              </div>
             </div>
           </div>
         </div>
@@ -758,8 +606,10 @@ const Footer: React.FC = () => {
         >
           {/* Copyright */}
           <div className="text-center md:text-left">
-            <p className="text-[#2F3E3E]/60 text-sm">
-              © 2024 Finwit Kids. All rights reserved.
+            <p className="max-w-md text-sm text-[#2F3E3E]/60">
+              Enter a learning ecosystem where human potential meets
+              Artificial Intelligence designed to cultivate thinkers,
+              innovators, and future nation-builders.
             </p>
           </div>
 

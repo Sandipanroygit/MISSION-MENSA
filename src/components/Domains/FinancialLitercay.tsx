@@ -107,7 +107,7 @@ const HowItWorks: React.FC = () => {
 
   const activities = [
     "Design a personalized piggy bank and saving tracker",
-    "Play 'Finwit Market Day' (a pretend store game)",
+    "Play 'Mensa Market Day' (a pretend store game)",
     "Create a giving plan for helping someone in need",
   ];
 

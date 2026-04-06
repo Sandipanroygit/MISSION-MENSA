@@ -2,9 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
-  Users,
-  BookOpen,
-  TrendingUp,
+  PenSquare,
+  MessageSquare,
   Settings,
   ChevronDown,
   LogOut,
@@ -12,21 +11,18 @@ import {
   X,
   Bell,
 } from "lucide-react";
-import Logo from "@/assets/finwit_kids_logo_clear.png";
+import Logo from "@/assets/missionmensa.png";
 import { useAuthContext } from "@/context/AuthContext";
 import { useLogout } from "@/hooks/useAuth";
 import LearnerSwitcher from "@/components/dashboard/LearnerSwitcher";
 
 const parentNavItems = [
-  { name: "Overview", href: "/dashboard/overview", icon: LayoutDashboard },
-  { name: "Learners", href: "/dashboard/learners", icon: Users },
-  { name: "Subscriptions", href: "/dashboard/subscriptions", icon: TrendingUp },
-  { name: "Resources", href: "/resources", icon: BookOpen },
+  { name: "Writing Blogs", href: "/dashboard/writing-blogs", icon: PenSquare },
+  { name: "Discussion", href: "/dashboard/discussion", icon: MessageSquare },
 ];
 
 const childNavItems = [
   { name: "My Dashboard", href: "/dashboard/child", icon: LayoutDashboard },
-  { name: "Resources", href: "/resources", icon: BookOpen },
 ];
 
 export default function DashboardHeader() {
@@ -76,13 +72,13 @@ export default function DashboardHeader() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-gray-100 bg-white/95 backdrop-blur-sm shadow-sm">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex min-h-12 max-w-7xl items-center justify-between px-4 py-2 sm:px-6 lg:px-8">
         {/* ── Logo ──────────────────────────────────────────────────────── */}
         <Link to="/dashboard" className="flex-shrink-0">
           <img
             src={Logo}
-            alt="FinWit Kids"
-            className="h-12 w-auto object-contain"
+            alt="Mission MENSA"
+            className="block w-[105px] h-auto object-contain"
           />
         </Link>
 

@@ -125,7 +125,7 @@ const Error404Page: React.FC = () => {
             <p className="text-lg text-[#2F3E3E]/80 max-w-2xl mx-auto leading-relaxed mb-8">
               Don't worry - even the best explorers sometimes take a wrong turn.
               Let's get you back on track to discover amazing learning
-              opportunities with Finwit Kids!
+              opportunities with Mensa!
             </p>
           </div>
 
