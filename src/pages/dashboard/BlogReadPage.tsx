@@ -4,11 +4,11 @@ import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 import { useAuthContext } from "@/context/AuthContext";
 import InlineRichText from "@/components/common/InlineRichText";
 import {
-  blogs,
   deletePublishedBlog,
   deletePublishedBlogAsync,
   getPublishedBlogs,
   getPublishedBlogsAsync,
+  mergePublishedAndSeedBlogs,
   type BlogEntry,
   type BlogYoutubeBlock,
 } from "./blogData";
@@ -111,7 +111,7 @@ export default function BlogReadPage() {
   const [publishedBlogs, setPublishedBlogs] = useState<BlogEntry[]>(() =>
     getPublishedBlogs(),
   );
-  const blog = [...publishedBlogs, ...blogs].find(
+  const blog = mergePublishedAndSeedBlogs(publishedBlogs).find(
     (entry) => entry.slug === slug,
   );
 

@@ -2,9 +2,9 @@ import React from "react";
 import { ArrowRight, BookOpen, PlayCircle, Sparkles } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
-  blogs,
   getPublishedBlogs,
   getPublishedBlogsAsync,
+  mergePublishedAndSeedBlogs,
   type BlogEntry,
 } from "@/pages/dashboard/blogData";
 
@@ -13,7 +13,7 @@ const PublicBlogs: React.FC = () => {
   const [publishedBlogs, setPublishedBlogs] = React.useState<BlogEntry[]>(() =>
     getPublishedBlogs(),
   );
-  const visibleBlogs = [...publishedBlogs, ...blogs];
+  const visibleBlogs = mergePublishedAndSeedBlogs(publishedBlogs);
 
   React.useEffect(() => {
     void getPublishedBlogsAsync().then(setPublishedBlogs);

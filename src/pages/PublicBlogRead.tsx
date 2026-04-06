@@ -2,9 +2,9 @@ import { ArrowLeft, PlayCircle, Sparkles } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, Navigate, useParams } from "react-router-dom";
 import {
-  blogs,
   getPublishedBlogs,
   getPublishedBlogsAsync,
+  mergePublishedAndSeedBlogs,
   type BlogEntry,
   type BlogYoutubeBlock,
 } from "./dashboard/blogData";
@@ -105,7 +105,7 @@ export default function PublicBlogReadPage() {
   const [publishedBlogs, setPublishedBlogs] = useState<BlogEntry[]>(() =>
     getPublishedBlogs(),
   );
-  const blog = [...publishedBlogs, ...blogs].find(
+  const blog = mergePublishedAndSeedBlogs(publishedBlogs).find(
     (entry) => entry.slug === slug,
   );
 

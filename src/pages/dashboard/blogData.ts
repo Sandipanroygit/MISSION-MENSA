@@ -76,6 +76,14 @@ export const blogs: BlogEntry[] = [
     ],
   },
 ];
+const SEEDED_BLOG_SLUGS = new Set(blogs.map((blog) => blog.slug));
+
+export function mergePublishedAndSeedBlogs(publishedBlogs: BlogEntry[]) {
+  return [
+    ...publishedBlogs.filter((blog) => !SEEDED_BLOG_SLUGS.has(blog.slug)),
+    ...blogs,
+  ];
+}
 
 const LEGACY_PUBLISHED_BLOGS_STORAGE_KEY = "mission-mensa-published-blogs";
 
@@ -107,10 +115,17 @@ export function getPublishedBlogs(): BlogEntry[] {
 }
 
 export async function getPublishedBlogsAsync(): Promise<BlogEntry[]> {
-  return readRemoteContentCollection<BlogEntry>(
+  const remoteBlogs = await readRemoteContentCollection<BlogEntry>(
     "publishedBlogs",
-    getPublishedBlogs(),
+    [],
   );
+
+  if (remoteBlogs.length) {
+    return remoteBlogs;
+  }
+
+  await saveRemoteContentCollection("publishedBlogs", blogs);
+  return getPublishedBlogs();
 }
 
 export function savePublishedBlog(blog: BlogEntry) {

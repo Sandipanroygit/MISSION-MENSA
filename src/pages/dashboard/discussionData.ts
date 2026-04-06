@@ -304,12 +304,18 @@ export function getStoredTopics() {
 }
 
 export async function getStoredTopicsAsync() {
-  return mergeDefaultTopics(
-    await readRemoteContentCollection<DiscussionTopic>(
-      "discussionTopics",
-      getStoredTopics(),
-    ),
+  const remoteTopics = await readRemoteContentCollection<DiscussionTopic>(
+    "discussionTopics",
+    [],
   );
+
+  if (remoteTopics.length) {
+    return mergeDefaultTopics(remoteTopics);
+  }
+
+  const seededTopics = mergeDefaultTopics(getStoredTopics());
+  await saveRemoteContentCollection("discussionTopics", seededTopics);
+  return seededTopics;
 }
 
 export function getPublicTopics() {

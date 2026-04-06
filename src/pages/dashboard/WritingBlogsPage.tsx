@@ -3,11 +3,11 @@ import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuthContext } from "@/context/AuthContext";
 import {
-  blogs,
   deletePublishedBlog,
   deletePublishedBlogAsync,
   getPublishedBlogs,
   getPublishedBlogsAsync,
+  mergePublishedAndSeedBlogs,
   type BlogEntry,
 } from "./blogData";
 
@@ -22,8 +22,7 @@ export default function WritingBlogsPage() {
     null,
   );
   const [visibleBlogs, setVisibleBlogs] = useState<BlogEntry[]>([
-    ...getPublishedBlogs(),
-    ...blogs,
+    ...mergePublishedAndSeedBlogs(getPublishedBlogs()),
   ]);
 
   useEffect(() => {
@@ -39,7 +38,7 @@ export default function WritingBlogsPage() {
 
   useEffect(() => {
     void getPublishedBlogsAsync().then((publishedBlogs) => {
-      setVisibleBlogs([...publishedBlogs, ...blogs]);
+      setVisibleBlogs(mergePublishedAndSeedBlogs(publishedBlogs));
     });
   }, [saveSuccessMessage]);
 
@@ -89,9 +88,9 @@ export default function WritingBlogsPage() {
 
   function handleDeleteBlog(slug: string) {
     deletePublishedBlog(slug);
-    setVisibleBlogs([...getPublishedBlogs(), ...blogs]);
+    setVisibleBlogs(mergePublishedAndSeedBlogs(getPublishedBlogs()));
     void deletePublishedBlogAsync(slug).then((publishedBlogs) => {
-      setVisibleBlogs([...publishedBlogs, ...blogs]);
+      setVisibleBlogs(mergePublishedAndSeedBlogs(publishedBlogs));
     });
   }
 
