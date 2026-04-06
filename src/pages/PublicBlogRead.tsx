@@ -1,7 +1,13 @@
 import { ArrowLeft, PlayCircle, Sparkles } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, Navigate, useParams } from "react-router-dom";
-import { blogs, getPublishedBlogs, type BlogYoutubeBlock } from "./dashboard/blogData";
+import {
+  blogs,
+  getPublishedBlogs,
+  getPublishedBlogsAsync,
+  type BlogEntry,
+  type BlogYoutubeBlock,
+} from "./dashboard/blogData";
 import ScrollToTop from "@/components/common/ScrolltoTop";
 import InlineRichText from "@/components/common/InlineRichText";
 
@@ -96,9 +102,16 @@ function PublicYouTubeBlock({
 export default function PublicBlogReadPage() {
   const { slug } = useParams<{ slug: string }>();
   const [activeVideoIndex, setActiveVideoIndex] = useState<number | null>(null);
-  const blog = [...getPublishedBlogs(), ...blogs].find(
+  const [publishedBlogs, setPublishedBlogs] = useState<BlogEntry[]>(() =>
+    getPublishedBlogs(),
+  );
+  const blog = [...publishedBlogs, ...blogs].find(
     (entry) => entry.slug === slug,
   );
+
+  useEffect(() => {
+    void getPublishedBlogsAsync().then(setPublishedBlogs);
+  }, []);
 
   if (!blog) {
     return <Navigate to="/about-us" replace />;

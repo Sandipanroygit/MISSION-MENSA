@@ -25,7 +25,7 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "@/context/AuthContext";
-import { savePublishedBlog } from "./blogData";
+import { savePublishedBlog, savePublishedBlogAsync } from "./blogData";
 
 const fontFamilies = [
   { label: "Modern Sans", value: "Arial, sans-serif" },
@@ -319,7 +319,7 @@ export default function BlogDraftEditorPage() {
       }),
     );
 
-    savePublishedBlog({
+    const publishedBlog = {
       slug: slugify(title) || `published-${Date.now()}`,
       title,
       summary,
@@ -333,7 +333,10 @@ export default function BlogDraftEditorPage() {
             .filter(Boolean)
             .slice(0, 6)
         : ["This published blog is ready to be expanded with your final content."],
-    });
+    };
+
+    savePublishedBlog(publishedBlog);
+    void savePublishedBlogAsync(publishedBlog);
 
     localStorage.removeItem(getDraftStorageKey(user?.email));
 

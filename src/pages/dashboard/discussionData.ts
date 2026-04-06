@@ -1,7 +1,9 @@
 import {
   hasPersistedContentCollection,
   readContentCollection,
+  readRemoteContentCollection,
   saveContentCollection,
+  saveRemoteContentCollection,
 } from "@/backend/contentStore";
 
 export type MediaType = "image" | "video";
@@ -301,6 +303,15 @@ export function getStoredTopics() {
   }
 }
 
+export async function getStoredTopicsAsync() {
+  return mergeDefaultTopics(
+    await readRemoteContentCollection<DiscussionTopic>(
+      "discussionTopics",
+      getStoredTopics(),
+    ),
+  );
+}
+
 export function getPublicTopics() {
   if (hasPersistedContentCollection("discussionTopics")) {
     return getStoredTopics();
@@ -314,8 +325,16 @@ export function getPublicTopics() {
   return mergeDefaultTopics([]);
 }
 
+export async function getPublicTopicsAsync() {
+  return getStoredTopicsAsync();
+}
+
 export function saveStoredTopics(topics: DiscussionTopic[]) {
   saveContentCollection("discussionTopics", topics);
+}
+
+export async function saveStoredTopicsAsync(topics: DiscussionTopic[]) {
+  await saveRemoteContentCollection("discussionTopics", mergeDefaultTopics(topics));
 }
 
 export function getTopicCoverImage(topic: DiscussionTopic) {

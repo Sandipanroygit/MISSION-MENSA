@@ -1,12 +1,15 @@
 import { ArrowLeft, PlayCircle } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 import { useAuthContext } from "@/context/AuthContext";
 import InlineRichText from "@/components/common/InlineRichText";
 import {
   blogs,
   deletePublishedBlog,
+  deletePublishedBlogAsync,
   getPublishedBlogs,
+  getPublishedBlogsAsync,
+  type BlogEntry,
   type BlogYoutubeBlock,
 } from "./blogData";
 
@@ -105,9 +108,16 @@ export default function BlogReadPage() {
   const { user } = useAuthContext();
   const navigate = useNavigate();
   const [activeVideoIndex, setActiveVideoIndex] = useState<number | null>(null);
-  const blog = [...getPublishedBlogs(), ...blogs].find(
+  const [publishedBlogs, setPublishedBlogs] = useState<BlogEntry[]>(() =>
+    getPublishedBlogs(),
+  );
+  const blog = [...publishedBlogs, ...blogs].find(
     (entry) => entry.slug === slug,
   );
+
+  useEffect(() => {
+    void getPublishedBlogsAsync().then(setPublishedBlogs);
+  }, []);
 
   if (!blog) {
     return <Navigate to="/dashboard/writing-blogs" replace />;
@@ -118,7 +128,9 @@ export default function BlogReadPage() {
 
   function handleDeleteBlog() {
     deletePublishedBlog(blog.slug);
-    navigate("/dashboard/writing-blogs");
+    void deletePublishedBlogAsync(blog.slug).finally(() => {
+      navigate("/dashboard/writing-blogs");
+    });
   }
 
   return (

@@ -1,4 +1,4 @@
-import { type ChangeEvent, useMemo, useRef, useState } from "react";
+import { type ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 import { Link, Navigate, useParams } from "react-router-dom";
 import { ArrowLeft, ImagePlus, Lock, Send, Video } from "lucide-react";
 import ScrollToTop from "@/components/common/ScrolltoTop";
@@ -7,9 +7,11 @@ import {
   createId,
   formatDate,
   getPublicTopics,
+  getPublicTopicsAsync,
   getTopicCoverImage,
   readFileAsDataUrl,
   saveStoredTopics,
+  saveStoredTopicsAsync,
   type DiscussionComment,
   type DiscussionMedia,
   type DiscussionTopic,
@@ -52,6 +54,10 @@ export default function PublicDiscussionReadPage() {
     () => topics.find((topic) => topic.id === topicId) ?? null,
     [topicId, topics],
   );
+
+  useEffect(() => {
+    void getPublicTopicsAsync().then(setTopics);
+  }, []);
   const commentsById = useMemo(() => {
     const comments = selectedTopic?.comments ?? [];
     return new Map(comments.map((comment) => [comment.id, comment]));
@@ -107,6 +113,7 @@ export default function PublicDiscussionReadPage() {
 
     setTopics(updatedTopics);
     saveStoredTopics(updatedTopics);
+    void saveStoredTopicsAsync(updatedTopics);
     setCommentBody("");
     setCommentAttachments([]);
     setReplyToCommentId(null);
@@ -135,6 +142,7 @@ export default function PublicDiscussionReadPage() {
 
     setTopics(updatedTopics);
     saveStoredTopics(updatedTopics);
+    void saveStoredTopicsAsync(updatedTopics);
     if (replyToCommentId === commentId) {
       setReplyToCommentId(null);
     }

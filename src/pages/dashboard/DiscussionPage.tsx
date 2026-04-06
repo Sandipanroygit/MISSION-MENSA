@@ -6,9 +6,11 @@ import {
   createId,
   formatDate,
   getStoredTopics,
+  getStoredTopicsAsync,
   getTopicCoverImage,
   readFileAsDataUrl,
   saveStoredTopics,
+  saveStoredTopicsAsync,
   type DiscussionMedia,
   type DiscussionTopic,
 } from "./discussionData";
@@ -27,7 +29,12 @@ export default function DiscussionPage() {
 
   useEffect(() => {
     saveStoredTopics(topics);
+    void saveStoredTopicsAsync(topics);
   }, [topics]);
+
+  useEffect(() => {
+    void getStoredTopicsAsync().then(setTopics);
+  }, []);
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => setIsReady(true));
@@ -82,6 +89,7 @@ export default function DiscussionPage() {
 
     const updatedTopics = [newTopic, ...topics];
     saveStoredTopics(updatedTopics);
+    void saveStoredTopicsAsync(updatedTopics);
     setTopics(updatedTopics);
     resetTopicComposer();
     navigate(`/dashboard/discussion/${newTopic.id}`);

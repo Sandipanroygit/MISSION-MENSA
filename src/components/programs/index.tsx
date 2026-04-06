@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   ArrowUpRight,
   MessageCircle,
@@ -9,7 +9,9 @@ import { useNavigate } from "react-router-dom";
 import {
   formatDate,
   getPublicTopics,
+  getPublicTopicsAsync,
   getTopicCoverImage,
+  type DiscussionTopic,
 } from "@/pages/dashboard/discussionData";
 
 const topicAccents = [
@@ -38,7 +40,12 @@ const topicAccents = [
 
 const PublicDiscussions: React.FC = () => {
   const navigate = useNavigate();
-  const topics = useMemo(() => getPublicTopics(), []);
+  const initialTopics = useMemo(() => getPublicTopics(), []);
+  const [topics, setTopics] = useState<DiscussionTopic[]>(initialTopics);
+
+  useEffect(() => {
+    void getPublicTopicsAsync().then(setTopics);
+  }, []);
 
   return (
     <main className="min-h-screen overflow-hidden bg-[#FAF7F2] text-[#2F3E3E]">

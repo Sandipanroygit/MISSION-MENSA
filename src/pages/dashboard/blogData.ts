@@ -1,7 +1,9 @@
 import {
   hasPersistedContentCollection,
   readContentCollection,
+  readRemoteContentCollection,
   saveContentCollection,
+  saveRemoteContentCollection,
 } from "@/backend/contentStore";
 
 export interface BlogYoutubeBlock {
@@ -104,14 +106,33 @@ export function getPublishedBlogs(): BlogEntry[] {
   return legacyBlogs;
 }
 
+export async function getPublishedBlogsAsync(): Promise<BlogEntry[]> {
+  return readRemoteContentCollection<BlogEntry>(
+    "publishedBlogs",
+    getPublishedBlogs(),
+  );
+}
+
 export function savePublishedBlog(blog: BlogEntry) {
   const current = getPublishedBlogs();
   const filtered = current.filter((entry) => entry.slug !== blog.slug);
   saveContentCollection("publishedBlogs", [blog, ...filtered]);
 }
 
+export async function savePublishedBlogAsync(blog: BlogEntry) {
+  const current = await getPublishedBlogsAsync();
+  const filtered = current.filter((entry) => entry.slug !== blog.slug);
+  await saveRemoteContentCollection("publishedBlogs", [blog, ...filtered]);
+}
+
 export function deletePublishedBlog(slug: string) {
   const current = getPublishedBlogs();
   const filtered = current.filter((entry) => entry.slug !== slug);
   saveContentCollection("publishedBlogs", filtered);
+}
+
+export async function deletePublishedBlogAsync(slug: string) {
+  const current = await getPublishedBlogsAsync();
+  const filtered = current.filter((entry) => entry.slug !== slug);
+  await saveRemoteContentCollection("publishedBlogs", filtered);
 }

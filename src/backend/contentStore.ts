@@ -1,3 +1,5 @@
+import { supabase } from "@/lib/supabase";
+
 type ContentCollectionKey = "publishedBlogs" | "discussionTopics";
 
 interface ContentDatabase {
@@ -7,6 +9,7 @@ interface ContentDatabase {
 }
 
 const CONTENT_DATABASE_KEY = "mission-mensa-content-database";
+const CONTENT_COLLECTIONS_TABLE = "content_collections";
 
 function createEmptyDatabase(): ContentDatabase {
   return {
@@ -95,4 +98,46 @@ export function saveContentCollection<T>(
     ...database,
     [key]: collection,
   });
+}
+
+export async function readRemoteContentCollection<T>(
+  key: ContentCollectionKey,
+  fallback: T[] = [],
+) {
+  if (!supabase) {
+    return fallback;
+  }
+
+  const { data, error } = await supabase
+    .from(CONTENT_COLLECTIONS_TABLE)
+    .select("items")
+    .eq("key", key)
+    .maybeSingle();
+
+  if (error || !Array.isArray(data?.items)) {
+    return fallback;
+  }
+
+  return data.items as T[];
+}
+
+export async function saveRemoteContentCollection<T>(
+  key: ContentCollectionKey,
+  collection: T[],
+) {
+  saveContentCollection(key, collection);
+
+  if (!supabase) {
+    return;
+  }
+
+  const { error } = await supabase.from(CONTENT_COLLECTIONS_TABLE).upsert({
+    key,
+    items: collection,
+    updated_at: new Date().toISOString(),
+  });
+
+  if (error) {
+    console.warn(`Failed to save ${key} to Supabase`, error);
+  }
 }

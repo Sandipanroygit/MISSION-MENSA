@@ -6,9 +6,11 @@ import {
   createId,
   formatDate,
   getStoredTopics,
+  getStoredTopicsAsync,
   getTopicCoverImage,
   readFileAsDataUrl,
   saveStoredTopics,
+  saveStoredTopicsAsync,
   type DiscussionMedia,
   type DiscussionComment,
   type DiscussionTopic,
@@ -57,7 +59,12 @@ export default function DiscussionTopicPage() {
 
   useEffect(() => {
     saveStoredTopics(topics);
+    void saveStoredTopicsAsync(topics);
   }, [topics]);
+
+  useEffect(() => {
+    void getStoredTopicsAsync().then(setTopics);
+  }, []);
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => setIsReady(true));
@@ -145,6 +152,7 @@ export default function DiscussionTopicPage() {
     const updatedTopics = topics.filter((topic) => topic.id !== selectedTopic.id);
     setTopics(updatedTopics);
     saveStoredTopics(updatedTopics);
+    void saveStoredTopicsAsync(updatedTopics);
     navigate("/dashboard/discussion");
   }
 
@@ -166,6 +174,7 @@ export default function DiscussionTopicPage() {
 
     setTopics(updatedTopics);
     saveStoredTopics(updatedTopics);
+    void saveStoredTopicsAsync(updatedTopics);
     setIsEditing(false);
   }
 

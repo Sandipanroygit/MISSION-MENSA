@@ -5,7 +5,9 @@ import { useAuthContext } from "@/context/AuthContext";
 import {
   blogs,
   deletePublishedBlog,
+  deletePublishedBlogAsync,
   getPublishedBlogs,
+  getPublishedBlogsAsync,
   type BlogEntry,
 } from "./blogData";
 
@@ -36,7 +38,9 @@ export default function WritingBlogsPage() {
   }, [location.pathname, location.state, navigate]);
 
   useEffect(() => {
-    setVisibleBlogs([...getPublishedBlogs(), ...blogs]);
+    void getPublishedBlogsAsync().then((publishedBlogs) => {
+      setVisibleBlogs([...publishedBlogs, ...blogs]);
+    });
   }, [saveSuccessMessage]);
 
   const recentDrafts = useMemo(() => {
@@ -86,6 +90,9 @@ export default function WritingBlogsPage() {
   function handleDeleteBlog(slug: string) {
     deletePublishedBlog(slug);
     setVisibleBlogs([...getPublishedBlogs(), ...blogs]);
+    void deletePublishedBlogAsync(slug).then((publishedBlogs) => {
+      setVisibleBlogs([...publishedBlogs, ...blogs]);
+    });
   }
 
   return (

@@ -1,11 +1,23 @@
 import React from "react";
 import { ArrowRight, BookOpen, PlayCircle, Sparkles } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { blogs, getPublishedBlogs } from "@/pages/dashboard/blogData";
+import {
+  blogs,
+  getPublishedBlogs,
+  getPublishedBlogsAsync,
+  type BlogEntry,
+} from "@/pages/dashboard/blogData";
 
 const PublicBlogs: React.FC = () => {
   const navigate = useNavigate();
-  const visibleBlogs = [...getPublishedBlogs(), ...blogs];
+  const [publishedBlogs, setPublishedBlogs] = React.useState<BlogEntry[]>(() =>
+    getPublishedBlogs(),
+  );
+  const visibleBlogs = [...publishedBlogs, ...blogs];
+
+  React.useEffect(() => {
+    void getPublishedBlogsAsync().then(setPublishedBlogs);
+  }, []);
 
   return (
     <main className="min-h-screen bg-[#FAF7F2]">
