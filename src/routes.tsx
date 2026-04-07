@@ -1,104 +1,106 @@
+import { lazy, Suspense } from "react";
 import { Routes, Route } from "react-router-dom";
 import Home from "@/components/Home";
-import DomainDetail from "@/components/DomainDetail";
-import ProgramsPage from "./pages/Programs";
-import CommunityPage from "./pages/Community";
-import AboutUsPage from "./pages/Aboutus";
-import PublicBlogReadPage from "./pages/PublicBlogRead";
-import PublicDiscussionReadPage from "./pages/PublicDiscussionRead";
-import ContactUs from "./pages/ContactUs";
-import PricingPage from "./pages/Pricing";
-import LearningPlans from "./components/LearningPlan";
-import Error404Page from "./components/common/Error404";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 import DashboardLayout from "./components/layouts/DashboardLayout";
 import RootLayout from "./components/layouts/RootLayout";
 
+const DomainDetail = lazy(() => import("@/components/DomainDetail"));
+const ProgramsPage = lazy(() => import("./pages/Programs"));
+const CommunityPage = lazy(() => import("./pages/Community"));
+const AboutUsPage = lazy(() => import("./pages/Aboutus"));
+const PublicBlogReadPage = lazy(() => import("./pages/PublicBlogRead"));
+const PublicDiscussionReadPage = lazy(() => import("./pages/PublicDiscussionRead"));
+const ContactUs = lazy(() => import("./pages/ContactUs"));
+const PricingPage = lazy(() => import("./pages/Pricing"));
+const LearningPlans = lazy(() => import("./components/LearningPlan"));
+const Error404Page = lazy(() => import("./components/common/Error404"));
+
 // Auth pages
-import LoginPage from "./pages/auth/Login";
-import RegisterPage from "./pages/auth/Register";
-import ForgotPasswordPage from "./pages/auth/ForgotPassword";
-import ResetPasswordPage from "./pages/auth/ResetPassword";
+const LoginPage = lazy(() => import("./pages/auth/Login"));
+const RegisterPage = lazy(() => import("./pages/auth/Register"));
+const ForgotPasswordPage = lazy(() => import("./pages/auth/ForgotPassword"));
+const ResetPasswordPage = lazy(() => import("./pages/auth/ResetPassword"));
 
 // Dashboard pages
-import DashboardRedirect from "./pages/dashboard/DashboardRedirect";
-import ParentOverview from "./pages/dashboard/ParentOverview";
-import ChildDashboard from "./pages/dashboard/ChildDashboard";
-import LearnerDetailPage from "./pages/dashboard/LearnerDetailPage";
-import SubscriptionsPage from "./pages/dashboard/SubscriptionsPage";
-import WritingBlogsPage from "./pages/dashboard/WritingBlogsPage";
-import BlogDraftEditorPage from "./pages/dashboard/BlogDraftEditorPage";
-import BlogReadPage from "./pages/dashboard/BlogReadPage";
-import DiscussionPage from "./pages/dashboard/DiscussionPage";
-import DiscussionTopicPage from "./pages/dashboard/DiscussionTopicPage";
+const DashboardRedirect = lazy(() => import("./pages/dashboard/DashboardRedirect"));
+const ParentOverview = lazy(() => import("./pages/dashboard/ParentOverview"));
+const ChildDashboard = lazy(() => import("./pages/dashboard/ChildDashboard"));
+const LearnerDetailPage = lazy(() => import("./pages/dashboard/LearnerDetailPage"));
+const SubscriptionsPage = lazy(() => import("./pages/dashboard/SubscriptionsPage"));
+const WritingBlogsPage = lazy(() => import("./pages/dashboard/WritingBlogsPage"));
+const BlogDraftEditorPage = lazy(() => import("./pages/dashboard/BlogDraftEditorPage"));
+const BlogReadPage = lazy(() => import("./pages/dashboard/BlogReadPage"));
+const DiscussionPage = lazy(() => import("./pages/dashboard/DiscussionPage"));
+const DiscussionTopicPage = lazy(() => import("./pages/dashboard/DiscussionTopicPage"));
+
+const routeFallback = (
+  <div className="min-h-[50vh] bg-[#FAF7F2] flex items-center justify-center text-sm font-semibold text-[#24544c]">
+    Loading...
+  </div>
+);
 
 const AppRoutes = () => {
   return (
-    <Routes>
-      {/* ── Public marketing routes — wrapped in Header + Footer ── */}
-      <Route element={<RootLayout />}>
-        <Route path="/" element={<Home />} />
-        <Route path="/programs" element={<ProgramsPage />} />
-        <Route path="/programs/:topicId" element={<PublicDiscussionReadPage />} />
-        <Route path="/about-us" element={<AboutUsPage />} />
-        <Route path="/about-us/:slug" element={<PublicBlogReadPage />} />
-        <Route path="/contact-us" element={<ContactUs />} />
-        <Route path="/community" element={<CommunityPage />} />
-        <Route path="/pricing" element={<PricingPage />} />
-        <Route
-          path="/domains-of-development/:domain"
-          element={<DomainDetail />}
-        />
-        <Route path="/learning-plans" element={<LearningPlans />} />
-      </Route>
-
-      {/* ── Auth routes — no nav chrome ── */}
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/register" element={<RegisterPage />} />
-      <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-      <Route path="/reset-password" element={<ResetPasswordPage />} />
-
-      {/* ── Protected dashboard routes ── */}
-      <Route element={<ProtectedRoute />}>
-        <Route element={<DashboardLayout />}>
-          {/* Role-aware redirect at /dashboard root */}
-          <Route path="/dashboard" element={<DashboardRedirect />} />
-
-          {/* Parent views */}
+    <Suspense fallback={routeFallback}>
+      <Routes>
+        <Route element={<RootLayout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/programs" element={<ProgramsPage />} />
+          <Route path="/programs/:topicId" element={<PublicDiscussionReadPage />} />
+          <Route path="/about-us" element={<AboutUsPage />} />
+          <Route path="/about-us/:slug" element={<PublicBlogReadPage />} />
+          <Route path="/contact-us" element={<ContactUs />} />
+          <Route path="/community" element={<CommunityPage />} />
+          <Route path="/pricing" element={<PricingPage />} />
           <Route
-            path="/dashboard/writing-blogs"
-            element={<WritingBlogsPage />}
+            path="/domains-of-development/:domain"
+            element={<DomainDetail />}
           />
-          <Route
-            path="/dashboard/writing-blogs/new"
-            element={<BlogDraftEditorPage />}
-          />
-          <Route
-            path="/dashboard/writing-blogs/read/:slug"
-            element={<BlogReadPage />}
-          />
-          <Route path="/dashboard/discussion" element={<DiscussionPage />} />
-          <Route
-            path="/dashboard/discussion/:topicId"
-            element={<DiscussionTopicPage />}
-          />
-          <Route path="/dashboard/overview" element={<ParentOverview />} />
-          <Route
-            path="/dashboard/learners/:learnerId"
-            element={<LearnerDetailPage />}
-          />
-          <Route
-            path="/dashboard/subscriptions"
-            element={<SubscriptionsPage />}
-          />
-
-          {/* Child view */}
-          <Route path="/dashboard/child" element={<ChildDashboard />} />
+          <Route path="/learning-plans" element={<LearningPlans />} />
         </Route>
-      </Route>
 
-      <Route path="*" element={<Error404Page />} />
-    </Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
+
+        <Route element={<ProtectedRoute />}>
+          <Route element={<DashboardLayout />}>
+            <Route path="/dashboard" element={<DashboardRedirect />} />
+            <Route
+              path="/dashboard/writing-blogs"
+              element={<WritingBlogsPage />}
+            />
+            <Route
+              path="/dashboard/writing-blogs/new"
+              element={<BlogDraftEditorPage />}
+            />
+            <Route
+              path="/dashboard/writing-blogs/read/:slug"
+              element={<BlogReadPage />}
+            />
+            <Route path="/dashboard/discussion" element={<DiscussionPage />} />
+            <Route
+              path="/dashboard/discussion/:topicId"
+              element={<DiscussionTopicPage />}
+            />
+            <Route path="/dashboard/overview" element={<ParentOverview />} />
+            <Route
+              path="/dashboard/learners/:learnerId"
+              element={<LearnerDetailPage />}
+            />
+            <Route
+              path="/dashboard/subscriptions"
+              element={<SubscriptionsPage />}
+            />
+            <Route path="/dashboard/child" element={<ChildDashboard />} />
+          </Route>
+        </Route>
+
+        <Route path="*" element={<Error404Page />} />
+      </Routes>
+    </Suspense>
   );
 };
 

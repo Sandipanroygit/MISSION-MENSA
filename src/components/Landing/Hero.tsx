@@ -684,7 +684,7 @@ const HeroSection: React.FC = () => {
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 lg:pt-20">
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center min-h-[calc(100vh-6rem)] py-8 lg:py-12">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-start min-h-[calc(100vh-6rem)] py-8 lg:py-12">
           {/* Left Content */}
           <div className="space-y-6 lg:space-y-8 animate-fadeInUp z-10">
             <div className="space-y-4 lg:space-y-6">
