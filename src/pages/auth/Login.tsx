@@ -1,6 +1,7 @@
 import { type FormEvent, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { AxiosError } from "axios";
 import AuthLayout from "@/components/auth/AuthLayout";
 import { useLogin } from "@/hooks/useAuth";
 import { getApiError, mapFieldErrors } from "@/utils/apiError";
@@ -57,8 +58,23 @@ export default function LoginPage() {
         },
         onError: (error) => {
           const apiErr = getApiError(error);
-          setServerError(apiErr.message);
-          if (apiErr.errors) setFieldErrors(mapFieldErrors(apiErr.errors));
+          const isCredentialError =
+            error instanceof AxiosError &&
+            (error.response?.status === 401 || error.response?.status === 422);
+          const nextFieldErrors = apiErr.errors
+            ? mapFieldErrors(apiErr.errors)
+            : {};
+
+          if (isCredentialError && !nextFieldErrors.password) {
+            nextFieldErrors.password = "Email or password is incorrect.";
+          }
+
+          setServerError(
+            isCredentialError
+              ? "Email or password is incorrect."
+              : apiErr.message,
+          );
+          setFieldErrors(nextFieldErrors);
         },
       },
     );

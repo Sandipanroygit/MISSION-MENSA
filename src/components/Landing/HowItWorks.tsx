@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import {
   User,
   Smile,
@@ -16,6 +17,7 @@ const HowItWorksSection: React.FC = () => {
       bgColor: "bg-gradient-to-br from-[#2CA4A4] to-[#5EC1E8]",
       hoverColor: "group-hover:from-[#5EC1E8] group-hover:to-[#2CA4A4]",
       textColor: "text-white",
+      href: "/about-us",
     },
     {
       icon: Smile,
@@ -26,6 +28,7 @@ const HowItWorksSection: React.FC = () => {
       bgColor: "bg-gradient-to-br from-[#FFC94B] to-[#FBBF24]",
       hoverColor: "group-hover:from-[#FBBF24] group-hover:to-[#FFC94B]",
       textColor: "text-white",
+      href: "",
     },
     {
       icon: GraduationCap,
@@ -36,11 +39,28 @@ const HowItWorksSection: React.FC = () => {
       bgColor: "bg-gradient-to-br from-[#8B5FBF] to-[#A855F7]",
       hoverColor: "group-hover:from-[#A855F7] group-hover:to-[#8B5FBF]",
       textColor: "text-white",
+      href: "/programs",
     },
   ];
+  const navigate = useNavigate();
+  const [slideTarget, setSlideTarget] = React.useState<string | null>(null);
+
+  function handleCardClick(href: string) {
+    if (!href || slideTarget) return;
+
+    setSlideTarget(href);
+    window.setTimeout(() => {
+      navigate(href);
+    }, 520);
+  }
 
   return (
     <section className="py-20 bg-[#FAF7F2] relative overflow-hidden">
+      {slideTarget ? (
+        <div className="fixed inset-0 z-[9999] pointer-events-none overflow-hidden">
+          <div className="h-full w-full animate-pageSlideToLeft bg-[linear-gradient(90deg,#2CA4A4_0%,#5EC1E8_48%,#A5C85A_100%)]" />
+        </div>
+      ) : null}
       {/* Animated SVG Background - Spans Entire Component */}
       <div className="absolute inset-0 w-full h-full pointer-events-none overflow-hidden">
         <svg
@@ -713,8 +733,16 @@ const HowItWorksSection: React.FC = () => {
                   style={{ animationDelay: `${index * 0.2}s` }}
                 >
                   {/* Step card */}
-                  <div
-                    className={`relative ${step.bgColor} ${step.hoverColor} min-h-[20rem] rounded-lg p-8 shadow-xl shadow-[#234f12]/15 hover:shadow-2xl transition-all duration-700 transform hover:scale-105 hover:-translate-y-2 overflow-hidden cursor-pointer`}
+                  <button
+                    type="button"
+                    onClick={() => handleCardClick(step.href)}
+                    disabled={!step.href}
+                    aria-label={step.href ? `Open ${step.title}` : undefined}
+                    className={`relative block w-full text-left ${step.bgColor} ${step.hoverColor} min-h-[20rem] rounded-lg p-8 shadow-xl shadow-[#234f12]/15 hover:shadow-2xl transition-all duration-700 transform hover:scale-105 hover:-translate-y-2 overflow-hidden ${
+                      step.href
+                        ? "cursor-pointer"
+                        : "cursor-default disabled:opacity-100"
+                    }`}
                   >
                     <div className="absolute inset-x-0 top-0 h-1.5 bg-white/70 transition-all duration-500 group-hover:h-2.5" />
                     <div className="absolute right-5 top-5 font-serif text-7xl text-white/10 transition-all duration-500 group-hover:scale-110 group-hover:text-white/15">
@@ -824,7 +852,7 @@ const HowItWorksSection: React.FC = () => {
                     {/* Floating decorative blurs */}
                     <div className="absolute -bottom-3 -right-3 w-20 h-20 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
                     <div className="absolute -top-3 -left-3 w-16 h-16 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
-                  </div>
+                  </button>
 
                   {/* Connection line (hidden on mobile, shown on desktop) */}
                   {index < steps.length - 1 && (

@@ -101,26 +101,17 @@ const UserChip: React.FC = () => {
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isSticky, setIsSticky] = useState(false);
   const [isHeaderHidden, setIsHeaderHidden] = useState(false);
   const location = useLocation();
   const { isAuthenticated } = useAuthContext();
-  const lastScrollY = useRef(0);
 
   useEffect(() => {
     const handleScroll = () => {
       const scrollPosition = window.scrollY;
-      const stickyThreshold = 25;
-
-      // Update sticky state based on scroll position
-      setIsSticky(scrollPosition > stickyThreshold);
 
       // Update scrolled state for additional styling
       setIsScrolled(scrollPosition > 10);
-      setIsHeaderHidden(
-        scrollPosition > lastScrollY.current && scrollPosition > 120,
-      );
-      lastScrollY.current = Math.max(scrollPosition, 0);
+      setIsHeaderHidden(scrollPosition > 10);
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -136,15 +127,7 @@ const Header: React.FC = () => {
 
   return (
     <header
-      style={{
-        position: isSticky ? "fixed" : "relative",
-        top: isSticky ? "0" : "auto",
-        left: isSticky ? "0" : "auto",
-        right: isSticky ? "0" : "auto",
-      }}
-      className={`w-full z-50 transition-all duration-300 ease-in-out ${
-        isSticky ? "animate-slideDown" : ""
-      } ${
+      className={`sticky top-0 w-full z-50 transition-transform duration-300 ease-in-out ${
         isHeaderHidden && !isMenuOpen ? "-translate-y-full" : "translate-y-0"
       } ${
         isScrolled

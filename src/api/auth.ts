@@ -24,6 +24,9 @@ export const authApi = {
       AUTH.LOGIN,
       payload,
     );
+    if (!data.access_token) {
+      throw new Error("Email or password is incorrect.");
+    }
     setToken(data.access_token);
     return data;
   },

@@ -1,10 +1,11 @@
-import { FileText, PenSquare, PlusCircle } from "lucide-react";
+import { Eye, FileText, PenSquare, PlusCircle, ThumbsUp } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuthContext } from "@/context/AuthContext";
 import {
   deletePublishedBlog,
   deletePublishedBlogAsync,
+  getBlogStats,
   getPublishedBlogs,
   getPublishedBlogsAsync,
   mergePublishedAndSeedBlogs,
@@ -186,6 +187,7 @@ export default function WritingBlogsPage() {
                 const canEdit =
                   user?.email?.trim().toLowerCase() ===
                   blog.authorEmail.trim().toLowerCase();
+                const stats = getBlogStats(blog);
                 return (
               <article
                 key={blog.slug}
@@ -209,7 +211,7 @@ export default function WritingBlogsPage() {
                   <p className="mt-4 text-sm font-medium text-[#2CA4A4]">
                     Written by {blog.author}
                   </p>
-                  <div className="mt-5 flex flex-wrap gap-3">
+                  <div className="mt-5 flex flex-wrap items-center gap-3">
                     <button
                       onClick={() =>
                         navigate(`/dashboard/writing-blogs/read/${blog.slug}`)
@@ -218,6 +220,16 @@ export default function WritingBlogsPage() {
                     >
                       Read More
                     </button>
+                    <div className="ml-auto flex items-center gap-4 text-sm font-semibold text-[#62706D]/70">
+                      <span className="inline-flex items-center gap-1.5">
+                        <Eye size={15} className="text-[#62706D]/60" />
+                        {stats.views}
+                      </span>
+                      <span className="inline-flex items-center gap-1.5">
+                        <ThumbsUp size={15} className="text-[#62706D]/60" />
+                        {stats.likes}
+                      </span>
+                    </div>
                     {canEdit ? (
                       <>
                         <button

@@ -1,9 +1,10 @@
 import React from "react";
-import { ArrowRight, BookOpen, PlayCircle, Sparkles } from "lucide-react";
+import { ArrowRight, BookOpen, Eye, PlayCircle, Sparkles, ThumbsUp } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
   getPublishedBlogs,
   getPublishedBlogsAsync,
+  getBlogStats,
   mergePublishedAndSeedBlogs,
   type BlogEntry,
 } from "@/pages/dashboard/blogData";
@@ -170,6 +171,7 @@ const PublicBlogs: React.FC = () => {
                 },
               ];
               const palette = palettes[index % palettes.length];
+              const stats = getBlogStats(blog);
 
               return (
                 <article
@@ -215,14 +217,26 @@ const PublicBlogs: React.FC = () => {
                     <p className="mt-4 text-base leading-7 text-[#2F3E3E]/70">
                       {blog.summary}
                     </p>
-                    <button
-                      type="button"
-                      onClick={() => navigate(`/about-us/${blog.slug}`)}
-                      className={`mt-6 inline-flex items-center gap-2 rounded-full bg-gradient-to-r ${palette.glow} px-5 py-3 text-sm font-semibold text-white shadow-md transition-all duration-300 hover:shadow-xl group-hover:translate-x-2`}
-                    >
-                      Read More
-                      <ArrowRight size={16} />
-                    </button>
+                    <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
+                      <button
+                        type="button"
+                        onClick={() => navigate(`/about-us/${blog.slug}`)}
+                        className={`inline-flex items-center gap-2 rounded-full bg-gradient-to-r ${palette.glow} px-5 py-3 text-sm font-semibold text-white shadow-md transition-all duration-300 hover:shadow-xl group-hover:translate-x-2`}
+                      >
+                        Read More
+                        <ArrowRight size={16} />
+                      </button>
+                      <div className="ml-auto flex items-center gap-4 text-xs font-semibold text-[#2F3E3E]/48">
+                        <span className="inline-flex items-center gap-1.5">
+                          <Eye size={14} className="text-[#2F3E3E]/38" />
+                          {stats.views}
+                        </span>
+                        <span className="inline-flex items-center gap-1.5">
+                          <ThumbsUp size={14} className="text-[#2F3E3E]/38" />
+                          {stats.likes}
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 </article>
               );

@@ -22,6 +22,8 @@ export interface BlogEntry {
   authorEmail: string;
   image: string;
   content: BlogContentBlock[];
+  views?: number;
+  likes?: number;
 }
 
 export const blogs: BlogEntry[] = [
@@ -33,6 +35,8 @@ export const blogs: BlogEntry[] = [
       "A field note on how a role that first looked like an assessment assignment became a deeper responsibility toward pedagogy, purpose, and nation building.",
     author: "Dr Sruthi Sridharan",
     authorEmail: "programlead@missionmensa.org",
+    views: 184,
+    likes: 37,
     image:
       "https://images.unsplash.com/photo-1758270705518-b61b40527e76?auto=format&fit=crop&w=1200&q=80",
     content: [
@@ -55,6 +59,8 @@ export const blogs: BlogEntry[] = [
       "A research note on how meeting Mensa-qualified children challenged an old picture of underprivilege and reshaped the AI Tutor design around recognition and rigorous challenge.",
     author: "Dr Sruthi Sridharan",
     authorEmail: "programlead@missionmensa.org",
+    views: 142,
+    likes: 29,
     image:
       "https://images.pexels.com/photos/8471919/pexels-photo-8471919.jpeg?auto=compress&cs=tinysrgb&w=1200",
     content: [
@@ -77,6 +83,19 @@ export const blogs: BlogEntry[] = [
   },
 ];
 const SEEDED_BLOG_SLUGS = new Set(blogs.map((blog) => blog.slug));
+
+function getFallbackBlogStat(slug: string, offset: number) {
+  return slug
+    .split("")
+    .reduce((total, char) => total + char.charCodeAt(0), offset);
+}
+
+export function getBlogStats(blog: BlogEntry) {
+  return {
+    views: blog.views ?? 80 + (getFallbackBlogStat(blog.slug, 17) % 220),
+    likes: blog.likes ?? 12 + (getFallbackBlogStat(blog.slug, 7) % 65),
+  };
+}
 
 export function mergePublishedAndSeedBlogs(publishedBlogs: BlogEntry[]) {
   return [

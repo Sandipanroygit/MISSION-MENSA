@@ -9,6 +9,9 @@ export function getApiError(error: unknown): ApiError {
   if (error instanceof AxiosError && error.response?.data) {
     return error.response.data as ApiError;
   }
+  if (error instanceof Error) {
+    return { message: error.message };
+  }
   return { message: "Something went wrong. Please try again." };
 }
 
