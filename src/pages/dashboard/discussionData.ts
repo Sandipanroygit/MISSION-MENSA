@@ -28,6 +28,7 @@ export interface DiscussionComment {
 export interface DiscussionTopic {
   id: string;
   title: string;
+  category?: string;
   body: string;
   authorName: string;
   authorEmail: string;
@@ -39,11 +40,25 @@ export interface DiscussionTopic {
 export const STORAGE_KEY = "mission-mensa-discussions";
 export const DISCUSSION_FALLBACK_IMAGE =
   "https://images.pexels.com/photos/32556797/pexels-photo-32556797.jpeg?auto=compress&cs=tinysrgb&w=1200";
+export const DISCUSSION_CATEGORY_OPTIONS = [
+  "MENSA",
+  "Outreach",
+  "AI Learning",
+  "Mentorship",
+  "Assessment",
+  "Research",
+  "General",
+];
+
+export function getDiscussionCategory(topic: DiscussionTopic) {
+  return topic.category?.trim() || "General";
+}
 
 export const defaultDiscussionTopics: DiscussionTopic[] = [
   {
     id: "student-employability-startups",
     title: "Student Employability & Startups",
+    category: "MENSA",
     body: "Exploring what meaningful startups 17-18-year-olds can realistically build, and defining the concept of a Minimum Viable Startup (MVS). This includes designing a clear pathway from idea generation to prototyping and incubation.",
     authorName: "Mission MENSA",
     authorEmail: "team@missionmensa.org",
@@ -104,6 +119,7 @@ export const defaultDiscussionTopics: DiscussionTopic[] = [
   {
     id: "orchestrating-collective-intelligence",
     title: "Orchestrating Collective Intelligence",
+    category: "AI Learning",
     body: "Defining who orchestrates the interaction between Human Intelligence, AI, Personal AI Companion, and Networked Intelligence. This includes identifying required skills and determining whether a single mentor can manage multiple students or if distributed roles are needed.",
     authorName: "Mission MENSA",
     authorEmail: "team@missionmensa.org",
@@ -121,6 +137,7 @@ export const defaultDiscussionTopics: DiscussionTopic[] = [
   {
     id: "ai-agent-development",
     title: "AI Agent Development",
+    category: "AI Learning",
     body: "Establishing a core team to build essential AI agents such as subject tutors, research assistants, and reflective agents. Evaluating domain-specific vs. general-purpose agents, while leveraging LLMs as initial barefoot agents for rapid deployment.",
     authorName: "Mission MENSA",
     authorEmail: "team@missionmensa.org",
@@ -138,6 +155,7 @@ export const defaultDiscussionTopics: DiscussionTopic[] = [
   {
     id: "role-of-the-human-mentor",
     title: "Role of the Human Mentor",
+    category: "Mentorship",
     body: "Redefining the role of mentors in an AI-driven system - focusing on discipline, purpose, ethics, and emotional development. This includes identifying measurable indicators of mentor impact beyond academic outcomes.",
     authorName: "Mission MENSA",
     authorEmail: "team@missionmensa.org",
@@ -155,6 +173,7 @@ export const defaultDiscussionTopics: DiscussionTopic[] = [
   {
     id: "balancing-acceleration-with-humanization",
     title: "Balancing Acceleration with Humanization",
+    category: "Mentorship",
     body: "Ensuring that rapid AI-driven learning does not outpace human development. This involves designing the right balance between learning, reflection, and personal growth, while identifying early warning signs of over-acceleration.",
     authorName: "Mission MENSA",
     authorEmail: "team@missionmensa.org",
@@ -172,6 +191,7 @@ export const defaultDiscussionTopics: DiscussionTopic[] = [
   {
     id: "measuring-success",
     title: "Measuring Success",
+    category: "Assessment",
     body: "Defining a focused set of metrics to evaluate the experiment, including academic acceleration, student agency, innovation output, and quality of AI collaboration. Establishing clear success and failure criteria for Year 1.",
     authorName: "Mission MENSA",
     authorEmail: "team@missionmensa.org",
@@ -189,6 +209,7 @@ export const defaultDiscussionTopics: DiscussionTopic[] = [
   {
     id: "irreplaceable-role-of-humans-in-education",
     title: "Irreplaceable Role of Humans in Education",
+    category: "Research",
     body: "Understanding what remains uniquely human in education when AI handles knowledge delivery. This insight will shape mentor roles, Human Lab design, and the long-term architecture of future schools.",
     authorName: "Mission MENSA",
     authorEmail: "team@missionmensa.org",
@@ -206,6 +227,7 @@ export const defaultDiscussionTopics: DiscussionTopic[] = [
   {
     id: "multilingual-ai-capability",
     title: "Multilingual AI Capability",
+    category: "Outreach",
     body: "Ensuring AI systems can operate effectively in regional Indian languages without compromising quality, consistency, or trackability, making the model scalable and inclusive.",
     authorName: "Mission MENSA",
     authorEmail: "team@missionmensa.org",

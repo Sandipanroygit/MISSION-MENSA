@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from "react";
-import CountUp from "react-countup";
 import {
   ArrowRight,
   Sparkles,
   Heart,
   Star,
   Zap,
-  Play,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
@@ -16,6 +14,13 @@ import HeroImage3 from "@/assets/finwit_kids_hero3.png";
 import HeroImage4 from "@/assets/finwit_kids_hero4.png";
 
 const HeroSection: React.FC = () => {
+  const heroStats = [
+    { number: "01", value: "Top 2%", label: "Target Percentile" },
+    { number: "02", value: "Grade 9", label: "Entry Cohort" },
+    { number: "03", value: "2-Stage", label: "Screening Model" },
+    { number: "04", value: "MENSA", label: "Assessment Partner" },
+  ];
+
   // Carousel state and auto-transition
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
@@ -65,7 +70,7 @@ const HeroSection: React.FC = () => {
   }, [carouselImages.length, isPaused]);
 
   return (
-    <section className="relative min-h-screen bg-gradient-to-br from-[#FAF7F2] via-[#5EC1E8]/5 to-[#A5C85A]/5 overflow-hidden">
+    <section className="relative min-h-screen overflow-hidden bg-[linear-gradient(135deg,#0b5960_0%,#137a74_48%,#1f6b4a_100%)]">
       {/* Magical Animated SVG Background - Full Width & Responsive */}
       <div className="absolute inset-0 w-full h-full pointer-events-none overflow-hidden">
         <svg
@@ -683,9 +688,16 @@ const HeroSection: React.FC = () => {
           {/* Left Content */}
           <div className="space-y-6 lg:space-y-8 animate-fadeInUp z-10">
             <div className="space-y-4 lg:space-y-6">
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-white">
+                01&nbsp; Home
+              </p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-[#ff6b45]">
+                Indus International School x Mensa India x Bengaluru
+              </p>
+
+              <h1 className="font-serif text-5xl sm:text-6xl lg:text-7xl xl:text-8xl leading-none">
                 <span
-                  className="inline-block text-[#2CA4A4] hover:scale-125 hover:-rotate-3 hover:skew-y-2 transition-all duration-500 cursor-pointer animate-tickerWord hover:text-[#5EC1E8] hover:drop-shadow-lg"
+                  className="inline-block text-[#fff4d0] hover:scale-110 hover:-rotate-3 hover:skew-y-2 transition-all duration-500 cursor-pointer animate-tickerWord hover:text-[#d8fff9] hover:drop-shadow-lg"
                   style={{
                     animationDelay: "0s",
                     animationDuration: "6s",
@@ -696,17 +708,16 @@ const HeroSection: React.FC = () => {
                 <span className="inline-block">
                   <span className="relative inline-block group cursor-pointer">
                     <span
-                      className="bg-gradient-to-r from-[#8B5FBF] via-[#FFC94B] to-[#5EC1E8] bg-clip-text text-transparent hover:from-[#5EC1E8] hover:via-[#A5C85A] hover:to-[#8B5FBF] transition-all duration-700 animate-tickerWord hover:scale-125 inline-block hover:drop-shadow-2xl"
+                      className="text-[#fff4d0] transition-all duration-700 animate-tickerWord hover:scale-110 inline-block hover:drop-shadow-2xl"
                       style={{
                         animationDelay: "1s",
                         animationDuration: "6s",
-                        backgroundSize: "200% auto",
                       }}
                     >
-                      MENSA
+                      Mensa
                     </span>
                     <svg
-                      className="absolute -bottom-2 left-0 w-full h-3 text-[#FFC94B] opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-drawLine group-hover:animate-pulse"
+                      className="absolute -bottom-2 left-0 w-full h-3 text-[#d8fff9] opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-drawLine group-hover:animate-pulse"
                       viewBox="0 0 200 12"
                       preserveAspectRatio="none"
                     >
@@ -719,99 +730,67 @@ const HeroSection: React.FC = () => {
                     </svg>
                     {/* Multiple sparkle effects on hover */}
                     <span className="absolute -top-2 -right-2 opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-125">
-                      <Sparkles className="w-6 h-6 text-[#FFC94B] animate-spin-slow" />
+                      <Sparkles className="w-6 h-6 text-[#d8fff9] animate-spin-slow" />
                     </span>
                     <span className="absolute -top-1 -left-2 opacity-0 group-hover:opacity-100 transition-all duration-500 delay-100">
-                      <Star className="w-5 h-5 text-[#5EC1E8] animate-pulse" />
+                      <Star className="w-5 h-5 text-[#fff4d0] animate-pulse" />
                     </span>
                     <span className="absolute -bottom-1 right-0 opacity-0 group-hover:opacity-100 transition-all duration-500 delay-200">
-                      <Heart className="w-4 h-4 text-[#8B5FBF] animate-bounce" />
+                      <Heart className="w-4 h-4 text-[#d8fff9] animate-bounce" />
                     </span>
                   </span>
                 </span>{" "}
                 <span
-                  className="inline-block text-[#8B5FBF] hover:scale-125 hover:rotate-3 hover:-skew-y-2 transition-all duration-500 cursor-pointer animate-tickerWord hover:text-[#FFC94B] hover:drop-shadow-lg"
+                  className="block italic text-[#d8fff9] hover:scale-110 hover:rotate-3 hover:-skew-y-2 transition-all duration-500 cursor-pointer animate-tickerWord hover:text-[#fff4d0] hover:drop-shadow-lg"
                   style={{
                     animationDelay: "2s",
                     animationDuration: "6s",
                   }}
                 >
-                  Begins
+                  at Indus
                 </span>
               </h1>
 
               <div className="space-y-3">
                 <p
-                  className="text-base sm:text-lg lg:text-xl text-[#2F3E3E]/70 max-w-2xl leading-relaxed group cursor-pointer animate-fadeInUp"
+                  className="text-base sm:text-lg lg:text-xl text-[#edf7f5] max-w-2xl leading-relaxed group cursor-pointer animate-fadeInUp"
                   style={{ animationDelay: "1s" }}
                 >
-                  Mission MENSA is an advanced educational initiative designed
-                  to identify and cultivate exceptional human potential in the
-                  age of Artificial Intelligence. Developed under the vision of
-                  Indus Trust, Bangalore, it combines human intelligence,
-                  AI-powered learning systems, personal AI companions, and
-                  networked global knowledge to build a new model of education
-                  focused on discovering constructive outliers.
+                  A gifted education programme identifying and nurturing
+                  exceptional students from government schools across South
+                  Bengaluru - connecting untapped intelligence with structured
+                  opportunity.
                 </p>
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 lg:gap-6">
-              <button className="group relative bg-gradient-to-r from-[#8B5FBF] to-[#5EC1E8] hover:from-[#5EC1E8] hover:to-[#8B5FBF] text-white font-bold px-8 py-4 rounded-full transition-all duration-500 transform hover:scale-110 shadow-xl hover:shadow-2xl flex items-center justify-center space-x-2 overflow-hidden">
-                <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></span>
-                <span className="relative z-10">Explore Mission MENSA</span>
-                <ArrowRight className="relative z-10 w-5 h-5 group-hover:translate-x-2 transition-transform duration-300" />
-              </button>
-
-              <button className="group bg-white hover:bg-gradient-to-r hover:from-[#2CA4A4] hover:to-[#5EC1E8] text-[#2CA4A4] hover:text-white border-2 border-[#2CA4A4] hover:border-transparent font-semibold px-8 py-4 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center justify-center space-x-2">
-                <Play className="w-5 h-5 group-hover:scale-125 group-hover:rotate-12 transition-all duration-300" />
-                <span>View Human Lab Vision</span>
-              </button>
-            </div>
-
             {/* Stats or badges - Enhanced with hover effects */}
-            <div className="flex flex-wrap gap-6 lg:gap-8 pt-6 lg:pt-8">
-              <div className="group text-center bg-white/50 backdrop-blur-sm px-6 py-4 rounded-2xl hover:bg-white hover:shadow-lg transition-all duration-300 hover:scale-110 cursor-pointer">
-                <div className="text-3xl lg:text-4xl font-bold text-[#2CA4A4] group-hover:scale-125 transition-transform duration-300">
-                  <CountUp
-                    end={1}
-                    duration={2.5}
-                    enableScrollSpy
-                    scrollSpyOnce
-                  />
+            <div className="grid gap-3 sm:grid-cols-2 pt-6 lg:pt-8">
+              {heroStats.map((stat) => (
+                <div
+                  key={stat.value}
+                  className="group relative min-h-[8.5rem] overflow-hidden rounded-2xl border border-[#9ce7de]/35 bg-[#073b42]/55 p-5 shadow-xl shadow-black/15 backdrop-blur-md transition-all duration-500 hover:-translate-y-2 hover:border-[#d8fff9]/85 hover:bg-[#0c5f5c]/70 hover:shadow-2xl"
+                >
+                  <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#d8fff9] via-[#5EC1E8] to-[#A5C85A] opacity-80 transition-all duration-500 group-hover:h-2" />
+                  <div className="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-[#5EC1E8]/18 blur-2xl transition-transform duration-500 group-hover:scale-150" />
+                  <div className="relative flex h-full flex-col justify-between gap-4">
+                    <div className="flex items-center justify-between">
+                      <span className="rounded-full border border-[#9ce7de]/35 px-3 py-1 text-[10px] font-bold text-[#d8fff9]">
+                        {stat.number}
+                      </span>
+                      <span className="h-2 w-2 rounded-full bg-[#5EC1E8] shadow-[0_0_18px_rgba(94,193,232,0.8)]" />
+                    </div>
+                    <div>
+                      <p className="whitespace-nowrap font-serif text-2xl leading-none text-[#fff4d0] transition-transform duration-500 group-hover:translate-x-1 sm:text-3xl xl:text-4xl">
+                        {stat.value}
+                      </p>
+                      <p className="mt-3 text-[10px] font-bold uppercase tracking-[0.18em] text-[#d7e6a7]">
+                        {stat.label}
+                      </p>
+                    </div>
+                  </div>
                 </div>
-                <div className="text-xs lg:text-sm text-[#2F3E3E]/70 font-medium mt-1">
-                  Human Lab
-                </div>
-              </div>
-              <div className="group text-center bg-white/50 backdrop-blur-sm px-6 py-4 rounded-2xl hover:bg-white hover:shadow-lg transition-all duration-300 hover:scale-110 cursor-pointer">
-                <div className="text-3xl lg:text-4xl font-bold text-[#A5C85A] group-hover:scale-125 transition-transform duration-300">
-                  <CountUp
-                    start={1}
-                    end={1}
-                    duration={2.5}
-                    enableScrollSpy
-                    scrollSpyOnce
-                  />
-                </div>
-                <div className="text-xs lg:text-sm text-[#2F3E3E]/70 font-medium mt-1">
-                  AI Companion
-                </div>
-              </div>
-              <div className="group text-center bg-white/50 backdrop-blur-sm px-6 py-4 rounded-2xl hover:bg-white hover:shadow-lg transition-all duration-300 hover:scale-110 cursor-pointer">
-                <div className="text-3xl lg:text-4xl font-bold text-[#8B5FBF] group-hover:scale-125 transition-transform duration-300">
-                  <CountUp
-                    end={100}
-                    duration={2.5}
-                    suffix="%"
-                    enableScrollSpy
-                    scrollSpyOnce
-                  />
-                </div>
-                <div className="text-xs lg:text-sm text-[#2F3E3E]/70 font-medium mt-1">
-                  Intelligence Driven
-                </div>
-              </div>
+              ))}
             </div>
           </div>
 

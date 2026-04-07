@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Bot, Brain, Network, GraduationCap } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 
 const WhyFinwitKidsSection: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -36,50 +35,49 @@ const WhyFinwitKidsSection: React.FC = () => {
   const features = [
     {
       icon: GraduationCap,
-      title: "Constructive Outliers",
+      title: "Nation Building",
       description:
-        "Mission MENSA is built to identify students with extraordinary curiosity, creativity, and problem-solving ability and place them in an environment that accelerates excellence.",
-      color: "from-[#8B5FBF] to-[#2CA4A4]",
-      cardBgColor: "bg-gradient-to-br from-[#8B5FBF] to-[#5EC1E8]",
+        "Challenging gifted minds towards India's knowledge economy and civic life.",
+      color: "from-[#234f12] to-[#A5C85A]",
+      cardBgColor: "bg-white",
       iconBgColor: "bg-white/20",
-      borderColor: "border-[#8B5FBF]",
-      textColor: "text-white",
+      borderColor: "border-[#ded7bf]",
+      textColor: "text-[#1c260f]",
     },
     {
       icon: Bot,
-      title: "Personal AI Companions",
+      title: "MENSA Standard",
       description:
-        "Each student operates with a dedicated AI agent that personalises learning pathways, enhances analytical thinking, and supports independent exploration.",
-      color: "from-[#FFC94B] to-[#A5C85A]",
-      cardBgColor: "bg-gradient-to-br from-[#FFC94B] to-[#A5C85A]",
+        "Partnering with MENSA India Bengaluru for validated cognitive assessments.",
+      color: "from-[#234f12] to-[#A5C85A]",
+      cardBgColor: "bg-white",
       iconBgColor: "bg-white/20",
-      borderColor: "border-[#FFC94B]",
-      textColor: "text-white",
+      borderColor: "border-[#ded7bf]",
+      textColor: "text-[#1c260f]",
     },
     {
       icon: Brain,
-      title: "Human Development",
+      title: "Humanness",
       description:
-        "Human mentors cultivate discipline, ethical judgment, emotional resilience, and purpose so AI acceleration is matched by deep human development.",
-      color: "from-[#2CA4A4] to-[#5EC1E8]",
-      cardBgColor: "bg-gradient-to-br from-[#A855F7] to-[#C084FC]",
+        "Ensuring equity - a child's postcode does not determine their ceiling.",
+      color: "from-[#234f12] to-[#A5C85A]",
+      cardBgColor: "bg-white",
       iconBgColor: "bg-white/20",
-      borderColor: "border-[#A855F7]",
-      textColor: "text-white",
+      borderColor: "border-[#ded7bf]",
+      textColor: "text-[#1c260f]",
     },
     {
       icon: Network,
-      title: "Collective Intelligence",
+      title: "AI-Powered Learning",
       description:
-        "Learning emerges from the interaction between human reasoning, intelligent machines, and global knowledge networks rather than classroom limits alone.",
-      color: "from-[#A5C85A] to-[#FFC94B]",
-      cardBgColor: "bg-gradient-to-br from-[#10B981] to-[#34D399]",
+        "Intelligent screening tools and adaptive assessments to find talent at scale.",
+      color: "from-[#234f12] to-[#A5C85A]",
+      cardBgColor: "bg-white",
       iconBgColor: "bg-white/20",
-      borderColor: "border-[#10B981]",
-      textColor: "text-white",
+      borderColor: "border-[#ded7bf]",
+      textColor: "text-[#1c260f]",
     },
   ];
-  const navigate = useNavigate();
   return (
     <section className="py-20 bg-[#FAF7F2] relative overflow-hidden">
       {/* Sleek Animated SVG Background - Why Finwit Kids Theme */}
@@ -763,6 +761,9 @@ const WhyFinwitKidsSection: React.FC = () => {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div ref={headerRef} className="text-center mb-16">
+          <p className="mb-3 text-[10px] font-bold uppercase tracking-wide text-[#d71912]">
+            Four Pillars of the Programme
+          </p>
           <h2
             className={`text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 overflow-hidden transition-all duration-1000 ${
               isVisible
@@ -775,7 +776,7 @@ const WhyFinwitKidsSection: React.FC = () => {
                 isVisible ? "animate-slideInLeft" : ""
               }`}
             >
-              Why
+              What
             </span>{" "}
             <span
               className={`inline-block bg-gradient-to-r from-[#2CA4A4] to-[#5EC1E8] bg-clip-text text-transparent hover:from-[#5EC1E8] hover:to-[#2CA4A4] transition-all duration-500 hover:scale-110 cursor-pointer ${
@@ -783,15 +784,7 @@ const WhyFinwitKidsSection: React.FC = () => {
               }`}
               style={{ animationDelay: "0.3s" }}
             >
-              Mission MENSA
-            </span>
-            <span
-              className={`inline-block text-[#2F3E3E] hover:scale-110 hover:rotate-12 transition-all duration-300 cursor-pointer ${
-                isVisible ? "animate-bounceIn" : ""
-              }`}
-              style={{ animationDelay: "0.8s" }}
-            >
-              ?
+              we stand for
             </span>
           </h2>
           <div
@@ -810,83 +803,56 @@ const WhyFinwitKidsSection: React.FC = () => {
             return (
               <div
                 key={feature.title}
-                className={`group relative p-8 ${feature.cardBgColor} rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-700 transform hover:scale-110 hover:-rotate-2 border-4 border-dashed ${feature.borderColor} border-opacity-0 hover:border-opacity-30 animate-fadeInUp cursor-pointer overflow-hidden`}
+                className={`group relative min-h-[18rem] p-7 ${feature.cardBgColor} rounded-lg shadow-xl shadow-[#234f12]/10 hover:shadow-2xl transition-all duration-700 transform hover:scale-105 hover:-translate-y-2 border ${feature.borderColor} animate-fadeInUp cursor-pointer overflow-hidden`}
                 style={{ animationDelay: `${index * 0.2}s` }}
               >
+                <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-[#234f12] via-[#A5C85A] to-[#ff4b21] transition-all duration-500 group-hover:h-2.5" />
+                <div className="absolute right-5 top-5 rounded-full border border-[#234f12]/15 bg-[#edf5dc] px-3 py-1 text-[10px] font-bold text-[#234f12]">
+                  {String(index + 1).padStart(2, "0")}
+                </div>
+                <div className="absolute -right-10 -bottom-10 h-32 w-32 rounded-full bg-[#A5C85A]/15 blur-2xl transition-transform duration-700 group-hover:scale-150" />
+
                 {/* Animated background sparkles */}
                 <div className="absolute top-4 right-4 w-8 h-8 opacity-20 group-hover:opacity-40 transition-opacity duration-500">
-                  <div className="absolute w-2 h-2 bg-white rounded-full animate-ping"></div>
-                  <div className="absolute top-2 left-3 w-1 h-1 bg-white rounded-full animate-pulse"></div>
-                  <div className="absolute top-1 left-1 w-1.5 h-1.5 bg-white rounded-full animate-bounce"></div>
+                  <div className="absolute w-2 h-2 bg-[#ff4b21] rounded-full animate-ping"></div>
+                  <div className="absolute top-2 left-3 w-1 h-1 bg-[#234f12] rounded-full animate-pulse"></div>
+                  <div className="absolute top-1 left-1 w-1.5 h-1.5 bg-[#A5C85A] rounded-full animate-bounce"></div>
                 </div>
 
                 {/* Icon container */}
                 <div
-                  className={`relative w-20 h-20 ${feature.iconBgColor} backdrop-blur-sm rounded-2xl flex items-center justify-center mb-6 group-hover:scale-125 group-hover:rotate-12 transition-all duration-500 shadow-lg`}
+                    className={`relative w-16 h-16 bg-[#edf5dc] backdrop-blur-sm rounded-lg flex items-center justify-center mb-7 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-lg`}
                 >
                   <IconComponent
-                    className={`w-10 h-10 text-white group-hover:scale-110 transition-transform duration-300 drop-shadow-lg`}
+                    className={`w-8 h-8 text-[#234f12] group-hover:scale-110 transition-transform duration-300 drop-shadow-lg`}
                   />
 
                   {/* Pulsing ring on hover */}
-                  <div className="absolute inset-0 border-4 border-white/30 rounded-2xl opacity-0 group-hover:opacity-100 group-hover:scale-125 transition-all duration-500"></div>
+                  <div className="absolute inset-0 border-4 border-[#234f12]/10 rounded-lg opacity-0 group-hover:opacity-100 group-hover:scale-125 transition-all duration-500"></div>
                 </div>
 
                 {/* Content */}
                 <div className="space-y-3 relative z-10">
-                  <h3
-                    className={`text-xl font-bold ${feature.textColor} group-hover:scale-105 transition-transform duration-300 drop-shadow-md`}
-                  >
+                  <h3 className={`text-xl font-bold ${feature.textColor} group-hover:translate-x-1 transition-transform duration-300`}>
                     {feature.title}
                   </h3>
                   <p
-                    className={`${feature.textColor} opacity-90 leading-relaxed group-hover:opacity-100 transition-opacity duration-300 text-sm`}
+                    className={`${feature.textColor} opacity-75 leading-relaxed group-hover:opacity-100 transition-opacity duration-300 text-sm`}
                   >
                     {feature.description}
                   </p>
                 </div>
 
                 {/* Shine effect on hover */}
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 pointer-events-none"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#d7e6a7]/30 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 pointer-events-none"></div>
 
                 {/* Floating decorative elements */}
-                <div className="absolute -bottom-2 -right-2 w-16 h-16 bg-white/10 rounded-full blur-xl group-hover:scale-150 transition-transform duration-700"></div>
-                <div className="absolute -top-2 -left-2 w-12 h-12 bg-white/10 rounded-full blur-xl group-hover:scale-150 transition-transform duration-700"></div>
+                <div className="absolute -top-2 -left-2 w-12 h-12 bg-[#234f12]/5 rounded-full blur-xl group-hover:scale-150 transition-transform duration-700"></div>
               </div>
             );
           })}
         </div>
 
-        {/* Call-to-action section */}
-        <div
-          className="text-center mt-8 md:mt-32 animate-fadeInUp"
-          style={{ animationDelay: "0.6s" }}
-        >
-          <div className="bg-white rounded-3xl p-8 shadow-lg border border-[#2CA4A4]/10 max-w-4xl mx-auto">
-            <h3 className="text-2xl font-bold text-[#2F3E3E] mb-4">
-              Reimagining Education Around Exceptional Potential
-            </h3>
-            <p className="text-[#2F3E3E]/80 mb-6 max-w-2xl mx-auto">
-              Mission MENSA moves beyond average outcomes toward a system that
-              identifies and empowers individuals capable of shaping the future
-              through AI-driven learning and disciplined mentorship.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button
-                onClick={() => navigate("/programs")}
-                className="bg-[#2CA4A4] hover:bg-[#A5C85A] text-white font-semibold px-8 py-3 rounded-full transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg"
-              >
-                Explore the Model
-              </button>
-              <button
-                onClick={() => navigate("/about-us")}
-                className="bg-transparent hover:bg-[#FFC94B] text-[#2CA4A4] hover:text-[#2F3E3E] border-2 border-[#2CA4A4] hover:border-[#FFC94B] font-semibold px-8 py-3 rounded-full transition-all duration-300 transform hover:scale-105"
-              >
-                Read the Vision
-              </button>
-            </div>
-          </div>
-        </div>
       </div>
     </section>
   );

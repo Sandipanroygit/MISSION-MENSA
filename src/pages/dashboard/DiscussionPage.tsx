@@ -1,10 +1,12 @@
 import { ImagePlus, MessageSquare, PlusCircle, Video } from "lucide-react";
-import { useEffect, useState, type ChangeEvent } from "react";
+import { useEffect, useMemo, useState, type ChangeEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "@/context/AuthContext";
 import {
+  DISCUSSION_CATEGORY_OPTIONS,
   createId,
   formatDate,
+  getDiscussionCategory,
   getStoredTopics,
   getStoredTopicsAsync,
   getTopicCoverImage,
@@ -22,9 +24,21 @@ export default function DiscussionPage() {
   const [isCreatingTopic, setIsCreatingTopic] = useState(false);
   const [isReady, setIsReady] = useState(false);
   const [topicTitle, setTopicTitle] = useState("");
+  const [topicCategory, setTopicCategory] = useState("MENSA");
+  const [customTopicCategory, setCustomTopicCategory] = useState("");
   const [topicBody, setTopicBody] = useState("");
   const [topicAttachments, setTopicAttachments] = useState<DiscussionMedia[]>(
     [],
+  );
+  const categoryOptions = useMemo(
+    () =>
+      Array.from(
+        new Set([
+          ...DISCUSSION_CATEGORY_OPTIONS,
+          ...topics.map((topic) => getDiscussionCategory(topic)),
+        ]),
+      ),
+    [topics],
   );
 
   useEffect(() => {
@@ -67,6 +81,8 @@ export default function DiscussionPage() {
   function resetTopicComposer() {
     setIsCreatingTopic(false);
     setTopicTitle("");
+    setTopicCategory("MENSA");
+    setCustomTopicCategory("");
     setTopicBody("");
     setTopicAttachments([]);
   }
@@ -79,6 +95,10 @@ export default function DiscussionPage() {
     const newTopic: DiscussionTopic = {
       id: createId(),
       title: topicTitle.trim(),
+      category:
+        topicCategory === "__custom__"
+          ? customTopicCategory.trim() || "General"
+          : topicCategory,
       body: topicBody.trim(),
       authorName: user.name,
       authorEmail: user.email,
@@ -183,6 +203,32 @@ export default function DiscussionPage() {
                 placeholder="Topic title"
                 className="w-full rounded-2xl border border-gray-200 px-4 py-3 text-sm text-[#1D2A2A] outline-none transition focus:border-[#355E3B]"
               />
+              <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr),minmax(0,1fr)]">
+                <select
+                  value={topicCategory}
+                  onChange={(event) => setTopicCategory(event.target.value)}
+                  className="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-[#1D2A2A] outline-none transition focus:border-[#355E3B]"
+                >
+                  {categoryOptions.map((category) => (
+                    <option key={category} value={category}>
+                      {category}
+                    </option>
+                  ))}
+                  <option value="__custom__">Create new area</option>
+                </select>
+                {topicCategory === "__custom__" ? (
+                  <input
+                    value={customTopicCategory}
+                    onChange={(event) => setCustomTopicCategory(event.target.value)}
+                    placeholder="New area name"
+                    className="w-full rounded-2xl border border-gray-200 px-4 py-3 text-sm text-[#1D2A2A] outline-none transition focus:border-[#355E3B]"
+                  />
+                ) : (
+                  <div className="rounded-2xl border border-[#D5E3CB] bg-white px-4 py-3 text-sm font-medium text-[#355E3B]">
+                    Area: {topicCategory}
+                  </div>
+                )}
+              </div>
               <textarea
                 value={topicBody}
                 onChange={(event) => setTopicBody(event.target.value)}
@@ -270,9 +316,14 @@ export default function DiscussionPage() {
                     />
                   </div>
                   <div className="mb-4 flex items-center justify-between gap-3">
-                    <div className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-[#355E3B]">
-                      {topic.comments.length} repl
-                      {topic.comments.length === 1 ? "y" : "ies"}
+                    <div className="flex min-w-0 flex-wrap items-center gap-2">
+                      <div className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-[#355E3B]">
+                        {getDiscussionCategory(topic)}
+                      </div>
+                      <div className="rounded-full bg-[#EEF5EA] px-3 py-1 text-xs font-semibold text-[#355E3B]">
+                        {topic.comments.length} repl
+                        {topic.comments.length === 1 ? "y" : "ies"}
+                      </div>
                     </div>
                     {topic.attachments.length ? (
                       <div className="text-xs font-medium text-[#6A7673]">

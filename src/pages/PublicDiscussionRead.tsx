@@ -6,6 +6,7 @@ import { useAuthContext } from "@/context/AuthContext";
 import {
   createId,
   formatDate,
+  getDiscussionCategory,
   getPublicTopics,
   getPublicTopicsAsync,
   getTopicCoverImage,
@@ -241,7 +242,7 @@ export default function PublicDiscussionReadPage() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#2F3E3E]/60 via-transparent to-transparent" />
                 <div className="absolute left-6 top-6 inline-flex items-center gap-2 rounded-full bg-[#FFC94B] px-4 py-2 text-sm font-black text-[#172222] shadow-lg">
-                  Public Discussion
+                  {getDiscussionCategory(selectedTopic)}
                 </div>
                 <div className="absolute bottom-6 left-6 right-6 rounded-[1.5rem] border border-white/65 bg-white/82 p-5 shadow-lg backdrop-blur">
                   <p className="text-xs font-black uppercase tracking-[0.22em] text-[#2CA4A4]">

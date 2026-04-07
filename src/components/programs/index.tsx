@@ -7,7 +7,9 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
+  DISCUSSION_CATEGORY_OPTIONS,
   formatDate,
+  getDiscussionCategory,
   getPublicTopics,
   getPublicTopicsAsync,
   getTopicCoverImage,
@@ -42,6 +44,28 @@ const PublicDiscussions: React.FC = () => {
   const navigate = useNavigate();
   const initialTopics = useMemo(() => getPublicTopics(), []);
   const [topics, setTopics] = useState<DiscussionTopic[]>(initialTopics);
+  const [selectedCategory, setSelectedCategory] = useState("All topics");
+  const categoryOptions = useMemo(
+    () => [
+      "All topics",
+      ...Array.from(
+        new Set([
+          ...DISCUSSION_CATEGORY_OPTIONS,
+          ...topics.map((topic) => getDiscussionCategory(topic)),
+        ]),
+      ),
+    ],
+    [topics],
+  );
+  const visibleTopics = useMemo(
+    () =>
+      selectedCategory === "All topics"
+        ? topics
+        : topics.filter(
+            (topic) => getDiscussionCategory(topic) === selectedCategory,
+          ),
+    [selectedCategory, topics],
+  );
 
   useEffect(() => {
     void getPublicTopicsAsync().then(setTopics);
@@ -186,9 +210,26 @@ const PublicDiscussions: React.FC = () => {
               </p>
             </div>
 
-            {topics.length ? (
+            <div className="mb-7 flex flex-wrap gap-2">
+              {categoryOptions.map((category) => (
+                <button
+                  key={category}
+                  type="button"
+                  onClick={() => setSelectedCategory(category)}
+                  className={`rounded-full border px-4 py-2 text-sm font-black transition ${
+                    selectedCategory === category
+                      ? "border-[#2CA4A4] bg-[#2CA4A4] text-white shadow-lg"
+                      : "border-[#2CA4A4]/18 bg-white/80 text-[#2F3E3E]/72 hover:border-[#2CA4A4]/55 hover:text-[#2F3E3E]"
+                  }`}
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
+
+            {visibleTopics.length ? (
               <div className="grid gap-5 lg:grid-cols-3">
-                {topics.map((topic, index) => {
+                {visibleTopics.map((topic, index) => {
                 const accent = topicAccents[index % topicAccents.length];
 
                 return (
@@ -215,7 +256,7 @@ const PublicDiscussions: React.FC = () => {
                       <div className="mt-6 min-w-0 flex-1">
                         <div className="mb-4 flex items-center justify-between gap-3">
                           <span className={`shrink-0 rounded-full px-3 py-1 text-xs font-black uppercase tracking-[0.14em] ${accent.soft} ${accent.text}`}>
-                            Thread {String(index + 1).padStart(2, "0")}
+                            {getDiscussionCategory(topic)}
                           </span>
                           <span className="min-w-0 truncate text-xs font-semibold text-[#172222]/50">
                             {formatDate(topic.createdAt)}
@@ -247,10 +288,11 @@ const PublicDiscussions: React.FC = () => {
             ) : (
               <div className="rounded-[2rem] border border-dashed border-[#2CA4A4]/28 bg-white/78 px-6 py-14 text-center shadow-lg">
                 <h3 className="text-2xl font-black text-[#2F3E3E]">
-                  No discussions yet.
+                  No discussions here yet.
                 </h3>
                 <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-[#2F3E3E]/62">
-                  Real discussions will appear here once they are added.
+                  Choose All topics or create a new discussion for this area
+                  after signing in.
                 </p>
               </div>
             )}

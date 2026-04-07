@@ -5,6 +5,7 @@ import { useAuthContext } from "@/context/AuthContext";
 import {
   createId,
   formatDate,
+  getDiscussionCategory,
   getStoredTopics,
   getStoredTopicsAsync,
   getTopicCoverImage,
@@ -276,6 +277,9 @@ export default function DiscussionTopicPage() {
                 <p className="text-sm font-medium text-[#6A7673]">
                   Open Discussion
                 </p>
+                <div className="mt-2 inline-flex rounded-full bg-[#EEF5EA] px-3 py-1 text-xs font-semibold text-[#355E3B]">
+                  {getDiscussionCategory(selectedTopic)}
+                </div>
                 <h1 className="mt-1 text-2xl font-semibold text-[#1D2A2A]">
                   {selectedTopic.title}
                 </h1>

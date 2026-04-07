@@ -4,16 +4,14 @@ import {
   Smile,
   GraduationCap,
   Plus,
-  ChevronLeft,
-  ChevronRight,
 } from "lucide-react";
 const HowItWorksSection: React.FC = () => {
   const steps = [
     {
       icon: User,
-      title: "Assess",
+      title: "Insights & Blog",
       description:
-        "The program begins with baseline cognitive and behavioural assessments to identify exceptional potential and establish learning baselines.",
+        "Research, field notes, and reflections from the programme team.",
       color: "from-[#2CA4A4] to-[#5EC1E8]",
       bgColor: "bg-gradient-to-br from-[#2CA4A4] to-[#5EC1E8]",
       hoverColor: "group-hover:from-[#5EC1E8] group-hover:to-[#2CA4A4]",
@@ -21,9 +19,9 @@ const HowItWorksSection: React.FC = () => {
     },
     {
       icon: Smile,
-      title: "Observe",
+      title: "Project Plan",
       description:
-        "Student behaviour, academic growth, AI interaction patterns, and creative output are continuously tracked inside a live experimental Human Lab.",
+        "Live roadmap showing phases, milestones, and ownership.",
       color: "from-[#FFC94B] to-[#A5C85A]",
       bgColor: "bg-gradient-to-br from-[#FFC94B] to-[#FBBF24]",
       hoverColor: "group-hover:from-[#FBBF24] group-hover:to-[#FFC94B]",
@@ -31,9 +29,9 @@ const HowItWorksSection: React.FC = () => {
     },
     {
       icon: GraduationCap,
-      title: "Innovate",
+      title: "Discussions",
       description:
-        "Students engage in design thinking, problem-solving challenges, and early innovation projects aimed at future contributions to science, technology, entrepreneurship, and society.",
+        "An open forum to share experiences, challenges, and ideas.",
       color: "from-[#8B5FBF] to-[#2CA4A4]",
       bgColor: "bg-gradient-to-br from-[#8B5FBF] to-[#A855F7]",
       hoverColor: "group-hover:from-[#A855F7] group-hover:to-[#8B5FBF]",
@@ -692,10 +690,13 @@ const HowItWorksSection: React.FC = () => {
         <div className="mb-20">
           {/* Section Header */}
           <div className="text-center mb-16 animate-fadeInUp">
+            <p className="mb-3 text-[10px] font-bold uppercase tracking-wide text-[#d71912]">
+              Explore Our Work
+            </p>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#2F3E3E] mb-6">
-              How Mission{" "}
+              Navigate the{" "}
               <span className="bg-gradient-to-r from-[#2CA4A4] to-[#5EC1E8] bg-clip-text text-transparent">
-                MENSA Works
+                programme
               </span>
             </h2>
             <div className="w-24 h-1 bg-gradient-to-r from-[#FFC94B] to-[#A5C85A] mx-auto rounded-full"></div>
@@ -713,8 +714,13 @@ const HowItWorksSection: React.FC = () => {
                 >
                   {/* Step card */}
                   <div
-                    className={`relative ${step.bgColor} ${step.hoverColor} rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-700 transform hover:scale-110 hover:-rotate-2 overflow-hidden cursor-pointer`}
+                    className={`relative ${step.bgColor} ${step.hoverColor} min-h-[20rem] rounded-lg p-8 shadow-xl shadow-[#234f12]/15 hover:shadow-2xl transition-all duration-700 transform hover:scale-105 hover:-translate-y-2 overflow-hidden cursor-pointer`}
                   >
+                    <div className="absolute inset-x-0 top-0 h-1.5 bg-white/70 transition-all duration-500 group-hover:h-2.5" />
+                    <div className="absolute right-5 top-5 font-serif text-7xl text-white/10 transition-all duration-500 group-hover:scale-110 group-hover:text-white/15">
+                      {String(index + 1).padStart(2, "0")}
+                    </div>
+
                     {/* Decorative pattern overlay */}
                     <div className="absolute inset-0 opacity-10">
                       <svg
@@ -788,17 +794,20 @@ const HowItWorksSection: React.FC = () => {
                     </div>
 
                     {/* Icon container */}
-                    <div className="relative w-20 h-20 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mb-6 mx-auto transition-all duration-500 group-hover:scale-125 group-hover:rotate-12 shadow-lg">
+                    <div className="relative w-16 h-16 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center mb-7 mx-auto transition-all duration-500 group-hover:scale-110 group-hover:rotate-6 shadow-lg">
                       <IconComponent className="w-10 h-10 text-white drop-shadow-lg group-hover:scale-110 transition-transform duration-300" />
 
                       {/* Pulsing ring on hover */}
-                      <div className="absolute inset-0 border-4 border-white/40 rounded-2xl opacity-0 group-hover:opacity-100 group-hover:scale-125 transition-all duration-500"></div>
+                      <div className="absolute inset-0 border-4 border-white/40 rounded-lg opacity-0 group-hover:opacity-100 group-hover:scale-125 transition-all duration-500"></div>
                     </div>
 
                     {/* Content */}
-                    <div className="space-y-4 relative z-10">
+                    <div className="space-y-4 relative z-10 text-left">
+                      <p className="inline-flex rounded-full border border-white/30 px-3 py-1 text-xs font-semibold text-white/80">
+                        {String(index + 1).padStart(2, "0")}
+                      </p>
                       <h3
-                        className={`text-xl font-bold ${step.textColor} drop-shadow-md group-hover:scale-105 transition-transform duration-300`}
+                        className={`text-2xl font-bold ${step.textColor} drop-shadow-md group-hover:translate-x-1 transition-transform duration-300`}
                       >
                         {step.title}
                       </h3>
@@ -830,29 +839,6 @@ const HowItWorksSection: React.FC = () => {
             })}
           </div>
 
-          {/* Teacher-Guided Support Add-on */}
-          <div
-            className="mt-12 animate-fadeInUp"
-            style={{ animationDelay: "0.8s" }}
-          >
-            <div className="bg-white rounded-2xl p-6 shadow-lg border border-[#2CA4A4]/10 flex flex-col sm:flex-row items-center justify-between">
-              <div className="mb-4 sm:mb-0">
-                <h4 className="text-lg font-semibold text-[#2F3E3E] mb-2">
-                  Scalable Intelligence Ecosystem
-                </h4>
-                <p className="text-[#2F3E3E]/70">
-                  As the program evolves, Mission MENSA aims to move beyond a
-                  single cohort toward a scalable ecosystem for discovering and
-                  nurturing exceptional talent across multiple domains of
-                  intelligence.
-                </p>
-              </div>
-              <button className="bg-[#2CA4A4] hover:bg-[#5EC1E8] text-white font-medium px-6 py-2 rounded-full transition-all duration-300 transform hover:scale-105 flex items-center space-x-2">
-                <Plus className="w-4 h-4" />
-                <span>Expand</span>
-              </button>
-            </div>
-          </div>
         </div>
 
       </div>
