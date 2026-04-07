@@ -8,6 +8,7 @@ import RootLayout from "./components/layouts/RootLayout";
 const DomainDetail = lazy(() => import("@/components/DomainDetail"));
 const ProgramsPage = lazy(() => import("./pages/Programs"));
 const CommunityPage = lazy(() => import("./pages/Community"));
+const AboutMensaPage = lazy(() => import("./pages/AboutMensa"));
 const AboutUsPage = lazy(() => import("./pages/Aboutus"));
 const PublicBlogReadPage = lazy(() => import("./pages/PublicBlogRead"));
 const PublicDiscussionReadPage = lazy(() => import("./pages/PublicDiscussionRead"));
@@ -48,6 +49,7 @@ const AppRoutes = () => {
           <Route path="/" element={<Home />} />
           <Route path="/programs" element={<ProgramsPage />} />
           <Route path="/programs/:topicId" element={<PublicDiscussionReadPage />} />
+          <Route path="/about-mensa" element={<AboutMensaPage />} />
           <Route path="/about-us" element={<AboutUsPage />} />
           <Route path="/about-us/:slug" element={<PublicBlogReadPage />} />
           <Route path="/contact-us" element={<ContactUs />} />

@@ -1,5 +1,16 @@
 import React from "react";
-import { ArrowRight, BookOpen, Eye, PlayCircle, Sparkles, ThumbsUp } from "lucide-react";
+import {
+  Activity,
+  ArrowRight,
+  BookOpen,
+  Eye,
+  MapPin,
+  Network,
+  PlayCircle,
+  Sparkles,
+  ThumbsUp,
+  UsersRound,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
   getPublishedBlogs,
@@ -241,6 +252,118 @@ const PublicBlogs: React.FC = () => {
                 </article>
               );
             }))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="relative overflow-hidden bg-[#071521] px-4 py-20 text-white sm:px-6 lg:px-8">
+        <div className="absolute inset-0 opacity-70">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_22%_28%,rgba(44,164,164,0.42),transparent_24rem),radial-gradient(circle_at_76%_42%,rgba(255,201,75,0.25),transparent_22rem),linear-gradient(135deg,#071521_0%,#10253a_48%,#08111e_100%)]" />
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[size:3rem_3rem]" />
+        </div>
+
+        <div className="relative mx-auto max-w-7xl">
+          <div className="grid gap-10 lg:grid-cols-[0.82fr_1.18fr] lg:items-center">
+            <div>
+              <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/8 px-4 py-2 text-sm font-bold text-[#FFC94B] backdrop-blur">
+                <Network size={16} />
+                Community Intelligence Layer
+              </div>
+              <h2 className="max-w-2xl text-3xl font-black leading-tight sm:text-4xl lg:text-5xl">
+                Mapping talent signals across school communities.
+              </h2>
+              <p className="mt-5 max-w-2xl text-base leading-8 text-white/72">
+                Mission Mensa connects field assessments, school cohorts, and
+                student discovery into a live view of outreach. Each signal
+                helps identify where exceptional potential is emerging and
+                where support must be directed next.
+              </p>
+
+              <div className="mt-8 grid gap-3 sm:grid-cols-3">
+                {[
+                  ["320", "Assessments"],
+                  ["03", "School cohorts"],
+                  ["Live", "Field signals"],
+                ].map(([value, label]) => (
+                  <div
+                    key={label}
+                    className="rounded-lg border border-white/12 bg-white/8 p-4 shadow-lg shadow-black/20 backdrop-blur"
+                  >
+                    <p className="font-serif text-3xl font-black text-[#FFC94B]">
+                      {value}
+                    </p>
+                    <p className="mt-1 text-[11px] font-black uppercase tracking-[0.18em] text-white/58">
+                      {label}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="relative min-h-[30rem] overflow-hidden rounded-lg border border-white/14 bg-[#0b1d31] shadow-2xl shadow-black/40">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_35%_32%,rgba(94,193,232,0.34),transparent_14rem),radial-gradient(circle_at_72%_64%,rgba(44,164,164,0.32),transparent_12rem),linear-gradient(135deg,rgba(255,255,255,0.08),transparent_44%)]" />
+              <svg
+                className="absolute inset-0 h-full w-full opacity-75"
+                viewBox="0 0 720 430"
+                preserveAspectRatio="none"
+                aria-hidden="true"
+              >
+                <path d="M40 95 C170 60 250 120 360 88 S560 45 690 84" stroke="#86d7ff" strokeWidth="10" fill="none" opacity="0.22" />
+                <path d="M70 315 C190 250 300 300 410 245 S560 150 690 188" stroke="#2CA4A4" strokeWidth="16" fill="none" opacity="0.26" />
+                <path d="M130 20 L210 190 L90 410" stroke="#ffffff" strokeWidth="2" opacity="0.12" />
+                <path d="M310 0 L360 168 L330 430" stroke="#ffffff" strokeWidth="2" opacity="0.12" />
+                <path d="M570 0 L520 170 L620 430" stroke="#ffffff" strokeWidth="2" opacity="0.12" />
+                <path d="M0 190 L720 148" stroke="#ffffff" strokeWidth="2" opacity="0.12" />
+                <path d="M0 298 L720 340" stroke="#ffffff" strokeWidth="2" opacity="0.12" />
+              </svg>
+
+              {[
+                ["left-[18%] top-[22%]", "IICD", "Grade 10"],
+                ["left-[62%] top-[28%]", "Dommasandra", "44 assessed"],
+                ["left-[38%] top-[58%]", "Saraswati", "71 Grade 8"],
+                ["left-[76%] top-[62%]", "Screening", "Active"],
+              ].map(([position, title, detail], index) => (
+                <div
+                  key={title}
+                  className={`absolute ${position} group/pin`}
+                  style={{ animationDelay: `${index * 0.16}s` }}
+                >
+                  <div className="absolute -inset-5 rounded-full bg-[#2CA4A4]/20 blur-xl transition duration-500 group-hover/pin:bg-[#FFC94B]/30" />
+                  <div className="relative flex h-14 w-14 items-center justify-center rounded-full border border-white/30 bg-[#2CA4A4] text-white shadow-lg shadow-[#2CA4A4]/35 ring-8 ring-[#2CA4A4]/18 transition duration-500 group-hover/pin:scale-110 group-hover/pin:bg-[#FFC94B] group-hover/pin:text-[#123d22]">
+                    <MapPin size={24} />
+                  </div>
+                  <div className="absolute left-12 top-9 w-40 rounded-lg border border-white/12 bg-[#071521]/84 p-3 opacity-90 shadow-xl shadow-black/30 backdrop-blur">
+                    <p className="text-sm font-black text-white">{title}</p>
+                    <p className="mt-1 text-xs font-bold text-[#FFC94B]">
+                      {detail}
+                    </p>
+                  </div>
+                </div>
+              ))}
+
+              <div className="absolute bottom-5 left-5 right-5 grid gap-3 rounded-lg border border-white/12 bg-[#071521]/78 p-4 shadow-xl shadow-black/30 backdrop-blur sm:grid-cols-3">
+                {[
+                  [Activity, "Signals", "Assessment updates"],
+                  [UsersRound, "Cohorts", "School-wise discovery"],
+                  [Sparkles, "Potential", "Talent visibility"],
+                ].map(([Icon, title, detail]) => {
+                  const IconComponent = Icon as typeof Activity;
+                  return (
+                    <div key={title as string} className="flex items-center gap-3">
+                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white/10 text-[#FFC94B]">
+                        <IconComponent size={18} />
+                      </span>
+                      <div>
+                        <p className="text-sm font-black">{title as string}</p>
+                        <p className="text-[11px] font-semibold text-white/55">
+                          {detail as string}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>

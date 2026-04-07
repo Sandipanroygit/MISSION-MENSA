@@ -8,11 +8,6 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import HeroImage from "@/assets/finwit_kids_hero.png";
-import HeroImage2 from "@/assets/finwit_kids_hero2.png";
-import HeroImage3 from "@/assets/finwit_kids_hero3.png";
-import HeroImage4 from "@/assets/finwit_kids_hero4.png";
-
 const HeroSection: React.FC = () => {
   const heroStats = [
     { number: "01", value: "Top 2%", label: "Target Percentile" },
@@ -25,8 +20,11 @@ const HeroSection: React.FC = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
-  // Add your image paths here
-  const carouselImages = [HeroImage, HeroImage2, HeroImage3, HeroImage4];
+  const carouselImages = [
+    "https://induscommunityschool.com/wp-content/uploads/2023/04/sponser-child-new.jpg",
+    "https://induscommunityschool.com/wp-content/uploads/2023/04/banner-3.jpg",
+    "https://induscommunityschool.com/wp-content/uploads/2023/04/banner-1.jpg",
+  ];
 
   // Navigation functions
   const goToPrevious = () => {
@@ -675,19 +673,13 @@ const HeroSection: React.FC = () => {
           </button>
         </div>
 
-        {/* Scroll to top button like in the image */}
-        <div className="absolute bottom-8 right-8">
-          <button className="w-12 h-12 rounded-full bg-white shadow-lg flex items-center justify-center hover:bg-[#FFC94B] transition-all duration-300 hover:scale-110 group">
-            <ArrowRight className="w-5 h-5 text-[#2CA4A4] -rotate-90 group-hover:text-white group-hover:-translate-y-1 transition-all" />
-          </button>
-        </div>
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 lg:pt-20">
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-start min-h-[calc(100vh-6rem)] py-8 lg:py-12">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 lg:pt-12">
+        <div className="grid lg:grid-cols-2 gap-6 lg:gap-12 items-start py-6 lg:py-8">
           {/* Left Content */}
-          <div className="space-y-6 lg:space-y-8 animate-fadeInUp z-10">
-            <div className="space-y-4 lg:space-y-6">
+          <div className="space-y-5 lg:space-y-6 animate-fadeInUp z-10">
+            <div className="space-y-3 lg:space-y-4">
               <p className="text-[10px] font-bold uppercase tracking-widest text-white">
                 01&nbsp; Home
               </p>
@@ -695,7 +687,7 @@ const HeroSection: React.FC = () => {
                 Indus International School x Mensa India x Bengaluru
               </p>
 
-              <h1 className="font-serif text-5xl sm:text-6xl lg:text-7xl xl:text-8xl leading-none">
+              <h1 className="font-serif text-4xl leading-none sm:text-5xl lg:text-6xl xl:text-7xl">
                 <span
                   className="inline-block text-[#fff4d0] hover:scale-110 hover:-rotate-3 hover:skew-y-2 transition-all duration-500 cursor-pointer animate-tickerWord hover:text-[#d8fff9] hover:drop-shadow-lg"
                   style={{
@@ -740,36 +732,32 @@ const HeroSection: React.FC = () => {
                     </span>
                   </span>
                 </span>{" "}
-                <span
-                  className="block italic text-[#d8fff9] hover:scale-110 hover:rotate-3 hover:-skew-y-2 transition-all duration-500 cursor-pointer animate-tickerWord hover:text-[#fff4d0] hover:drop-shadow-lg"
-                  style={{
-                    animationDelay: "2s",
-                    animationDuration: "6s",
-                  }}
-                >
-                  at Indus
+                <span className="mt-3 block max-w-3xl text-xl italic leading-snug text-[#d8fff9] transition-all duration-500 hover:scale-105 hover:rotate-1 hover:-skew-y-1 hover:text-[#fff4d0] hover:drop-shadow-lg sm:text-2xl lg:text-3xl">
+                  India's First School for Future Nation Builders
                 </span>
               </h1>
 
               <div className="space-y-3">
                 <p
-                  className="text-base sm:text-lg lg:text-xl text-[#edf7f5] max-w-2xl leading-relaxed group cursor-pointer animate-fadeInUp"
+                  className="text-xs sm:text-sm lg:text-base text-[#edf7f5] max-w-2xl leading-relaxed group cursor-pointer animate-fadeInUp"
                   style={{ animationDelay: "1s" }}
                 >
-                  A gifted education programme identifying and nurturing
-                  exceptional students from government schools across South
-                  Bengaluru - connecting untapped intelligence with structured
-                  opportunity.
+                  This project identifies students of exceptional intellectual
+                  talent, but its long-term ambition must evolve toward
+                  identifying and nurturing exceptional talent across multiple
+                  intelligences. At the core of Mission Mensa is
+                  nation-building, which requires exceptional individuals across
+                  many domains of human capability.
                 </p>
               </div>
             </div>
 
             {/* Stats or badges - Enhanced with hover effects */}
-            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4 pt-6 lg:pt-8">
+            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4 pt-3 lg:pt-4">
               {heroStats.map((stat) => (
                 <div
                   key={stat.value}
-                  className="group relative min-h-[8.5rem] overflow-hidden rounded-2xl border border-[#9ce7de]/35 bg-[#073b42]/55 p-5 shadow-xl shadow-black/15 backdrop-blur-md transition-all duration-500 hover:-translate-y-2 hover:border-[#d8fff9]/85 hover:bg-[#0c5f5c]/70 hover:shadow-2xl xl:min-h-[7rem] xl:p-4"
+                  className="group relative min-h-[7rem] overflow-hidden rounded-2xl border border-[#9ce7de]/35 bg-[#073b42]/55 p-4 shadow-xl shadow-black/15 backdrop-blur-md transition-all duration-500 hover:-translate-y-2 hover:border-[#d8fff9]/85 hover:bg-[#0c5f5c]/70 hover:shadow-2xl xl:min-h-[6rem] xl:p-4"
                 >
                   <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#d8fff9] via-[#5EC1E8] to-[#A5C85A] opacity-80 transition-all duration-500 group-hover:h-2" />
                   <div className="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-[#5EC1E8]/18 blur-2xl transition-transform duration-500 group-hover:scale-150" />
@@ -799,7 +787,7 @@ const HeroSection: React.FC = () => {
             <div className="relative rounded-3xl overflow-visible">
               {/* Main image container with hover effects */}
               <div
-                className="relative h-[400px] sm:h-[500px] lg:h-[550px] bg-gradient-to-br from-[#FAF7F2] to-[#5EC1E8]/10 rounded-[3rem] overflow-hidden shadow-2xl group-hover:shadow-3xl transition-all duration-500 group-hover:scale-[1.02]"
+                className="relative h-[320px] sm:h-[420px] lg:h-[470px] bg-gradient-to-br from-[#FAF7F2] to-[#5EC1E8]/10 rounded-[3rem] overflow-hidden shadow-2xl group-hover:shadow-3xl transition-all duration-500 group-hover:scale-[1.02]"
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
               >
@@ -813,13 +801,13 @@ const HeroSection: React.FC = () => {
                 <div className="absolute top-1/3 right-16 w-6 h-6 bg-[#8B5FBF]/50 rounded-full animate-float hover:scale-125 transition-transform duration-300 cursor-pointer"></div>
 
                 {/* Hero Image Carousel */}
-                <div className="relative -top-12 flex items-center justify-center p-8 h-full">
+                <div className="relative h-full">
                   {carouselImages.map((image, index) => (
                     <img
                       key={index}
                       src={image}
                       alt={`Mensa learning experience ${index + 1}`}
-                      className={`absolute inset-0 w-full h-full object-contain transition-all duration-1000 ease-in-out ${
+                      className={`absolute inset-0 w-full h-full object-cover transition-all duration-1000 ease-in-out ${
                         index === currentImageIndex
                           ? "opacity-100 scale-100"
                           : "opacity-0 scale-95"

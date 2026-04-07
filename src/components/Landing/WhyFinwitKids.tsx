@@ -32,50 +32,58 @@ const WhyFinwitKidsSection: React.FC = () => {
     };
   }, []);
 
-  const features = [
+  const intelligenceComponents = [
     {
       icon: GraduationCap,
-      title: "Nation Building",
+      title: "Human Intelligence",
       description:
-        "Challenging gifted minds towards India's knowledge economy and civic life.",
-      color: "from-[#234f12] to-[#A5C85A]",
-      cardBgColor: "bg-white",
-      iconBgColor: "bg-white/20",
-      borderColor: "border-[#ded7bf]",
-      textColor: "text-[#1c260f]",
+        "Curiosity, judgement, values, creativity, and lived experience.",
+      surface:
+        "bg-[linear-gradient(145deg,#fff8e6_0%,#f7e9a7_52%,#ffd36a_100%)]",
+      accent: "bg-gradient-to-r from-[#b96d00] via-[#FFC94B] to-[#ff8a00]",
+      iconColor: "bg-[#8a4b00] text-[#fff8e6] shadow-[#8a4b00]/25",
+      glow: "bg-[#FFC94B]/24",
+      labelColor: "text-[#b96d00]",
+      ringColor: "ring-[#f4d57a]/80",
     },
     {
       icon: Bot,
-      title: "MENSA Standard",
+      title: "AI",
       description:
-        "Partnering with MENSA India Bengaluru for validated cognitive assessments.",
-      color: "from-[#234f12] to-[#A5C85A]",
-      cardBgColor: "bg-white",
-      iconBgColor: "bg-white/20",
-      borderColor: "border-[#ded7bf]",
-      textColor: "text-[#1c260f]",
+        "Pattern discovery, adaptive support, acceleration, and scale.",
+      surface:
+        "bg-[linear-gradient(145deg,#e9fbff_0%,#c8f3ff_54%,#8ee2f5_100%)]",
+      accent: "bg-gradient-to-r from-[#036580] via-[#2CA4A4] to-[#5EC1E8]",
+      iconColor: "bg-[#036580] text-[#e9fbff] shadow-[#036580]/25",
+      glow: "bg-[#5EC1E8]/24",
+      labelColor: "text-[#036580]",
+      ringColor: "ring-[#9de8f6]/80",
     },
     {
       icon: Brain,
-      title: "Humanness",
+      title: "Personal AI Companion",
       description:
-        "Ensuring equity - a child's postcode does not determine their ceiling.",
-      color: "from-[#234f12] to-[#A5C85A]",
-      cardBgColor: "bg-white",
-      iconBgColor: "bg-white/20",
-      borderColor: "border-[#ded7bf]",
-      textColor: "text-[#1c260f]",
+        "A learner-side partner that remembers context and supports growth.",
+      surface:
+        "bg-[linear-gradient(145deg,#f1f7ff_0%,#d8e8ff_52%,#b8d5ff_100%)]",
+      accent: "bg-gradient-to-r from-[#234f12] via-[#5a8f20] to-[#A5C85A]",
+      iconColor: "bg-[#234f12] text-[#f1f7ff] shadow-[#234f12]/25",
+      glow: "bg-[#A5C85A]/24",
+      labelColor: "text-[#4f7f17]",
+      ringColor: "ring-[#c8df8a]/80",
     },
     {
       icon: Network,
-      title: "AI-Powered Learning",
+      title: "Networked Intelligence",
       description:
-        "Intelligent screening tools and adaptive assessments to find talent at scale.",
-      color: "from-[#234f12] to-[#A5C85A]",
-      cardBgColor: "bg-white",
-      iconBgColor: "bg-white/20",
-      borderColor: "border-[#ded7bf]",
-      textColor: "text-[#1c260f]",
+        "Peers, mentors, institutions, and communities learning as a system.",
+      surface:
+        "bg-[linear-gradient(145deg,#fff0ec_0%,#ffd8cc_54%,#ffab92_100%)]",
+      accent: "bg-gradient-to-r from-[#9d2711] via-[#ff4b21] to-[#ff9a70]",
+      iconColor: "bg-[#9d2711] text-[#fff0ec] shadow-[#9d2711]/25",
+      glow: "bg-[#ff4b21]/22",
+      labelColor: "text-[#c1391a]",
+      ringColor: "ring-[#ffbea9]/80",
     },
   ];
   return (
@@ -776,7 +784,7 @@ const WhyFinwitKidsSection: React.FC = () => {
                 isVisible ? "animate-slideInLeft" : ""
               }`}
             >
-              What
+              What we
             </span>{" "}
             <span
               className={`inline-block bg-gradient-to-r from-[#2CA4A4] to-[#5EC1E8] bg-clip-text text-transparent hover:from-[#5EC1E8] hover:to-[#2CA4A4] transition-all duration-500 hover:scale-110 cursor-pointer ${
@@ -784,7 +792,7 @@ const WhyFinwitKidsSection: React.FC = () => {
               }`}
               style={{ animationDelay: "0.3s" }}
             >
-              we stand for
+              stand for
             </span>
           </h2>
           <div
@@ -796,61 +804,64 @@ const WhyFinwitKidsSection: React.FC = () => {
           ></div>
         </div>
 
-        {/* Features Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
-          {features.map((feature, index) => {
-            const IconComponent = feature.icon;
-            return (
-              <div
-                key={feature.title}
-                className={`group relative min-h-[18rem] p-7 ${feature.cardBgColor} rounded-lg shadow-xl shadow-[#234f12]/10 hover:shadow-2xl transition-all duration-700 transform hover:scale-105 hover:-translate-y-2 border ${feature.borderColor} animate-fadeInUp cursor-pointer overflow-hidden`}
-                style={{ animationDelay: `${index * 0.2}s` }}
-              >
-                <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-[#234f12] via-[#A5C85A] to-[#ff4b21] transition-all duration-500 group-hover:h-2.5" />
-                <div className="absolute right-5 top-5 rounded-full border border-[#234f12]/15 bg-[#edf5dc] px-3 py-1 text-[10px] font-bold text-[#234f12]">
-                  {String(index + 1).padStart(2, "0")}
-                </div>
-                <div className="absolute -right-10 -bottom-10 h-32 w-32 rounded-full bg-[#A5C85A]/15 blur-2xl transition-transform duration-700 group-hover:scale-150" />
+        <div className="group/collective relative mx-auto max-w-6xl">
+          <div className="relative mx-auto flex min-h-[11rem] max-w-[26rem] flex-col items-center justify-center overflow-hidden rounded-full bg-[radial-gradient(circle_at_30%_25%,#A5C85A_0%,#24602f_46%,#123d22_100%)] px-8 py-7 text-center shadow-2xl shadow-[#234f12]/30 ring-8 ring-white/80 transition duration-700 group-hover/collective:scale-[1.03] group-hover/collective:ring-[#fff4d0]">
+            <div className="absolute inset-0 rounded-full border border-[#d8fff9]/40" />
+            <div className="absolute -left-8 -top-8 h-28 w-28 rounded-full bg-[#d8fff9]/25 blur-2xl" />
+            <div className="absolute -bottom-10 right-2 h-32 w-32 rounded-full bg-[#FFC94B]/25 blur-2xl" />
+            <p className="relative text-[10px] font-black uppercase tracking-[0.2em] text-[#FFC94B]">
+              Mission MENSA
+            </p>
+            <h3 className="relative mt-2 font-serif text-2xl font-black leading-tight text-[#fff4d0] sm:text-3xl">
+              Collective Intelligence
+            </h3>
+            <p className="relative mt-3 text-xs font-semibold leading-relaxed text-white/82 sm:text-sm">
+              Four forces working as one learning system
+            </p>
+          </div>
 
-                {/* Animated background sparkles */}
-                <div className="absolute top-4 right-4 w-8 h-8 opacity-20 group-hover:opacity-40 transition-opacity duration-500">
-                  <div className="absolute w-2 h-2 bg-[#ff4b21] rounded-full animate-ping"></div>
-                  <div className="absolute top-2 left-3 w-1 h-1 bg-[#234f12] rounded-full animate-pulse"></div>
-                  <div className="absolute top-1 left-1 w-1.5 h-1.5 bg-[#A5C85A] rounded-full animate-bounce"></div>
-                </div>
-
-                {/* Icon container */}
-                <div
-                    className={`relative w-16 h-16 bg-[#edf5dc] backdrop-blur-sm rounded-lg flex items-center justify-center mb-7 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-lg`}
-                >
-                  <IconComponent
-                    className={`w-8 h-8 text-[#234f12] group-hover:scale-110 transition-transform duration-300 drop-shadow-lg`}
-                  />
-
-                  {/* Pulsing ring on hover */}
-                  <div className="absolute inset-0 border-4 border-[#234f12]/10 rounded-lg opacity-0 group-hover:opacity-100 group-hover:scale-125 transition-all duration-500"></div>
-                </div>
-
-                {/* Content */}
-                <div className="space-y-3 relative z-10">
-                  <h3 className={`text-xl font-bold ${feature.textColor} group-hover:translate-x-1 transition-transform duration-300`}>
-                    {feature.title}
-                  </h3>
-                  <p
-                    className={`${feature.textColor} opacity-75 leading-relaxed group-hover:opacity-100 transition-opacity duration-300 text-sm`}
+          <div className="mt-8 grid gap-3 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)_auto_minmax(0,1fr)_auto_minmax(0,1fr)] lg:items-stretch">
+            {intelligenceComponents.map((component, index) => {
+              const IconComponent = component.icon;
+              return (
+                <React.Fragment key={component.title}>
+                  <div
+                    className={`group/card relative flex min-h-[11.5rem] min-w-0 flex-col overflow-hidden rounded-lg border border-white/85 ${component.surface} p-3 shadow-xl shadow-[#234f12]/12 ring-1 ${component.ringColor} transition duration-700 hover:rotate-[-1.5deg] hover:scale-[1.02] hover:border-white hover:shadow-2xl hover:shadow-[#234f12]/20 sm:p-4 lg:h-full`}
+                    style={{ animationDelay: `${index * 0.16}s` }}
                   >
-                    {feature.description}
-                  </p>
-                </div>
-
-                {/* Shine effect on hover */}
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#d7e6a7]/30 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 pointer-events-none"></div>
-
-                {/* Floating decorative elements */}
-                <div className="absolute -top-2 -left-2 w-12 h-12 bg-[#234f12]/5 rounded-full blur-xl group-hover:scale-150 transition-transform duration-700"></div>
-              </div>
-            );
-          })}
+                    <div className={`absolute inset-x-0 top-0 h-1.5 ${component.accent}`} />
+                    <div className={`absolute -right-8 -top-8 h-24 w-24 rounded-full ${component.glow} blur-2xl transition duration-700 group-hover/card:scale-150`} />
+                    <div className="absolute -bottom-10 left-4 h-24 w-24 rounded-full bg-white/28 blur-2xl transition duration-700 group-hover/card:scale-125" />
+                    <div className="flex items-start gap-2.5">
+                      <div className={`relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${component.iconColor} shadow-lg transition duration-500 group-hover/card:rotate-6 group-hover/card:scale-110`}>
+                        <div className="absolute inset-0 rounded-full border border-[#d8fff9]/35" />
+                        <IconComponent className="h-5 w-5" />
+                      </div>
+                      <div className="relative min-w-0">
+                        <p className={`text-[10px] font-black uppercase tracking-[0.14em] ${component.labelColor}`}>
+                          Factor 0{index + 1}
+                        </p>
+                        <h3 className="mt-1 text-lg font-black leading-tight text-[#1c260f]">
+                          {component.title}
+                        </h3>
+                      </div>
+                    </div>
+                    <p className="relative mt-3 text-sm leading-relaxed text-[#1c260f]/74">
+                      {component.description}
+                    </p>
+                    <div className="absolute inset-0 translate-x-[-120%] bg-gradient-to-r from-transparent via-white/45 to-transparent transition-transform duration-1000 group-hover/card:translate-x-[120%]" />
+                  </div>
+                  {index < intelligenceComponents.length - 1 ? (
+                    <div className="flex items-center justify-center py-1 lg:py-0">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#ff4b21] text-lg font-black text-white shadow-lg shadow-[#ff4b21]/25 ring-4 ring-white">
+                        &times;
+                      </div>
+                    </div>
+                  ) : null}
+                </React.Fragment>
+              );
+            })}
+          </div>
         </div>
 
       </div>

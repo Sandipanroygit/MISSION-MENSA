@@ -326,7 +326,7 @@ export default function BlogDraftEditorPage() {
       author: user?.name ?? "Unknown Author",
       authorEmail: user?.email ?? "guest@example.com",
       image:
-        "https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=1200&q=80",
+        "https://induscommunityschool.com/wp-content/uploads/2023/04/banner-3.jpg",
       content: plainContent
         ? plainContent
             .split(/(?<=[.!?])\s+/)

@@ -6,6 +6,7 @@ import {
   GraduationCap,
   Plus,
 } from "lucide-react";
+
 const HowItWorksSection: React.FC = () => {
   const steps = [
     {
@@ -707,7 +708,7 @@ const HowItWorksSection: React.FC = () => {
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* How It Works Section */}
-        <div className="mb-20">
+        <div className="mb-14">
           {/* Section Header */}
           <div className="text-center mb-16 animate-fadeInUp">
             <p className="mb-3 text-[10px] font-bold uppercase tracking-wide text-[#d71912]">
@@ -866,7 +867,6 @@ const HowItWorksSection: React.FC = () => {
               );
             })}
           </div>
-
         </div>
 
       </div>

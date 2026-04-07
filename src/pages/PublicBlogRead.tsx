@@ -1,4 +1,4 @@
-import { ArrowLeft, PlayCircle, Sparkles } from "lucide-react";
+import { ArrowLeft, FileText, PlayCircle, Sparkles } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, Navigate, useParams } from "react-router-dom";
 import {
@@ -6,6 +6,8 @@ import {
   getPublishedBlogsAsync,
   mergePublishedAndSeedBlogs,
   type BlogEntry,
+  type BlogPdfBlock,
+  type BlogTableBlock,
   type BlogYoutubeBlock,
 } from "./dashboard/blogData";
 import ScrollToTop from "@/components/common/ScrolltoTop";
@@ -99,6 +101,85 @@ function PublicYouTubeBlock({
   );
 }
 
+function PublicPdfBlock({ block }: { block: BlogPdfBlock }) {
+  return (
+    <div className="overflow-hidden rounded-[2rem] border border-[#E3EAEA] bg-white shadow-lg">
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#E3EAEA] bg-[#F7FAFA] p-5">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#2CA4A4]">
+            PDF Report
+          </p>
+          <h3 className="mt-2 text-xl font-bold text-[#2F3E3E]">
+            {block.title}
+          </h3>
+        </div>
+        <a
+          href={block.url}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex items-center gap-2 rounded-full bg-[#2F3E3E] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#2CA4A4]"
+        >
+          <FileText size={18} />
+          Open PDF
+        </a>
+      </div>
+      <iframe
+        src={block.url}
+        title={block.title}
+        className="h-[72vh] min-h-[640px] w-full bg-[#F7FAFA]"
+      />
+    </div>
+  );
+}
+
+function PublicTableBlock({ block }: { block: BlogTableBlock }) {
+  return (
+    <div className="overflow-hidden rounded-[2rem] border border-[#DCE8E8] bg-white shadow-lg">
+      <div className="border-b border-[#DCE8E8] bg-[#F7FAFA] px-5 py-4 sm:px-6">
+        <h3 className="text-xl font-black text-[#2F3E3E]">{block.title}</h3>
+      </div>
+      <div className="overflow-x-auto">
+        <table className="min-w-[760px] w-full border-collapse text-left text-sm leading-6 text-[#2F3E3E]">
+          <thead>
+            <tr className="bg-[#2F3E3E] text-white">
+              {block.headers.map((header) => (
+                <th
+                  key={header || "comparison-point"}
+                  scope="col"
+                  className="border-r border-white/15 px-5 py-4 text-sm font-bold last:border-r-0"
+                >
+                  {header}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {block.rows.map((row, rowIndex) => (
+              <tr
+                key={`${block.title}-${row[0]}`}
+                className={rowIndex % 2 === 0 ? "bg-white" : "bg-[#F7FAFA]"}
+              >
+                {row.map((cell, cellIndex) => (
+                  <td
+                    key={`${block.title}-${row[0]}-${cellIndex}`}
+                    className={`border-r border-t border-[#DCE8E8] px-5 py-4 align-top last:border-r-0 ${
+                      cellIndex === 0
+                        ? "font-black text-[#2CA4A4]"
+                        : "font-medium text-[#2F3E3E]/82"
+                    }`}
+                  >
+                    {cell}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
 export default function PublicBlogReadPage() {
   const { slug } = useParams<{ slug: string }>();
   const [activeVideoIndex, setActiveVideoIndex] = useState<number | null>(null);
@@ -173,12 +254,30 @@ export default function PublicBlogReadPage() {
                     );
                   }
 
+                  if (block.type === "youtube") {
+                    return (
+                      <PublicYouTubeBlock
+                        key={`${blog.slug}-youtube-${index}`}
+                        block={block}
+                        isPlaying={activeVideoIndex === index}
+                        onPlay={() => setActiveVideoIndex(index)}
+                      />
+                    );
+                  }
+
+                  if (block.type === "table") {
+                    return (
+                      <PublicTableBlock
+                        key={`${blog.slug}-table-${index}`}
+                        block={block}
+                      />
+                    );
+                  }
+
                   return (
-                    <PublicYouTubeBlock
-                      key={`${blog.slug}-youtube-${index}`}
+                    <PublicPdfBlock
+                      key={`${blog.slug}-pdf-${index}`}
                       block={block}
-                      isPlaying={activeVideoIndex === index}
-                      onPlay={() => setActiveVideoIndex(index)}
                     />
                   );
                 })}

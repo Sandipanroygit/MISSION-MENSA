@@ -12,7 +12,24 @@ export interface BlogYoutubeBlock {
   title: string;
 }
 
-export type BlogContentBlock = string | BlogYoutubeBlock;
+export interface BlogPdfBlock {
+  type: "pdf";
+  url: string;
+  title: string;
+}
+
+export interface BlogTableBlock {
+  type: "table";
+  title: string;
+  headers: string[];
+  rows: string[][];
+}
+
+export type BlogContentBlock =
+  | string
+  | BlogYoutubeBlock
+  | BlogPdfBlock
+  | BlogTableBlock;
 
 export interface BlogEntry {
   slug: string;
@@ -38,7 +55,7 @@ export const blogs: BlogEntry[] = [
     views: 184,
     likes: 37,
     image:
-      "https://images.unsplash.com/photo-1758270705518-b61b40527e76?auto=format&fit=crop&w=1200&q=80",
+      "https://upload.wikimedia.org/wikipedia/commons/6/69/Classroom_in_India.jpg",
     content: [
       "I did not see it coming.",
       "The kickoff meeting was a normal enough setting — a room of colleagues, an agenda, introductions. And then my name was mentioned, not as a participant, but as the lead. I remember the moment clearly, not because I felt proud, but because I felt genuinely puzzled. I was still on probation with the organisation. I had come in as the psychologist. My immediate instinct was practical and, if I am honest, a little deflating: *they've put me in charge because they need someone to do the Mensa assessments. That's the role. That's why it's me.*",
@@ -62,7 +79,7 @@ export const blogs: BlogEntry[] = [
     views: 142,
     likes: 29,
     image:
-      "https://images.pexels.com/photos/8471919/pexels-photo-8471919.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "https://upload.wikimedia.org/wikipedia/commons/e/e6/5th_grade_Indian_students.jpg",
     content: [
       "I walked into the first round of screenings carrying a mental image that was, I now realise, approximately thirty years old.",
       "Underprivileged, in the picture I had held for most of my career, looked a particular way. It carried certain markers — hesitance, deference, a kind of learned smallness. Children who had grown up without resources, without the scaffolding of enriched environments, tended — or so I had assumed — to present with a particular tentativeness about their own abilities. They needed to be drawn out. Encouraged. Told they were capable before they could believe it themselves.",
@@ -79,6 +96,145 @@ export const blogs: BlogEntry[] = [
       "**What this surfaces as a research insight** is a design principle that I believe has broader implications beyond this cohort: the most dangerous assumption in educational technology is that we know who the learner is before we've actually met them. We came in with a thirty-year-old image of underprivileged. The children dismantled it in a single conversation.",
       "Any learning system — human or AI — that cannot update its model of the learner in real time will, at best, provide the wrong kind of support. At worst, it will replicate the very invisibility these children have spent their whole lives escaping.",
       "We are building something different. Something that sees them first.",
+    ],
+  },
+  {
+    slug: "david-game-alpha-school-report",
+    title: "Research & Comparison Between Projects Related to Project MENSA",
+    summary:
+      "A comparative report on David Game College, Alpha School, and ideas Mission MENSA can adopt from AI-led learning models.",
+    author: "Mr. Vishwah Sivagurunathan",
+    authorEmail: "team@missionmensa.org",
+    views: 128,
+    likes: 24,
+    image:
+      "https://upload.wikimedia.org/wikipedia/commons/6/63/Students_at_a_school_in_Bangalore%2C_India_learning_to_code_on_Progate.jpg",
+    content: [
+      "**Overview**",
+      "There are many programs or schools around the world similar to our project, MENSA, but there are two schools that are strikingly comparable to our project. I have summarized what those two schools are doing and what ideas we can incorporate from them into our program.",
+      "**David Game College - Sabrewing Programme, London**",
+      "David Game College, an independent sixth form in London's City district, launched the Sabrewing Programme in September 2024, the UK's first programme to entirely replace traditional classroom teaching with AI-driven adaptive learning for core curriculum subjects. The programme serves GCSE and A Level students across English, Maths, Sciences, Geography, Computer Science, Psychology, and Economics.",
+      "**How It Works**",
+      "**Morning AI Study:** Students learn through adaptive platforms powered by Violet, their AI personal tutor. The system checks understanding, targets knowledge gaps, and enforces mastery gating. Students advance only when each topic is fully mastered. Learning Coaches monitor real-time data dashboards and intervene on a just-in-time basis.",
+      "**Afternoon Life Skills:** 300+ hours annually of practicals and workshops: resilience, public speaking, debate, teamwork, entrepreneurship, financial literacy, technology, and physical education.",
+      "**Learning Coaches, Not Teachers:** Coaches are qualified teachers but do not necessarily know the subject content. They guide students through the AI systems, monitor studying behaviours using learning analytics, and mentor soft skills. Subject specialists are available for revision classes and exam preparation as exams approach. The pilot launched with 7 students; by July 2025 the programme expanded to all GCSE and A Level students.",
+      "**Results & Criticisms**",
+      "72% of 2025 students secured at least one Russell Group university offer. The ISA Chief Executive called it a potential game-changer in education. Critics note that the high cost limits accessibility, the small cohort makes results hard to generalise, there are concerns about whether there is sufficient social learning for students, and the high coach-to-student ratio is not easily replicable at scale.",
+      "**Alpha School - 2 Hour Learning Model, USA**",
+      "Austin Alpha School is a private K-12 network founded in Austin, Texas. Students complete all core academics in approximately two hours each morning using adaptive AI software, then spend afternoons on life-skills workshops and entrepreneurial projects. There are no traditional teachers; adults are called Guides. Tech billionaire Joe Liemandt has committed $1 billion to scale the model.",
+      "**How It Works**",
+      "**Morning 2 Hour Academics:** Four 30-minute AI-powered sessions in maths, science, social studies, and language, plus 20 minutes of test-taking skills. The AI uses adaptive apps, not chat-based systems, with a vision model that watches the screen and coaches students. Mastery-based progression ensures no knowledge gaps.",
+      "**Afternoon Life Skills & Projects:** Hands-on workshops cover public speaking, coding, financial literacy, entrepreneurship, and outdoor education. Students earn Alpha Bucks, a school currency, for completing work, teaching financial decision-making from kindergarten. Notable projects include student-run food trucks, TEDx Youth Talks, mobile app development, and Airbnb management.",
+      "**Guides, Not Teachers:** Guides are not credentialed educators or subject experts. They are recruited from elite universities and professional backgrounds such as tech, entrepreneurship, and arts for their ability to motivate, mentor, and design engaging workshops. They earn six-figure salaries. If a student struggles academically, Alpha provides virtual access to subject-matter experts.",
+      "**Results & Criticisms**",
+      "Alpha claims students score in the top 1-2% nationally on MAP standardised tests and reports a 2.6x faster growth rate than peers, with 94% of students saying they love school. The US Secretary of Education visited the Austin campus in September 2025. However, results are self-reported and have not been independently verified by external researchers. A 2026 Stanford review of 800+ papers found that AI benefits are less clear when students work without AI. Charter applications were denied in Pennsylvania, Arkansas, North Carolina, Utah, and South Carolina. The high cost, between $40K and $75K, makes the model inaccessible to most families.",
+      "**Ideas for Mission Mensa / Indus AI**",
+      "**1. Morning AI / Afternoon Human Split:** Both programmes validate this structure. Our mornings can use the Indus AI Socratic agent for JEE Main. Afternoons can focus on Design Thinking, Life Entrepreneurship, Reflection & Growth, and mentor sessions.",
+      "**2. Mastery-Gating:** Both enforce the principle of not advancing until mastery is achieved. Our skill-tree with prerequisite locking already does this, making it globally validated.",
+      "**3. Redefine the Adult Role:** Replace teachers with Mentors or Coaches focused on character, discipline, and purpose, not subject instruction. This matches our Collective Intelligence model exactly.",
+      "**4. Real World Entrepreneurial Projects:** Adopt Alpha's approach: real ventures with real stakes, not simulations. Each Mensa student launches a startup aligned to their talent domain.",
+      "**5. Just-in-Time Intervention:** David Game's coaches use live data dashboards. Our Mem0 memory layer makes this even more powerful with persistent behavioural pattern detection across sessions.",
+      {
+        type: "table",
+        title: "Where Indus AI Stands Apart",
+        headers: ["", "David Game", "Alpha School", "Indus AI"],
+        rows: [
+          [
+            "AI Method",
+            "External platforms",
+            "Adaptive apps (no chat)",
+            "Socratic agent (Mem0)",
+          ],
+          [
+            "Teaching",
+            "Content delivery",
+            "App-based mastery",
+            "Never gives answers",
+          ],
+          [
+            "Students",
+            "GCSE / A Level resits",
+            "General K-12",
+            "Exceptional (IQ 130+)",
+          ],
+          ["Cost", "GBP 27K/year", "$40K-$75K/year", "Accessible"],
+          ["Market", "UK only", "US only", "India"],
+          ["Innovation", "None", "Student projects", "Startup per student"],
+          [
+            "Systems",
+            "2 (acad + life)",
+            "2 (acad + life)",
+            "6 learning systems",
+          ],
+        ],
+      },
+      "**The Opportunity**",
+      "David Game and Alpha have validated the hypothesis that AI can handle academic instruction while humans focus on character and life skills. But both serve affluent Western families with tuition above $30,000.",
+      "No programme currently combines a conversational Socratic AI agent, persistent per-student memory, competitive exam preparation for JEE Main, a focus on underprivileged exceptional talent, and startup creation as a graduation requirement.",
+      "Mission Mensa applies a globally validated model to a fundamentally more impactful context: discovering and cultivating India's exceptional outliers.",
+    ],
+  },
+  {
+    slug: "agentic-ai-transform-education-reduce-income-inequality",
+    title:
+      "Can Agentic AI Transform Education and Reduce Income Inequality? A New Path Forward for Underprivileged Children",
+    summary:
+      "How personalized AI-powered learning could democratize education, break the cycle of poverty, and create the next generation of innovators.",
+    author: "Mrs Kamna Sinha Maam",
+    authorEmail: "team@missionmensa.org",
+    views: 136,
+    likes: 31,
+    image:
+      "https://upload.wikimedia.org/wikipedia/commons/4/40/Indian_student_reading.jpg",
+    content: [
+      "**How personalized AI-powered learning could democratize education, break the cycle of poverty, and create the next generation of innovators**",
+      "**The Crisis We Face**",
+      "The world stands at a crossroads. Artificial intelligence is reshaping our economy at unprecedented speed, and early warning signs suggest it will deepen existing inequalities rather than solve them. The International Monetary Fund warns that AI will affect nearly 40% of jobs globally - rising to 60% in advanced economies - with a troubling conclusion: \"In most scenarios, AI will likely worsen overall inequality.\"",
+      "But what if we're looking at this wrong? What if the very technology threatening to divide us could instead become the great equalizer?",
+      "The answer lies not in AI replacing workers, but in AI literacy becoming as universal as reading and writing. And for the world's most disadvantaged children - the 750 million people who lack access to basic education - agentic AI systems might offer something unprecedented: personalized, world-class education available anywhere, anytime, without traditional schools or teachers.",
+      "**The Intersection: Where \"Haves\" Meet \"Knows\"**",
+      "To understand the opportunity, we must first understand the problem. Traditional economic inequality divides us into \"haves\" and \"have-nots\" based on financial capital. But AI introduces a new dimension: the \"knows\" versus \"knows-not\" divide based on AI literacy.",
+      "These two divides create four distinct groups: 1. Haves + Knows: Wealthy individuals with AI skills experience exponential compounding of opportunities. 2. Haves + Knows-Not: The privileged but vulnerable - wealth provides a cushion but they risk being outcompeted. 3. Have-Nots + Knows: The most hopeful quadrant - where AI literacy becomes the bridge to economic opportunity. 4. Have-Nots + Knows-Not: The most dangerous spiral - lack of both resources and skills creates compounding disadvantage.",
+      "The Brookings Institution confirms this pattern: \"Given this likely concentration of productivity gains among higher-income workers, policymakers should prioritize investments in AI literacy and access for a broader population of workers.\"",
+      "The IMF adds that \"workers who are able to access the benefits of AI could increase their productivity and salary, while those who cannot are at risk of falling further behind.\"",
+      "Here's the critical insight: unlike wealth, which takes generations to redistribute, AI literacy can be distributed at near-zero marginal cost. By moving children from \"Knows-Not\" to \"Knows,\" we can transform them from the most disadvantaged quadrant to the most hopeful one - regardless of their starting financial position.",
+      "**The Traditional Education Barrier**",
+      "For underprivileged children, traditional education has always been the promised path to upward mobility. But that path is broken.",
+      "The reality is stark: 750 million people worldwide lack access to education and basic literacy. Nearly two-thirds of 10-year-olds cannot read and understand a simple text. In many developing countries, children don't acquire functional literacy or numeracy even after four years of school. There is a massive gender digital divide: for every 100 male youth with digital skills, there are only 65 female youth.",
+      "The problem isn't just access to schools - it's access to quality education. As the World Bank notes, \"Many school systems in underdeveloped countries are, by their own admission, unable to provide their children with even the most basic skills in reading, writing, and math.\"",
+      "Traditional schooling requires physical infrastructure, trained teachers, consistent attendance, standardized curriculum, and geographic proximity to schools.",
+      "For hundreds of millions of children, these requirements are insurmountable barriers.",
+      "**Enter Agentic AI: The Personalized Tutor Revolution**",
+      "Now, imagine a different scenario.",
+      "A 10-year-old girl in rural India who has never attended school can access an AI tutor on a basic smartphone. This isn't a chatbot that answers questions - it's an agentic AI system that assesses her current knowledge level across all subjects, creates a personalized learning path adapted to her pace and learning style, teaches in her native language with culturally relevant examples, adjusts in real time based on her comprehension and engagement, provides unlimited patience, tracks her progress, offers multimedia learning, functions offline when internet connectivity is unavailable, and costs nearly nothing to scale to millions of students.",
+      "This isn't science fiction. MIT researcher Cynthia Breazeal notes that \"70 per cent of teens have used at least one type of generative AI,\" and emphasizes the importance of students being \"prepared to become engaged, productive citizens, who can use AI and understand its societal implications.\"",
+      "The technology exists. The question is: will we deploy it to serve those who need it most?",
+      "**The Agentic AI Advantage for Underprivileged Children**",
+      "What makes agentic AI particularly powerful for underprivileged children isn't just personalization - it's the removal of traditional barriers.",
+      "Geographic Independence: A child in a remote village has the same access to world-class AI tutoring as a child in an elite urban school. Distance becomes irrelevant.",
+      "Economic Accessibility: While premium AI tools exist, the marginal cost of providing AI tutoring to one more student approaches zero. Google.org has already contributed over $40 million to AI literacy initiatives, reaching more than 13 million students. This is a fraction of what traditional school infrastructure would cost.",
+      "Time Flexibility: Children who work during the day or care for siblings can learn at night or in short bursts throughout the day. The AI tutor is always available.",
+      "Infinite Patience: Unlike human teachers managing large classes, AI tutors never get frustrated, never give up on a struggling student, and can repeat explanations thousands of times in different ways until understanding clicks.",
+      "No Prerequisite Bias: Traditional schools often assume baseline knowledge. Agentic AI starts exactly where each child is - whether they're behind, on level, or advanced - and builds from there.",
+      "Multilingual Support: AI can teach in hundreds of languages and dialects, removing language barriers that plague traditional education in multilingual regions.",
+      "Learning Disability Accommodation: AI can automatically adapt to different learning styles, speeds, and needs without requiring specialized teachers or resources.",
+      "Confidence Building: Many underprivileged children experience shame in traditional classrooms when they're behind their peers. AI tutors provide judgment-free learning environments where mistakes are private learning opportunities.",
+      "**From Education to Entrepreneurship: Breaking the Cycle**",
+      "Here's where the transformation becomes revolutionary: AI-literate children from disadvantaged backgrounds don't just gain employability - they gain the tools to become creators and entrepreneurs.",
+      "**The Democratization of Capability**",
+      "In the past, creating a business required capital for hiring teams, access to specialized expertise, networks of professional contacts, and physical infrastructure.",
+      "AI fundamentally changes this equation. As noted in our analysis of the \"knows\" advantage, a single AI-literate individual can now build websites and applications, create marketing content, analyze market data, design products, manage operations, provide customer service, and handle accounting and finance.",
+      "Tasks that once required a team of specialists can now be accomplished by one person with AI tools.",
+      "**The Compounding Advantage**",
+      "The World Economic Forum notes that \"AI & Machine Learning specialists top the list of fastest-growing jobs\" and that \"the most likely future is one where AI literacy and machine learning skills are at a premium, making AI education a new and valuable currency.\"",
+      "But beyond employment, AI literacy enables lower barriers to innovation, global market access, continuous learning, network effects, and wealth creation. Ideas can be tested quickly, AI translation can support worldwide markets, AI tutors can provide lifelong learning support, AI-literate communities can collaborate globally, and entrepreneurs can build valuable businesses that create jobs in their communities.",
+      "**The Call to Action**",
+      "We stand at a unique moment in history. The technology exists to break the cycle of poverty through education. The question is whether we have the vision and will to deploy it for those who need it most.",
+      "To policymakers: Make universal AI literacy a priority equivalent to universal basic education. Invest in infrastructure, access, and support.",
+      "To technology companies: Follow Google's lead. Provide free or heavily subsidized AI educational tools to underprivileged populations. Make this a core part of social responsibility, not a marketing afterthought.",
+      "To NGOs and international organizations: Expand the AI Skills Coalition model. Build community support systems. Measure outcomes. Share what works.",
+      "To researchers and educators: Continue developing AI literacy frameworks like the OECD/EC model. Make them practical, culturally adaptable, and proven through rigorous evaluation.",
+      "To all of us: Recognize that the \"Knows vs. Knows-Not\" divide will define economic opportunity in the 21st century as profoundly as literacy defined it in the 20th. We must ensure AI literacy becomes universal, not privileged.",
     ],
   },
 ];
