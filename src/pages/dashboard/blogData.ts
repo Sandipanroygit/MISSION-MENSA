@@ -25,6 +25,12 @@ export interface BlogTableBlock {
   rows: string[][];
 }
 
+export interface BlogHeadingBlock {
+  type: "heading";
+  level: 1 | 2 | 3;
+  text: string;
+}
+
 export type BlogContentBlock =
   | string
   | BlogYoutubeBlock
@@ -110,30 +116,41 @@ export const blogs: BlogEntry[] = [
     image:
       "https://upload.wikimedia.org/wikipedia/commons/6/63/Students_at_a_school_in_Bangalore%2C_India_learning_to_code_on_Progate.jpg",
     content: [
-      "**Overview**",
+      { type: "heading", level: 1, text: "Overview" },
       "There are many programs or schools around the world similar to our project, MENSA, but there are two schools that are strikingly comparable to our project. I have summarized what those two schools are doing and what ideas we can incorporate from them into our program.",
-      "**David Game College - Sabrewing Programme, London**",
+      { type: "heading", level: 1, text: "David Game College - Sabrewing Programme, London" },
       "David Game College, an independent sixth form in London's City district, launched the Sabrewing Programme in September 2024, the UK's first programme to entirely replace traditional classroom teaching with AI-driven adaptive learning for core curriculum subjects. The programme serves GCSE and A Level students across English, Maths, Sciences, Geography, Computer Science, Psychology, and Economics.",
-      "**How It Works**",
-      "**Morning AI Study:** Students learn through adaptive platforms powered by Violet, their AI personal tutor. The system checks understanding, targets knowledge gaps, and enforces mastery gating. Students advance only when each topic is fully mastered. Learning Coaches monitor real-time data dashboards and intervene on a just-in-time basis.",
-      "**Afternoon Life Skills:** 300+ hours annually of practicals and workshops: resilience, public speaking, debate, teamwork, entrepreneurship, financial literacy, technology, and physical education.",
-      "**Learning Coaches, Not Teachers:** Coaches are qualified teachers but do not necessarily know the subject content. They guide students through the AI systems, monitor studying behaviours using learning analytics, and mentor soft skills. Subject specialists are available for revision classes and exam preparation as exams approach. The pilot launched with 7 students; by July 2025 the programme expanded to all GCSE and A Level students.",
-      "**Results & Criticisms**",
+      { type: "heading", level: 2, text: "How It Works" },
+      { type: "heading", level: 3, text: "Morning AI Study" },
+      "Students learn through adaptive platforms powered by Violet, their AI personal tutor. The system checks understanding, targets knowledge gaps, and enforces mastery gating. Students advance only when each topic is fully mastered. Learning Coaches monitor real-time data dashboards and intervene on a just-in-time basis.",
+      { type: "heading", level: 3, text: "Afternoon Life Skills" },
+      "300+ hours annually of practicals and workshops: resilience, public speaking, debate, teamwork, entrepreneurship, financial literacy, technology, and physical education.",
+      { type: "heading", level: 2, text: "Learning Coaches, Not Teachers" },
+      "Coaches are qualified teachers but do not necessarily know the subject content. They guide students through the AI systems, monitor studying behaviours using learning analytics, and mentor soft skills. Subject specialists are available for revision classes and exam preparation as exams approach. The pilot launched with 7 students; by July 2025 the programme expanded to all GCSE and A Level students.",
+      { type: "heading", level: 2, text: "Results & Criticisms" },
       "72% of 2025 students secured at least one Russell Group university offer. The ISA Chief Executive called it a potential game-changer in education. Critics note that the high cost limits accessibility, the small cohort makes results hard to generalise, there are concerns about whether there is sufficient social learning for students, and the high coach-to-student ratio is not easily replicable at scale.",
-      "**Alpha School - 2 Hour Learning Model, USA**",
+      { type: "heading", level: 1, text: "Alpha School - 2 Hour Learning Model, USA" },
       "Austin Alpha School is a private K-12 network founded in Austin, Texas. Students complete all core academics in approximately two hours each morning using adaptive AI software, then spend afternoons on life-skills workshops and entrepreneurial projects. There are no traditional teachers; adults are called Guides. Tech billionaire Joe Liemandt has committed $1 billion to scale the model.",
-      "**How It Works**",
-      "**Morning 2 Hour Academics:** Four 30-minute AI-powered sessions in maths, science, social studies, and language, plus 20 minutes of test-taking skills. The AI uses adaptive apps, not chat-based systems, with a vision model that watches the screen and coaches students. Mastery-based progression ensures no knowledge gaps.",
-      "**Afternoon Life Skills & Projects:** Hands-on workshops cover public speaking, coding, financial literacy, entrepreneurship, and outdoor education. Students earn Alpha Bucks, a school currency, for completing work, teaching financial decision-making from kindergarten. Notable projects include student-run food trucks, TEDx Youth Talks, mobile app development, and Airbnb management.",
-      "**Guides, Not Teachers:** Guides are not credentialed educators or subject experts. They are recruited from elite universities and professional backgrounds such as tech, entrepreneurship, and arts for their ability to motivate, mentor, and design engaging workshops. They earn six-figure salaries. If a student struggles academically, Alpha provides virtual access to subject-matter experts.",
-      "**Results & Criticisms**",
+      { type: "heading", level: 2, text: "How It Works" },
+      { type: "heading", level: 3, text: "Morning 2 Hour Academics" },
+      "Four 30-minute AI-powered sessions in maths, science, social studies, and language, plus 20 minutes of test-taking skills. The AI uses adaptive apps, not chat-based systems, with a vision model that watches the screen and coaches students. Mastery-based progression ensures no knowledge gaps.",
+      { type: "heading", level: 3, text: "Afternoon Life Skills & Projects" },
+      "Hands-on workshops cover public speaking, coding, financial literacy, entrepreneurship, and outdoor education. Students earn Alpha Bucks, a school currency, for completing work, teaching financial decision-making from kindergarten. Notable projects include student-run food trucks, TEDx Youth Talks, mobile app development, and Airbnb management.",
+      { type: "heading", level: 2, text: "Guides, Not Teachers" },
+      "Guides are not credentialed educators or subject experts. They are recruited from elite universities and professional backgrounds such as tech, entrepreneurship, and arts for their ability to motivate, mentor, and design engaging workshops. They earn six-figure salaries. If a student struggles academically, Alpha provides virtual access to subject-matter experts.",
+      { type: "heading", level: 2, text: "Results & Criticisms" },
       "Alpha claims students score in the top 1-2% nationally on MAP standardised tests and reports a 2.6x faster growth rate than peers, with 94% of students saying they love school. The US Secretary of Education visited the Austin campus in September 2025. However, results are self-reported and have not been independently verified by external researchers. A 2026 Stanford review of 800+ papers found that AI benefits are less clear when students work without AI. Charter applications were denied in Pennsylvania, Arkansas, North Carolina, Utah, and South Carolina. The high cost, between $40K and $75K, makes the model inaccessible to most families.",
-      "**Ideas for Mission Mensa / Indus AI**",
-      "**1. Morning AI / Afternoon Human Split:** Both programmes validate this structure. Our mornings can use the Indus AI Socratic agent for JEE Main. Afternoons can focus on Design Thinking, Life Entrepreneurship, Reflection & Growth, and mentor sessions.",
-      "**2. Mastery-Gating:** Both enforce the principle of not advancing until mastery is achieved. Our skill-tree with prerequisite locking already does this, making it globally validated.",
-      "**3. Redefine the Adult Role:** Replace teachers with Mentors or Coaches focused on character, discipline, and purpose, not subject instruction. This matches our Collective Intelligence model exactly.",
-      "**4. Real World Entrepreneurial Projects:** Adopt Alpha's approach: real ventures with real stakes, not simulations. Each Mensa student launches a startup aligned to their talent domain.",
-      "**5. Just-in-Time Intervention:** David Game's coaches use live data dashboards. Our Mem0 memory layer makes this even more powerful with persistent behavioural pattern detection across sessions.",
+      { type: "heading", level: 1, text: "Ideas for Mission Mensa / Indus AI" },
+      { type: "heading", level: 2, text: "1. Morning AI / Afternoon Human Split" },
+      "Both programmes validate this structure. Our mornings can use the Indus AI Socratic agent for JEE Main. Afternoons can focus on Design Thinking, Life Entrepreneurship, Reflection & Growth, and mentor sessions.",
+      { type: "heading", level: 2, text: "2. Mastery-Gating" },
+      "Both enforce the principle of not advancing until mastery is achieved. Our skill-tree with prerequisite locking already does this, making it globally validated.",
+      { type: "heading", level: 2, text: "3. Redefine the Adult Role" },
+      "Replace teachers with Mentors or Coaches focused on character, discipline, and purpose, not subject instruction. This matches our Collective Intelligence model exactly.",
+      { type: "heading", level: 2, text: "4. Real World Entrepreneurial Projects" },
+      "Adopt Alpha's approach: real ventures with real stakes, not simulations. Each Mensa student launches a startup aligned to their talent domain.",
+      { type: "heading", level: 2, text: "5. Just-in-Time Intervention" },
+      "David Game's coaches use live data dashboards. Our Mem0 memory layer makes this even more powerful with persistent behavioural pattern detection across sessions.",
       {
         type: "table",
         title: "Where Indus AI Stands Apart",

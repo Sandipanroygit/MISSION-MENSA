@@ -6,6 +6,7 @@ import {
   getPublishedBlogsAsync,
   mergePublishedAndSeedBlogs,
   type BlogEntry,
+  type BlogHeadingBlock,
   type BlogPdfBlock,
   type BlogTableBlock,
   type BlogYoutubeBlock,
@@ -132,6 +133,19 @@ function PublicPdfBlock({ block }: { block: BlogPdfBlock }) {
   );
 }
 
+function PublicHeadingBlock({ block }: { block: BlogHeadingBlock }) {
+  const weightClasses =
+    block.level === 1
+      ? "text-3xl sm:text-4xl font-serif font-black tracking-tight text-[#2F3E3E]"
+      : block.level === 2
+      ? "text-2xl sm:text-3xl font-serif font-bold text-[#2F3E3E]/92"
+      : "text-xl font-semibold text-[#2F3E3E]/88";
+
+  return (
+    <p className={`mt-10 ${weightClasses}`}>{block.text}</p>
+  );
+}
+
 function PublicTableBlock({ block }: { block: BlogTableBlock }) {
   return (
     <div className="overflow-hidden rounded-[2rem] border border-[#DCE8E8] bg-white shadow-lg">
@@ -246,17 +260,26 @@ export default function PublicBlogReadPage() {
 
               <div className="mt-10 space-y-8 text-lg leading-9 text-[#2F3E3E]/82">
                 {blog.content.map((block, index) => {
-                  if (typeof block === "string") {
-                    return (
-                      <p key={`${blog.slug}-paragraph-${index}`}>
-                        <InlineRichText text={block} />
-                      </p>
-                    );
-                  }
+                if (typeof block === "string") {
+                  return (
+                    <p key={`${blog.slug}-paragraph-${index}`}>
+                      <InlineRichText text={block} />
+                    </p>
+                  );
+                }
 
-                  if (block.type === "youtube") {
-                    return (
-                      <PublicYouTubeBlock
+                if (block.type === "heading") {
+                  return (
+                    <PublicHeadingBlock
+                      key={`${blog.slug}-heading-${index}`}
+                      block={block}
+                    />
+                  );
+                }
+
+                if (block.type === "youtube") {
+                  return (
+                    <PublicYouTubeBlock
                         key={`${blog.slug}-youtube-${index}`}
                         block={block}
                         isPlaying={activeVideoIndex === index}
@@ -265,9 +288,9 @@ export default function PublicBlogReadPage() {
                     );
                   }
 
-                  if (block.type === "table") {
-                    return (
-                      <PublicTableBlock
+                if (block.type === "table") {
+                  return (
+                    <PublicTableBlock
                         key={`${blog.slug}-table-${index}`}
                         block={block}
                       />

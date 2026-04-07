@@ -10,6 +10,7 @@ import {
   getPublishedBlogsAsync,
   mergePublishedAndSeedBlogs,
   type BlogEntry,
+  type BlogHeadingBlock,
   type BlogPdfBlock,
   type BlogTableBlock,
   type BlogYoutubeBlock,
@@ -136,6 +137,17 @@ function PdfEmbed({ block }: { block: BlogPdfBlock }) {
   );
 }
 
+function HeadingEmbed({ block }: { block: BlogHeadingBlock }) {
+  const styles =
+    block.level === 1
+      ? "text-3xl sm:text-4xl font-serif font-black text-[#2F3E3E] leading-tight"
+      : block.level === 2
+      ? "text-2xl sm:text-3xl font-serif font-bold text-[#2F3E3E]/92"
+      : "text-xl font-semibold text-[#2F3E3E]/88";
+
+  return <p className={`mt-10 ${styles}`}>{block.text}</p>;
+}
+
 function TableEmbed({ block }: { block: BlogTableBlock }) {
   return (
     <div className="overflow-hidden rounded-[1.75rem] border border-[#E3EAEA] bg-white shadow-sm">
@@ -252,6 +264,15 @@ export default function BlogReadPage() {
                   <p key={`${blog.slug}-paragraph-${index}`}>
                     <InlineRichText text={block} />
                   </p>
+                );
+              }
+
+              if (block.type === "heading") {
+                return (
+                  <HeadingEmbed
+                    key={`${blog.slug}-heading-${index}`}
+                    block={block}
+                  />
                 );
               }
 
