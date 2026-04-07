@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import {
   Menu,
   X,
+  Home,
   Info,
   MessageCircle,
   LayoutDashboard,
@@ -127,7 +128,8 @@ const Header: React.FC = () => {
   }, []);
 
   const mainNavItems = [
-    { name: "Blogs", href: "/", icon: Info },
+    { name: "Home", href: "/", icon: Home },
+    { name: "Blogs", href: "/about-us", icon: Info },
     { name: "Discussion", href: "/programs", icon: MessageCircle },
     // { name: "Community", href: "/community", icon: Users },
   ];

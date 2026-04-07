@@ -1,4 +1,5 @@
 import { Routes, Route } from "react-router-dom";
+import Home from "@/components/Home";
 import DomainDetail from "@/components/DomainDetail";
 import ProgramsPage from "./pages/Programs";
 import CommunityPage from "./pages/Community";
@@ -36,7 +37,7 @@ const AppRoutes = () => {
     <Routes>
       {/* ── Public marketing routes — wrapped in Header + Footer ── */}
       <Route element={<RootLayout />}>
-        <Route path="/" element={<AboutUsPage />} />
+        <Route path="/" element={<Home />} />
         <Route path="/programs" element={<ProgramsPage />} />
         <Route path="/programs/:topicId" element={<PublicDiscussionReadPage />} />
         <Route path="/about-us" element={<AboutUsPage />} />
