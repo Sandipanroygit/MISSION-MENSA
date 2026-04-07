@@ -765,11 +765,11 @@ const HeroSection: React.FC = () => {
             </div>
 
             {/* Stats or badges - Enhanced with hover effects */}
-            <div className="grid gap-3 sm:grid-cols-2 pt-6 lg:pt-8">
+            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4 pt-6 lg:pt-8">
               {heroStats.map((stat) => (
                 <div
                   key={stat.value}
-                  className="group relative min-h-[8.5rem] overflow-hidden rounded-2xl border border-[#9ce7de]/35 bg-[#073b42]/55 p-5 shadow-xl shadow-black/15 backdrop-blur-md transition-all duration-500 hover:-translate-y-2 hover:border-[#d8fff9]/85 hover:bg-[#0c5f5c]/70 hover:shadow-2xl"
+                  className="group relative min-h-[8.5rem] overflow-hidden rounded-2xl border border-[#9ce7de]/35 bg-[#073b42]/55 p-5 shadow-xl shadow-black/15 backdrop-blur-md transition-all duration-500 hover:-translate-y-2 hover:border-[#d8fff9]/85 hover:bg-[#0c5f5c]/70 hover:shadow-2xl xl:min-h-[7rem] xl:p-4"
                 >
                   <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#d8fff9] via-[#5EC1E8] to-[#A5C85A] opacity-80 transition-all duration-500 group-hover:h-2" />
                   <div className="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-[#5EC1E8]/18 blur-2xl transition-transform duration-500 group-hover:scale-150" />
@@ -781,7 +781,7 @@ const HeroSection: React.FC = () => {
                       <span className="h-2 w-2 rounded-full bg-[#5EC1E8] shadow-[0_0_18px_rgba(94,193,232,0.8)]" />
                     </div>
                     <div>
-                      <p className="whitespace-nowrap font-serif text-2xl leading-none text-[#fff4d0] transition-transform duration-500 group-hover:translate-x-1 sm:text-3xl xl:text-4xl">
+                      <p className="whitespace-nowrap font-serif text-2xl leading-none text-[#fff4d0] transition-transform duration-500 group-hover:translate-x-1 sm:text-3xl xl:text-2xl">
                         {stat.value}
                       </p>
                       <p className="mt-3 text-[10px] font-bold uppercase tracking-[0.18em] text-[#d7e6a7]">

@@ -52,8 +52,8 @@ body {
 .home-card-panel {
   position: sticky;
   top: 0;
-  min-height: 100vh;
-  padding: clamp(0.75rem, 2vw, 1.5rem);
+  min-height: 100dvh;
+  padding: clamp(0.5rem, 1.35vw, 1rem);
 }
 
 .home-card-panel-1 {
@@ -69,16 +69,55 @@ body {
 }
 
 .home-card-shell {
-  min-height: calc(100vh - clamp(1.5rem, 4vw, 3rem));
-  overflow: hidden;
+  height: calc(100dvh - clamp(1rem, 2.7vw, 2rem));
+  overflow: auto;
   border: 1px solid rgba(255, 255, 255, 0.72);
-  border-radius: clamp(1.25rem, 3vw, 2rem);
+  border-radius: clamp(1rem, 2.25vw, 1.5rem);
   box-shadow: 0 2rem 5rem rgba(15, 58, 52, 0.22);
   background: #ffffff;
+  scrollbar-width: thin;
 }
 
 .home-card-shell > section {
-  min-height: calc(100vh - clamp(1.5rem, 4vw, 3rem));
+  min-height: 100%;
+}
+
+.home-card-shell .pt-12 {
+  padding-top: clamp(1rem, 2.2vw, 2.5rem);
+}
+
+.home-card-shell .lg\:pt-20 {
+  padding-top: clamp(1rem, 2.2vw, 2.5rem);
+}
+
+.home-card-shell .py-20 {
+  padding-top: clamp(2rem, 4vw, 3.5rem);
+  padding-bottom: clamp(2rem, 4vw, 3.5rem);
+}
+
+.home-card-shell .lg\:py-12 {
+  padding-top: clamp(1rem, 2.5vw, 2rem);
+  padding-bottom: clamp(1rem, 2.5vw, 2rem);
+}
+
+.home-card-shell .min-h-\[calc\(100vh-6rem\)\] {
+  min-height: calc(100dvh - 9.5rem);
+}
+
+.home-card-shell .h-\[400px\] {
+  height: clamp(24rem, 62dvh, 34rem);
+}
+
+.home-card-shell .sm\:h-\[500px\] {
+  height: clamp(24rem, 62dvh, 34rem);
+}
+
+.home-card-shell .lg\:h-\[550px\] {
+  height: clamp(24rem, 62dvh, 34rem);
+}
+
+.home-card-shell .-top-12 {
+  top: -4.5rem;
 }
 
 @media (max-width: 768px) {
@@ -88,11 +127,7 @@ body {
 
   .home-card-shell {
     border-radius: 1rem;
-    min-height: calc(100vh - 1rem);
-  }
-
-  .home-card-shell > section {
-    min-height: calc(100vh - 1rem);
+    height: calc(100dvh - 1rem);
   }
 }
 
