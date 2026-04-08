@@ -39,7 +39,7 @@ export interface DiscussionTopic {
 
 export const STORAGE_KEY = "mission-mensa-discussions";
 export const DISCUSSION_FALLBACK_IMAGE =
-  "https://images.pexels.com/photos/32556797/pexels-photo-32556797.jpeg?auto=compress&cs=tinysrgb&w=1200";
+  "https://images.pexels.com/photos/3231359/pexels-photo-3231359.jpeg?auto=compress&cs=tinysrgb&w=1200";
 export const DISCUSSION_CATEGORY_OPTIONS = [
   "MENSA",
   "Outreach",
@@ -67,8 +67,8 @@ export const defaultDiscussionTopics: DiscussionTopic[] = [
       {
         id: "student-employability-startups-cover",
         type: "image",
-        url: "https://images.pexels.com/photos/6914058/pexels-photo-6914058.jpeg?auto=compress&cs=tinysrgb&w=1200",
-        name: "Startup team brainstorming around a laptop",
+        url: "https://images.pexels.com/photos/16070143/pexels-photo-16070143.jpeg?auto=compress&cs=tinysrgb&w=1200",
+        name: "Indian students collaborating on a laptop project",
       },
     ],
     comments: [
@@ -128,8 +128,8 @@ export const defaultDiscussionTopics: DiscussionTopic[] = [
       {
         id: "orchestrating-collective-intelligence-cover",
         type: "image",
-        url: "https://images.pexels.com/photos/7876755/pexels-photo-7876755.jpeg?auto=compress&cs=tinysrgb&w=1200",
-        name: "Team coordinating ideas around a shared laptop",
+        url: "https://commons.wikimedia.org/wiki/Special:FilePath/Students%20at%20a%20school%20in%20Bangalore%2C%20India%20learning%20to%20code%20on%20Progate.jpg",
+        name: "Indian students learning together on computers in Bangalore",
       },
     ],
     comments: [],
@@ -165,7 +165,7 @@ export const defaultDiscussionTopics: DiscussionTopic[] = [
         id: "role-of-the-human-mentor-cover",
         type: "image",
         url: "https://images.pexels.com/photos/18870246/pexels-photo-18870246.jpeg?auto=compress&cs=tinysrgb&w=1200",
-        name: "Mentor in one-on-one discussion with a student",
+        name: "Mentor in one-on-one guidance with a student",
       },
     ],
     comments: [],
@@ -182,8 +182,8 @@ export const defaultDiscussionTopics: DiscussionTopic[] = [
       {
         id: "balancing-acceleration-with-humanization-cover",
         type: "image",
-        url: "https://images.pexels.com/photos/7396389/pexels-photo-7396389.jpeg?auto=compress&cs=tinysrgb&w=1200",
-        name: "Teacher supporting a student emotionally",
+        url: "https://images.pexels.com/photos/18012462/pexels-photo-18012462.jpeg?auto=compress&cs=tinysrgb&w=1200",
+        name: "Indian children in a classroom focused on human learning context",
       },
     ],
     comments: [],
@@ -200,8 +200,8 @@ export const defaultDiscussionTopics: DiscussionTopic[] = [
       {
         id: "measuring-success-cover",
         type: "image",
-        url: "https://images.pexels.com/photos/7109316/pexels-photo-7109316.jpeg?auto=compress&cs=tinysrgb&w=1200",
-        name: "Analytics dashboard for measuring outcomes",
+        url: "https://commons.wikimedia.org/wiki/Special:FilePath/A%20class%20test%20in%20Shahid%20Matangini%20Hazra%20Government%20College%20for%20Women%2C%20West%20Bengal%2C%20India%20%282016%29.jpg",
+        name: "Indian students writing a class test in West Bengal",
       },
     ],
     comments: [],
@@ -218,8 +218,8 @@ export const defaultDiscussionTopics: DiscussionTopic[] = [
       {
         id: "irreplaceable-role-of-humans-in-education-cover",
         type: "image",
-        url: "https://images.pexels.com/photos/8419196/pexels-photo-8419196.jpeg?auto=compress&cs=tinysrgb&w=1200",
-        name: "Teacher guiding students in a classroom discussion",
+        url: "https://images.pexels.com/photos/35152622/pexels-photo-35152622.jpeg?auto=compress&cs=tinysrgb&w=1200",
+        name: "Children in a rural Indian classroom learning together",
       },
     ],
     comments: [],
@@ -236,8 +236,8 @@ export const defaultDiscussionTopics: DiscussionTopic[] = [
       {
         id: "multilingual-ai-capability-cover",
         type: "image",
-        url: "https://images.pexels.com/photos/6936079/pexels-photo-6936079.jpeg?auto=compress&cs=tinysrgb&w=1200",
-        name: "Students using mobile technology in a language classroom",
+        url: "https://images.pexels.com/photos/34030121/pexels-photo-34030121.jpeg?auto=compress&cs=tinysrgb&w=1200",
+        name: "Smartphone language selection interface for multilingual capability",
       },
     ],
     comments: [],
