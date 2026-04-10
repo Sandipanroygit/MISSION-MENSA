@@ -4,13 +4,15 @@ type ContentCollectionKey =
   | "publishedBlogs"
   | "discussionTopics"
   | "feedbackEntries"
-  | "voiceEntries";
+  | "voiceEntries"
+  | "trustedDevices";
 
 interface ContentDatabase {
   publishedBlogs: unknown[];
   discussionTopics: unknown[];
   feedbackEntries: unknown[];
   voiceEntries: unknown[];
+  trustedDevices: unknown[];
   updatedAt: string;
 }
 
@@ -23,6 +25,7 @@ function createEmptyDatabase(): ContentDatabase {
     discussionTopics: [],
     feedbackEntries: [],
     voiceEntries: [],
+    trustedDevices: [],
     updatedAt: new Date().toISOString(),
   };
 }
@@ -52,6 +55,9 @@ export function readContentDatabase(): ContentDatabase {
         : [],
       voiceEntries: Array.isArray(parsedDatabase.voiceEntries)
         ? parsedDatabase.voiceEntries
+        : [],
+      trustedDevices: Array.isArray(parsedDatabase.trustedDevices)
+        ? parsedDatabase.trustedDevices
         : [],
       updatedAt: parsedDatabase.updatedAt ?? new Date().toISOString(),
     };

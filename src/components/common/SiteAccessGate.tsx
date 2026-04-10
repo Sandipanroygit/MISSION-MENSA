@@ -1,11 +1,22 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Mail, ShieldCheck } from "lucide-react";
+import {
+  readRemoteContentCollection,
+  saveRemoteContentCollection,
+} from "@/backend/contentStore";
 import { isSupabaseConfigured, supabase } from "@/lib/supabase";
 
 const ACCESS_STORAGE_KEY = "mission-mensa-site-access-v1";
+const DEVICE_ID_STORAGE_KEY = "mission-mensa-device-id-v1";
 const ALLOWED_DOMAIN = "@indusschool.com";
 
 interface StoredAccess {
+  email: string;
+  unlockedAt: string;
+}
+
+interface TrustedDeviceRecord {
+  deviceId: string;
   email: string;
   unlockedAt: string;
 }
@@ -52,6 +63,25 @@ function saveStoredAccess(email: string) {
   window.localStorage.setItem(ACCESS_STORAGE_KEY, JSON.stringify(payload));
 }
 
+function getOrCreateDeviceId() {
+  if (typeof window === "undefined") {
+    return "";
+  }
+
+  const existingDeviceId = window.localStorage.getItem(DEVICE_ID_STORAGE_KEY);
+  if (existingDeviceId) {
+    return existingDeviceId;
+  }
+
+  const generatedDeviceId =
+    typeof crypto !== "undefined" && "randomUUID" in crypto
+      ? crypto.randomUUID()
+      : `device-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+
+  window.localStorage.setItem(DEVICE_ID_STORAGE_KEY, generatedDeviceId);
+  return generatedDeviceId;
+}
+
 export default function SiteAccessGate({
   children,
 }: {
@@ -67,6 +97,7 @@ export default function SiteAccessGate({
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isSending, setIsSending] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
+  const [isCheckingDevice, setIsCheckingDevice] = useState(true);
 
   useEffect(() => {
     function syncAccess() {
@@ -77,11 +108,53 @@ export default function SiteAccessGate({
     return () => window.removeEventListener("storage", syncAccess);
   }, []);
 
+  useEffect(() => {
+    async function hydrateTrustedDevice() {
+      const deviceId = getOrCreateDeviceId();
+
+      if (readStoredAccess()) {
+        setIsCheckingDevice(false);
+        return;
+      }
+
+      if (!deviceId) {
+        setIsCheckingDevice(false);
+        return;
+      }
+
+      const trustedDevices = await readRemoteContentCollection<TrustedDeviceRecord>(
+        "trustedDevices",
+        [],
+      );
+
+      const trustedDevice = trustedDevices.find(
+        (record) => record.deviceId === deviceId,
+      );
+
+      if (trustedDevice) {
+        saveStoredAccess(trustedDevice.email);
+        setStoredAccess(readStoredAccess());
+      }
+
+      setIsCheckingDevice(false);
+    }
+
+    void hydrateTrustedDevice();
+  }, []);
+
   const normalizedEmail = useMemo(() => normalizeEmail(email), [email]);
   const emailAllowed = normalizedEmail.endsWith(ALLOWED_DOMAIN);
 
   if (storedAccess) {
     return <>{children}</>;
+  }
+
+  if (isCheckingDevice) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[linear-gradient(135deg,#163a44_0%,#1f5d68_44%,#f3dfb9_100%)] text-white">
+        Checking access...
+      </div>
+    );
   }
 
   async function handleSendOtp() {
@@ -150,9 +223,28 @@ export default function SiteAccessGate({
       return;
     }
 
+    const deviceId = getOrCreateDeviceId();
+    const existingDevices = await readRemoteContentCollection<TrustedDeviceRecord>(
+      "trustedDevices",
+      [],
+    );
+    const trustedDeviceRecord: TrustedDeviceRecord = {
+      deviceId,
+      email: otpSentTo,
+      unlockedAt: new Date().toISOString(),
+    };
+
+    await saveRemoteContentCollection(
+      "trustedDevices",
+      [
+        trustedDeviceRecord,
+        ...existingDevices.filter((record) => record.deviceId !== deviceId),
+      ],
+    );
+
     saveStoredAccess(otpSentTo);
     setStoredAccess(readStoredAccess());
-    setStatusMessage("Access verified for this browser on this device.");
+    setStatusMessage("Access verified.");
     void supabase.auth.signOut();
   }
 
