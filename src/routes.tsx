@@ -9,6 +9,7 @@ const DomainDetail = lazy(() => import("@/components/DomainDetail"));
 const ProgramsPage = lazy(() => import("./pages/Programs"));
 const CommunityPage = lazy(() => import("./pages/Community"));
 const AboutMensaPage = lazy(() => import("./pages/AboutMensa"));
+const VoicesOfMensaPage = lazy(() => import("./pages/VoicesOfMensa"));
 const AboutUsPage = lazy(() => import("./pages/Aboutus"));
 const PublicBlogReadPage = lazy(() => import("./pages/PublicBlogRead"));
 const PublicDiscussionReadPage = lazy(() => import("./pages/PublicDiscussionRead"));
@@ -34,6 +35,8 @@ const BlogDraftEditorPage = lazy(() => import("./pages/dashboard/BlogDraftEditor
 const BlogReadPage = lazy(() => import("./pages/dashboard/BlogReadPage"));
 const DiscussionPage = lazy(() => import("./pages/dashboard/DiscussionPage"));
 const DiscussionTopicPage = lazy(() => import("./pages/dashboard/DiscussionTopicPage"));
+const FeedbackPage = lazy(() => import("./pages/dashboard/FeedbackPage"));
+const VoicesDraftPage = lazy(() => import("./pages/dashboard/VoicesDraftPage"));
 
 const routeFallback = (
   <div className="min-h-[50vh] bg-[#FAF7F2] flex items-center justify-center text-sm font-semibold text-[#24544c]">
@@ -50,6 +53,7 @@ const AppRoutes = () => {
           <Route path="/programs" element={<ProgramsPage />} />
           <Route path="/programs/:topicId" element={<PublicDiscussionReadPage />} />
           <Route path="/about-mensa" element={<AboutMensaPage />} />
+          <Route path="/voices-of-mensa" element={<VoicesOfMensaPage />} />
           <Route path="/about-us" element={<AboutUsPage />} />
           <Route path="/about-us/:slug" element={<PublicBlogReadPage />} />
           <Route path="/contact-us" element={<ContactUs />} />
@@ -87,6 +91,8 @@ const AppRoutes = () => {
               path="/dashboard/discussion/:topicId"
               element={<DiscussionTopicPage />}
             />
+            <Route path="/dashboard/voices" element={<VoicesDraftPage />} />
+            <Route path="/dashboard/feedback" element={<FeedbackPage />} />
             <Route path="/dashboard/overview" element={<ParentOverview />} />
             <Route
               path="/dashboard/learners/:learnerId"

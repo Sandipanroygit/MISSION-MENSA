@@ -1,10 +1,15 @@
-import { ArrowLeft, FileText, PlayCircle, Sparkles } from "lucide-react";
-import { useEffect, useState } from "react";
+import { ArrowLeft, Eye, FileText, PlayCircle, Sparkles, ThumbsUp } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { Link, Navigate, useParams } from "react-router-dom";
+import { useAuthContext } from "@/context/AuthContext";
 import {
+  getBlogStats,
   getPublishedBlogs,
   getPublishedBlogsAsync,
+  incrementBlogView,
   mergePublishedAndSeedBlogs,
+  savePublishedBlogAsync,
+  toggleBlogLike,
   type BlogEntry,
   type BlogHeadingBlock,
   type BlogPdfBlock,
@@ -196,7 +201,9 @@ function PublicTableBlock({ block }: { block: BlogTableBlock }) {
 
 export default function PublicBlogReadPage() {
   const { slug } = useParams<{ slug: string }>();
+  const { user } = useAuthContext();
   const [activeVideoIndex, setActiveVideoIndex] = useState<number | null>(null);
+  const hasTrackedViewRef = useRef<string | null>(null);
   const [publishedBlogs, setPublishedBlogs] = useState<BlogEntry[]>(() =>
     getPublishedBlogs(),
   );
@@ -208,8 +215,39 @@ export default function PublicBlogReadPage() {
     void getPublishedBlogsAsync().then(setPublishedBlogs);
   }, []);
 
+  useEffect(() => {
+    if (!slug || hasTrackedViewRef.current === slug) return;
+
+    hasTrackedViewRef.current = slug;
+    const updatedBlog = incrementBlogView(slug);
+    if (updatedBlog) {
+      setPublishedBlogs(getPublishedBlogs());
+      void savePublishedBlogAsync(updatedBlog).then(() => {
+        setPublishedBlogs(getPublishedBlogs());
+      });
+    }
+  }, [slug]);
+
   if (!blog) {
     return <Navigate to="/about-us" replace />;
+  }
+
+  const stats = getBlogStats(blog);
+  const isLikedByUser = Boolean(
+    user?.email &&
+      blog.likedBy?.includes(user.email.trim().toLowerCase()),
+  );
+
+  function handleToggleLike() {
+    if (!user?.email) return;
+
+    const updatedBlog = toggleBlogLike(blog.slug, user.email);
+    if (updatedBlog) {
+      setPublishedBlogs(getPublishedBlogs());
+      void savePublishedBlogAsync(updatedBlog).then(() => {
+        setPublishedBlogs(getPublishedBlogs());
+      });
+    }
   }
 
   return (
@@ -257,6 +295,32 @@ export default function PublicBlogReadPage() {
               <p className="mt-6 text-sm font-semibold text-[#2CA4A4]">
                 Written by {blog.author}
               </p>
+              <div className="mt-6 flex flex-wrap items-center gap-4 text-sm font-semibold text-[#2F3E3E]/70">
+                <span className="inline-flex items-center gap-2">
+                  <Eye size={16} className="text-[#2F3E3E]/50" />
+                  {stats.views} views
+                </span>
+                <button
+                  type="button"
+                  onClick={handleToggleLike}
+                  disabled={!user?.email}
+                  className={`inline-flex items-center gap-2 rounded-full px-4 py-2 transition ${
+                    user?.email
+                      ? isLikedByUser
+                        ? "bg-[#2CA4A4] text-white"
+                        : "border border-[#2CA4A4]/30 text-[#2CA4A4] hover:bg-[#2CA4A4]/10"
+                      : "cursor-not-allowed border border-gray-200 text-gray-400"
+                  }`}
+                >
+                  <ThumbsUp size={16} />
+                  {stats.likes} likes
+                </button>
+                {!user?.email && (
+                  <span className="text-xs font-medium text-gray-400">
+                    Log in to like this blog
+                  </span>
+                )}
+              </div>
 
               <div className="mt-10 space-y-8 text-lg leading-9 text-[#2F3E3E]/82">
                 {blog.content.map((block, index) => {

@@ -25,7 +25,11 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "@/context/AuthContext";
-import { savePublishedBlog, savePublishedBlogAsync } from "./blogData";
+import {
+  getDefaultBlogCover,
+  savePublishedBlog,
+  savePublishedBlogAsync,
+} from "./blogData";
 
 const fontFamilies = [
   { label: "Modern Sans", value: "Arial, sans-serif" },
@@ -43,10 +47,12 @@ const fontSizes = [
   { label: "32", value: "32px" },
 ];
 
-const initialBody = `
-  <h2>Begin writing here</h2>
-  <p>Create a compelling introduction, expand with examples, and use media to make the blog richer.</p>
-`;
+const defaultTitle = "Untitled Blog Draft";
+const defaultSummary =
+  "A draft space for ideas, structure, media, and polished publishing.";
+const editorPlaceholderTitle = "Begin writing here";
+const editorPlaceholderDescription =
+  "Create a compelling introduction, expand with examples, and use media to make the blog richer.";
 
 const getDraftStorageKey = (email?: string | null) =>
   `mission-mensa-blog-draft:${email ?? "guest"}`;
@@ -83,24 +89,66 @@ function normaliseYouTubeUrl(url: string) {
   return null;
 }
 
+function readFileAsDataUrl(file: File) {
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result ?? ""));
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(file);
+  });
+}
+
+function normalizeDraftTitle(value?: string) {
+  const nextValue = value?.trim() ?? "";
+  return nextValue === defaultTitle ? "" : nextValue;
+}
+
+function normalizeDraftSummary(value?: string) {
+  const nextValue = value?.trim() ?? "";
+  return nextValue === defaultSummary ? "" : nextValue;
+}
+
+function normalizeDraftContent(value?: string) {
+  const nextValue = value?.trim() ?? "";
+  if (!nextValue) return "";
+
+  const plainText = nextValue.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+  if (
+    plainText ===
+    `${editorPlaceholderTitle} ${editorPlaceholderDescription}`
+  ) {
+    return "";
+  }
+
+  return value ?? "";
+}
+
 export default function BlogDraftEditorPage() {
   const navigate = useNavigate();
   const { user } = useAuthContext();
   const editorRef = useRef<HTMLDivElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
+  const coverImageInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
   const savedRangeRef = useRef<Range | null>(null);
   const objectUrlsRef = useRef<string[]>([]);
 
-  const [title, setTitle] = useState("Untitled Blog Draft");
-  const [summary, setSummary] = useState(
-    "A draft space for ideas, structure, media, and polished publishing.",
-  );
+  const [title, setTitle] = useState("");
+  const [summary, setSummary] = useState("");
   const [fontFamily, setFontFamily] = useState(fontFamilies[0].value);
   const [fontSize, setFontSize] = useState(fontSizes[2].value);
-  const [editorHtml, setEditorHtml] = useState(initialBody);
+  const [editorHtml, setEditorHtml] = useState("");
   const [saveMessage, setSaveMessage] = useState("Not saved yet");
+  const [coverImage, setCoverImage] = useState(() =>
+    getDefaultBlogCover(defaultTitle),
+  );
+  const [hasCustomCover, setHasCustomCover] = useState(false);
   const hasVisibleContent = editorHtml.replace(/<[^>]*>/g, "").trim().length > 0;
+
+  useEffect(() => {
+    if (hasCustomCover) return;
+    setCoverImage(getDefaultBlogCover(title));
+  }, [hasCustomCover, title]);
 
   useEffect(() => {
     const savedDraft = localStorage.getItem(getDraftStorageKey(user?.email));
@@ -113,18 +161,30 @@ export default function BlogDraftEditorPage() {
           fontFamily: string;
           fontSize: string;
           content: string;
+          coverImage?: string;
+          hasCustomCover?: boolean;
           savedAt: string;
         };
 
-        setTitle(parsed.title);
-        setSummary(parsed.summary);
+        const normalizedTitle = normalizeDraftTitle(parsed.title);
+        const normalizedSummary = normalizeDraftSummary(parsed.summary);
+        const normalizedContent = normalizeDraftContent(parsed.content);
+
+        setTitle(normalizedTitle);
+        setSummary(normalizedSummary);
         setFontFamily(parsed.fontFamily);
         setFontSize(parsed.fontSize);
-        setEditorHtml(parsed.content);
+        setEditorHtml(normalizedContent);
+        setHasCustomCover(Boolean(parsed.hasCustomCover && parsed.coverImage));
+        setCoverImage(
+          parsed.coverImage && parsed.coverImage.trim().length > 0
+            ? parsed.coverImage
+            : getDefaultBlogCover(normalizedTitle || defaultTitle),
+        );
         setSaveMessage(`Saved ${new Date(parsed.savedAt).toLocaleString()}`);
 
         if (editorRef.current) {
-          editorRef.current.innerHTML = parsed.content;
+          editorRef.current.innerHTML = normalizedContent;
         }
         return;
       } catch {
@@ -133,9 +193,11 @@ export default function BlogDraftEditorPage() {
     }
 
     if (editorRef.current && !editorRef.current.innerHTML.trim()) {
-      editorRef.current.innerHTML = initialBody;
-      setEditorHtml(initialBody);
+      editorRef.current.innerHTML = "";
+      setEditorHtml("");
     }
+
+    setCoverImage(getDefaultBlogCover(title || defaultTitle));
   }, [user?.email]);
 
   useEffect(() => {
@@ -238,6 +300,22 @@ export default function BlogDraftEditorPage() {
     event.target.value = "";
   };
 
+  const handleCoverImageUpload = async (
+    event: ChangeEvent<HTMLInputElement>,
+  ) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+
+    try {
+      const dataUrl = await readFileAsDataUrl(file);
+      setCoverImage(dataUrl);
+      setHasCustomCover(true);
+    } catch {
+      setSaveMessage("Could not load cover image");
+    }
+  };
+
   const insertYoutubeEmbed = (embedUrl: string) => {
     insertHtmlAtCursor(`
       <div style="margin: 24px 0;">
@@ -265,16 +343,16 @@ export default function BlogDraftEditorPage() {
   };
 
   const handleResetDraft = () => {
-    setTitle("Untitled Blog Draft");
-    setSummary(
-      "A draft space for ideas, structure, media, and polished publishing.",
-    );
+    setTitle("");
+    setSummary("");
     setFontFamily(fontFamilies[0].value);
     setFontSize(fontSizes[2].value);
     if (editorRef.current) {
-      editorRef.current.innerHTML = initialBody;
+      editorRef.current.innerHTML = "";
     }
-    setEditorHtml(initialBody);
+    setEditorHtml("");
+    setHasCustomCover(false);
+    setCoverImage(getDefaultBlogCover(defaultTitle));
     localStorage.removeItem(getDraftStorageKey(user?.email));
     setSaveMessage("Draft reset");
   };
@@ -286,11 +364,13 @@ export default function BlogDraftEditorPage() {
     localStorage.setItem(
       getDraftStorageKey(user?.email),
       JSON.stringify({
-        title,
-        summary,
+        title: title.trim() || defaultTitle,
+        summary: summary.trim() || defaultSummary,
         fontFamily,
         fontSize,
         content,
+        coverImage,
+        hasCustomCover,
         savedAt,
       }),
     );
@@ -302,7 +382,7 @@ export default function BlogDraftEditorPage() {
     });
   };
 
-  const handlePublishDraft = () => {
+  const handlePublishDraft = async () => {
     const content = editorRef.current?.innerHTML ?? editorHtml;
     const savedAt = new Date().toISOString();
     const plainContent = content.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
@@ -315,18 +395,19 @@ export default function BlogDraftEditorPage() {
         fontFamily,
         fontSize,
         content,
+        coverImage,
+        hasCustomCover,
         savedAt,
       }),
     );
 
     const publishedBlog = {
-      slug: slugify(title) || `published-${Date.now()}`,
-      title,
-      summary,
+      slug: slugify(title || defaultTitle) || `published-${Date.now()}`,
+      title: title.trim() || defaultTitle,
+      summary: summary.trim() || defaultSummary,
       author: user?.name ?? "Unknown Author",
       authorEmail: user?.email ?? "guest@example.com",
-      image:
-        "https://induscommunityschool.com/wp-content/uploads/2023/04/banner-3.jpg",
+      image: coverImage || getDefaultBlogCover(title || defaultTitle),
       content: plainContent
         ? plainContent
             .split(/(?<=[.!?])\s+/)
@@ -336,7 +417,7 @@ export default function BlogDraftEditorPage() {
     };
 
     savePublishedBlog(publishedBlog);
-    void savePublishedBlogAsync(publishedBlog);
+    await savePublishedBlogAsync(publishedBlog);
 
     localStorage.removeItem(getDraftStorageKey(user?.email));
 
@@ -474,7 +555,7 @@ export default function BlogDraftEditorPage() {
                 <input
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="w-full rounded-2xl border border-gray-200 px-4 py-3 text-sm text-[#2F3E3E] outline-none transition focus:border-[#2CA4A4] focus:ring-4 focus:ring-[#2CA4A4]/10"
+                  className="w-full rounded-2xl border border-gray-200 px-4 py-3 text-sm text-[#2F3E3E] outline-none transition placeholder:text-gray-300 focus:border-[#2CA4A4] focus:ring-4 focus:ring-[#2CA4A4]/10"
                   placeholder="Enter blog title"
                 />
               </label>
@@ -487,10 +568,52 @@ export default function BlogDraftEditorPage() {
                   value={summary}
                   onChange={(e) => setSummary(e.target.value)}
                   rows={4}
-                  className="w-full rounded-2xl border border-gray-200 px-4 py-3 text-sm text-[#2F3E3E] outline-none transition focus:border-[#2CA4A4] focus:ring-4 focus:ring-[#2CA4A4]/10"
+                  className="w-full rounded-2xl border border-gray-200 px-4 py-3 text-sm text-[#2F3E3E] outline-none transition placeholder:text-gray-300 focus:border-[#2CA4A4] focus:ring-4 focus:ring-[#2CA4A4]/10"
                   placeholder="Write a short summary"
                 />
               </label>
+
+              <div>
+                <div className="mb-2 flex items-center justify-between gap-3">
+                  <span className="block text-sm font-medium text-[#2F3E3E]">
+                    Cover image
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => coverImageInputRef.current?.click()}
+                    className="rounded-full border border-[#2CA4A4]/25 px-3 py-1.5 text-xs font-semibold text-[#2CA4A4] transition hover:bg-[#2CA4A4]/10"
+                  >
+                    Upload image
+                  </button>
+                </div>
+                <div className="overflow-hidden rounded-3xl border border-gray-200 bg-[#F7FAFA]">
+                  <div className="aspect-[16/10]">
+                    <img
+                      src={coverImage}
+                      alt="Draft cover preview"
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                  <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
+                    <p className="text-xs leading-5 text-gray-500">
+                      If you do not upload a cover, a stock education image is
+                      used automatically when the draft is published.
+                    </p>
+                    {hasCustomCover && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setHasCustomCover(false);
+                          setCoverImage(getDefaultBlogCover(title));
+                        }}
+                        className="rounded-full border border-gray-200 px-3 py-1.5 text-xs font-semibold text-[#2F3E3E] transition hover:bg-white"
+                      >
+                        Use stock image
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </aside>
@@ -498,13 +621,15 @@ export default function BlogDraftEditorPage() {
         <section className="rounded-[2rem] border border-gray-100 bg-white shadow-sm">
           <div className="border-b border-gray-100 p-5">
             <div className="flex flex-col gap-4">
-              <input
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                className="w-full border-none p-0 text-3xl font-bold text-[#2F3E3E] outline-none placeholder:text-gray-300"
-                placeholder="Untitled blog"
-              />
-              <p className="text-sm text-gray-500">{summary}</p>
+                <input
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  className="w-full border-none p-0 text-3xl font-bold text-[#2F3E3E] outline-none placeholder:text-[#2F3E3E]"
+                  placeholder={defaultTitle}
+                />
+              <p className={summary ? "text-sm text-gray-500" : "text-sm text-[#2F3E3E]"}>
+                {summary || defaultSummary}
+              </p>
               <div className="flex flex-wrap items-center gap-2 border-t border-gray-100 pt-4">
                 <select
                   value={fontFamily}
@@ -581,6 +706,13 @@ export default function BlogDraftEditorPage() {
           </div>
 
           <input
+            ref={coverImageInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleCoverImageUpload}
+          />
+          <input
             ref={imageInputRef}
             type="file"
             accept="image/*"
@@ -622,9 +754,12 @@ export default function BlogDraftEditorPage() {
                   }}
                 />
                 {!hasVisibleContent && (
-                  <p className="pointer-events-none absolute left-10 top-24 text-base text-gray-300">
-                    Start writing your blog here...
-                  </p>
+                  <div className="pointer-events-none absolute left-10 top-24 space-y-2 text-gray-300">
+                    <p className="text-2xl font-semibold">{editorPlaceholderTitle}</p>
+                    <p className="max-w-2xl text-base leading-7">
+                      {editorPlaceholderDescription}
+                    </p>
+                  </div>
                 )}
               </div>
             </div>

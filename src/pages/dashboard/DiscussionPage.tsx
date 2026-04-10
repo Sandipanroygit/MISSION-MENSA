@@ -74,8 +74,15 @@ export default function DiscussionPage() {
     event.target.value = "";
   }
 
-  function removeAttachment(id: string) {
+function removeAttachment(id: string) {
     setTopicAttachments((current) => current.filter((item) => item.id !== id));
+  }
+
+  function handleDeleteTopic(topicId: string) {
+    const updatedTopics = topics.filter((topic) => topic.id !== topicId);
+    saveStoredTopics(updatedTopics);
+    void saveStoredTopicsAsync(updatedTopics);
+    setTopics(updatedTopics);
   }
 
   function resetTopicComposer() {
@@ -304,6 +311,12 @@ export default function DiscussionPage() {
           <div className="mt-5 overflow-x-auto pb-2">
             <div className="flex gap-4">
               {topics.map((topic) => (
+                (() => {
+                  const isOwner =
+                    user?.email?.trim().toLowerCase() ===
+                    topic.authorEmail.trim().toLowerCase();
+
+                  return (
                 <article
                   key={topic.id}
                   className="w-[320px] shrink-0 rounded-[1.75rem] border border-[#E7ECE7] bg-[#FCFDFC] p-5 text-left transition hover:border-[#CAD9C1] hover:bg-white"
@@ -342,6 +355,15 @@ export default function DiscussionPage() {
                     <div className="mt-1">{formatDate(topic.createdAt)}</div>
                   </div>
                   <div className="mt-4 flex justify-end">
+                    {isOwner ? (
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteTopic(topic.id)}
+                        className="mr-2 rounded-2xl bg-[#9A3D3D] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#7F3030]"
+                      >
+                        Delete
+                      </button>
+                    ) : null}
                     <button
                       type="button"
                       onClick={() => navigate(`/dashboard/discussion/${topic.id}`)}
@@ -351,6 +373,8 @@ export default function DiscussionPage() {
                     </button>
                   </div>
                 </article>
+                  );
+                })()
               ))}
             </div>
           </div>

@@ -1,9 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
+  Home,
   LayoutDashboard,
   PenSquare,
   MessageSquare,
+  MessageSquareText,
+  MessageSquareQuote,
   Settings,
   ChevronDown,
   LogOut,
@@ -19,10 +22,20 @@ import LearnerSwitcher from "@/components/dashboard/LearnerSwitcher";
 const parentNavItems = [
   { name: "Writing Blogs", href: "/dashboard/writing-blogs", icon: PenSquare },
   { name: "Discussion", href: "/dashboard/discussion", icon: MessageSquare },
+  {
+    name: "Voices Draft",
+    href: "/dashboard/voices",
+    icon: MessageSquareQuote,
+  },
 ];
 
 const childNavItems = [
   { name: "My Dashboard", href: "/dashboard/child", icon: LayoutDashboard },
+  {
+    name: "Voices Draft",
+    href: "/dashboard/voices",
+    icon: MessageSquareQuote,
+  },
 ];
 
 export default function DashboardHeader() {
@@ -162,6 +175,30 @@ export default function DashboardHeader() {
                     <Settings size={14} className="text-gray-400" />
                     Account settings
                   </Link>
+                  <Link
+                    to="/dashboard/voices"
+                    onClick={() => setUserMenuOpen(false)}
+                    className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-[#2F3E3E] hover:bg-[#FAF7F2] transition-colors"
+                  >
+                    <MessageSquareQuote size={14} className="text-gray-400" />
+                    Parent & Student Voices
+                  </Link>
+                  <Link
+                    to="/dashboard/feedback"
+                    onClick={() => setUserMenuOpen(false)}
+                    className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-[#2F3E3E] hover:bg-[#FAF7F2] transition-colors"
+                  >
+                    <MessageSquareText size={14} className="text-gray-400" />
+                    Platform Feedback
+                  </Link>
+                  <Link
+                    to="/"
+                    onClick={() => setUserMenuOpen(false)}
+                    className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-[#2F3E3E] hover:bg-[#FAF7F2] transition-colors"
+                  >
+                    <Home size={14} className="text-gray-400" />
+                    Back to Main Page
+                  </Link>
                 </div>
 
                 <div className="border-t border-gray-100 py-1">
@@ -218,6 +255,27 @@ export default function DashboardHeader() {
             );
           })}
           <div className="border-t border-gray-100 pt-2 mt-2">
+            <Link
+              to="/dashboard/voices"
+              className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-[#2F3E3E] hover:bg-[#FAF7F2] transition-colors"
+            >
+              <MessageSquareQuote size={18} className="text-gray-400" />
+              Parent & Student Voices
+            </Link>
+            <Link
+              to="/dashboard/feedback"
+              className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-[#2F3E3E] hover:bg-[#FAF7F2] transition-colors"
+            >
+              <MessageSquareText size={18} className="text-gray-400" />
+              Platform Feedback
+            </Link>
+            <Link
+              to="/"
+              className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-[#2F3E3E] hover:bg-[#FAF7F2] transition-colors"
+            >
+              <Home size={18} className="text-gray-400" />
+              Back to Main Page
+            </Link>
             <button
               onClick={handleLogout}
               disabled={logout.isPending}

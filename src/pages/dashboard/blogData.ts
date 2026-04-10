@@ -45,8 +45,49 @@ export interface BlogEntry {
   authorEmail: string;
   image: string;
   content: BlogContentBlock[];
-  views?: number;
-  likes?: number;
+  viewCount?: number;
+  likedBy?: string[];
+}
+
+export const DEFAULT_BLOG_COVER_IMAGES = [
+  "https://upload.wikimedia.org/wikipedia/commons/6/63/Students_at_a_school_in_Bangalore%2C_India_learning_to_code_on_Progate.jpg",
+];
+
+export function getDefaultBlogCover(seed: string) {
+  const normalizedSeed = seed.trim().toLowerCase() || "mission-mensa";
+  const index =
+    normalizedSeed
+      .split("")
+      .reduce((total, character) => total + character.charCodeAt(0), 0) %
+    DEFAULT_BLOG_COVER_IMAGES.length;
+
+  return DEFAULT_BLOG_COVER_IMAGES[index];
+}
+
+function normalizeBlogEntry(blog: BlogEntry): BlogEntry {
+  return {
+    ...blog,
+    image:
+      typeof blog.image === "string" && blog.image.trim().length > 0
+        ? blog.image
+        : getDefaultBlogCover(blog.slug || blog.title),
+    viewCount:
+      typeof blog.viewCount === "number"
+        ? blog.viewCount
+        : typeof (blog as BlogEntry & { views?: number }).views === "number"
+        ? (blog as BlogEntry & { views?: number }).views
+        : 0,
+    likedBy: Array.isArray(blog.likedBy)
+      ? Array.from(
+          new Set(
+            blog.likedBy
+              .filter((value): value is string => typeof value === "string")
+              .map((value) => value.trim().toLowerCase())
+              .filter(Boolean),
+          ),
+        )
+      : [],
+  };
 }
 
 export const blogs: BlogEntry[] = [
@@ -257,24 +298,32 @@ export const blogs: BlogEntry[] = [
 ];
 const SEEDED_BLOG_SLUGS = new Set(blogs.map((blog) => blog.slug));
 
-function getFallbackBlogStat(slug: string, offset: number) {
-  return slug
-    .split("")
-    .reduce((total, char) => total + char.charCodeAt(0), offset);
-}
-
 export function getBlogStats(blog: BlogEntry) {
   return {
-    views: blog.views ?? 80 + (getFallbackBlogStat(blog.slug, 17) % 220),
-    likes: blog.likes ?? 12 + (getFallbackBlogStat(blog.slug, 7) % 65),
+    views: blog.viewCount ?? 0,
+    likes: blog.likedBy?.length ?? 0,
   };
 }
 
 export function mergePublishedAndSeedBlogs(publishedBlogs: BlogEntry[]) {
-  return [
-    ...publishedBlogs.filter((blog) => !SEEDED_BLOG_SLUGS.has(blog.slug)),
-    ...blogs,
+  const mergedBlogs = new Map<string, BlogEntry>();
+
+  blogs.map(normalizeBlogEntry).forEach((blog) => {
+    mergedBlogs.set(blog.slug, blog);
+  });
+
+  publishedBlogs.map(normalizeBlogEntry).forEach((blog) => {
+    mergedBlogs.set(blog.slug, blog);
+  });
+
+  const orderedBlogs = [
+    ...publishedBlogs.map((blog) => normalizeBlogEntry(blog).slug),
+    ...blogs.map((blog) => blog.slug),
   ];
+
+  return Array.from(new Set(orderedBlogs))
+    .map((slug) => mergedBlogs.get(slug))
+    .filter((blog): blog is BlogEntry => Boolean(blog));
 }
 
 const LEGACY_PUBLISHED_BLOGS_STORAGE_KEY = "mission-mensa-published-blogs";
@@ -295,7 +344,9 @@ function readLegacyPublishedBlogs(): BlogEntry[] {
 
 export function getPublishedBlogs(): BlogEntry[] {
   if (hasPersistedContentCollection("publishedBlogs")) {
-    return readContentCollection<BlogEntry>("publishedBlogs", []);
+    return readContentCollection<BlogEntry>("publishedBlogs", []).map(
+      normalizeBlogEntry,
+    );
   }
 
   const legacyBlogs = readLegacyPublishedBlogs();
@@ -303,33 +354,113 @@ export function getPublishedBlogs(): BlogEntry[] {
     saveContentCollection("publishedBlogs", legacyBlogs);
   }
 
-  return legacyBlogs;
+  return legacyBlogs.map(normalizeBlogEntry);
 }
 
 export async function getPublishedBlogsAsync(): Promise<BlogEntry[]> {
+  const localBlogs = getPublishedBlogs();
   const remoteBlogs = await readRemoteContentCollection<BlogEntry>(
     "publishedBlogs",
-    [],
+    localBlogs,
   );
 
   if (remoteBlogs.length) {
-    return remoteBlogs;
+    return remoteBlogs.map(normalizeBlogEntry);
   }
 
-  await saveRemoteContentCollection("publishedBlogs", blogs);
+  return localBlogs;
+}
+
+function getMergedBlogBySlug(slug: string) {
+  return mergePublishedAndSeedBlogs(getPublishedBlogs()).find(
+    (blog) => blog.slug === slug,
+  );
+}
+
+export function incrementBlogView(slug: string) {
+  const existingBlog = getMergedBlogBySlug(slug);
+  if (!existingBlog) return null;
+
+  const updatedBlog = normalizeBlogEntry({
+    ...existingBlog,
+    viewCount: (existingBlog.viewCount ?? 0) + 1,
+  });
+
+  savePublishedBlog(updatedBlog);
+  return updatedBlog;
+}
+
+export async function incrementBlogViewAsync(slug: string) {
+  const existingBlog = getMergedBlogBySlug(slug);
+  if (!existingBlog) return getPublishedBlogs();
+
+  const updatedBlog = normalizeBlogEntry({
+    ...existingBlog,
+    viewCount: (existingBlog.viewCount ?? 0) + 1,
+  });
+
+  await savePublishedBlogAsync(updatedBlog);
+  return getPublishedBlogs();
+}
+
+export function toggleBlogLike(slug: string, userEmail: string) {
+  const normalizedEmail = userEmail.trim().toLowerCase();
+  if (!normalizedEmail) return null;
+
+  const existingBlog = getMergedBlogBySlug(slug);
+  if (!existingBlog) return null;
+
+  const likedBy = new Set(existingBlog.likedBy ?? []);
+  if (likedBy.has(normalizedEmail)) {
+    likedBy.delete(normalizedEmail);
+  } else {
+    likedBy.add(normalizedEmail);
+  }
+
+  const updatedBlog = normalizeBlogEntry({
+    ...existingBlog,
+    likedBy: Array.from(likedBy),
+  });
+
+  savePublishedBlog(updatedBlog);
+  return updatedBlog;
+}
+
+export async function toggleBlogLikeAsync(slug: string, userEmail: string) {
+  const normalizedEmail = userEmail.trim().toLowerCase();
+  if (!normalizedEmail) return getPublishedBlogs();
+
+  const existingBlog = getMergedBlogBySlug(slug);
+  if (!existingBlog) return getPublishedBlogs();
+
+  const likedBy = new Set(existingBlog.likedBy ?? []);
+  if (likedBy.has(normalizedEmail)) {
+    likedBy.delete(normalizedEmail);
+  } else {
+    likedBy.add(normalizedEmail);
+  }
+
+  const updatedBlog = normalizeBlogEntry({
+    ...existingBlog,
+    likedBy: Array.from(likedBy),
+  });
+
+  await savePublishedBlogAsync(updatedBlog);
   return getPublishedBlogs();
 }
 
 export function savePublishedBlog(blog: BlogEntry) {
+  const normalizedBlog = normalizeBlogEntry(blog);
   const current = getPublishedBlogs();
-  const filtered = current.filter((entry) => entry.slug !== blog.slug);
-  saveContentCollection("publishedBlogs", [blog, ...filtered]);
+  const filtered = current.filter((entry) => entry.slug !== normalizedBlog.slug);
+  saveContentCollection("publishedBlogs", [normalizedBlog, ...filtered]);
 }
 
 export async function savePublishedBlogAsync(blog: BlogEntry) {
+  const normalizedBlog = normalizeBlogEntry(blog);
   const current = await getPublishedBlogsAsync();
-  const filtered = current.filter((entry) => entry.slug !== blog.slug);
-  await saveRemoteContentCollection("publishedBlogs", [blog, ...filtered]);
+  const filtered = current.filter((entry) => entry.slug !== normalizedBlog.slug);
+  await saveRemoteContentCollection("publishedBlogs", [normalizedBlog, ...filtered]);
 }
 
 export function deletePublishedBlog(slug: string) {

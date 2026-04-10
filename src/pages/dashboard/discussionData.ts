@@ -71,50 +71,7 @@ export const defaultDiscussionTopics: DiscussionTopic[] = [
         name: "Indian students collaborating on a laptop project",
       },
     ],
-    comments: [
-      {
-        id: "student-startups-comment-1",
-        authorName: "Ananya Rao",
-        authorEmail: "ananya.rao@example.com",
-        body: "For Mission MENSA, the startup pathway should begin from the children's lived context. If an underprivileged gifted student uses AI to study, the first startup idea could solve a real learning gap they have personally experienced.",
-        createdAt: "2026-04-06T10:00:00.000Z",
-        attachments: [],
-      },
-      {
-        id: "student-startups-comment-2",
-        authorName: "Rahul Menon",
-        authorEmail: "rahul.menon@example.com",
-        body: "Yes. The Minimum Viable Startup should not be about building a company immediately. It should help them identify a problem, use AI to research it, test a small solution, and learn how to explain the value clearly.",
-        createdAt: "2026-04-06T10:08:00.000Z",
-        attachments: [],
-        replyToCommentId: "student-startups-comment-1",
-      },
-      {
-        id: "student-startups-comment-3",
-        authorName: "Meera Iyer",
-        authorEmail: "meera.iyer@example.com",
-        body: "A possible pathway: student notices a learning difficulty in their school or community, discusses it with the AI companion, interviews five peers, builds a paper or no-code prototype, and presents what changed after testing.",
-        createdAt: "2026-04-06T10:16:00.000Z",
-        attachments: [],
-      },
-      {
-        id: "student-startups-comment-5",
-        authorName: "Arjun Nair",
-        authorEmail: "arjun.nair@example.com",
-        body: "Can we define the MVS in four stages? 1. Problem from lived experience. 2. AI-supported research. 3. Prototype with minimum resources. 4. Mentor review on usefulness, ethics, and student ownership.",
-        createdAt: "2026-04-06T10:32:00.000Z",
-        attachments: [],
-      },
-      {
-        id: "student-startups-comment-6",
-        authorName: "Kavya S",
-        authorEmail: "kavya.s@example.com",
-        body: "I like this. We should also track whether the student is becoming more confident and self-directed, not just whether the prototype works. Mission MENSA is about developing the child, not only the product.",
-        createdAt: "2026-04-06T10:40:00.000Z",
-        attachments: [],
-        replyToCommentId: "student-startups-comment-5",
-      },
-    ],
+    comments: [],
   },
   {
     id: "orchestrating-collective-intelligence",
@@ -249,20 +206,39 @@ const DUMMY_DISCUSSION_TOPIC_IDS = new Set([
   "money-habits-children",
 ]);
 
+const REMOVED_DISCUSSION_COMMENT_IDS = new Set([
+  "student-startups-comment-1",
+  "student-startups-comment-2",
+  "student-startups-comment-3",
+  "student-startups-comment-5",
+  "student-startups-comment-6",
+]);
+
 function removeDummyTopics(topics: DiscussionTopic[]) {
   return topics.filter((topic) => !DUMMY_DISCUSSION_TOPIC_IDS.has(topic.id));
 }
 
+function sanitizeTopic(topic: DiscussionTopic): DiscussionTopic {
+  return {
+    ...topic,
+    comments: topic.comments.filter(
+      (comment) => !REMOVED_DISCUSSION_COMMENT_IDS.has(comment.id),
+    ),
+  };
+}
+
 function mergeDefaultTopics(topics: DiscussionTopic[]) {
-  const realTopics = removeDummyTopics(topics);
+  const realTopics = removeDummyTopics(topics).map(sanitizeTopic);
   const existingTopics = new Map(realTopics.map((topic) => [topic.id, topic]));
   const defaultIds = new Set(defaultDiscussionTopics.map((topic) => topic.id));
   return [
     ...defaultDiscussionTopics.map((topic) => {
       const existingTopic = existingTopics.get(topic.id);
-      return existingTopic
+      return sanitizeTopic(
+        existingTopic
         ? { ...topic, comments: existingTopic.comments }
-        : topic;
+        : topic,
+      );
     }),
     ...realTopics.filter((topic) => !defaultIds.has(topic.id)),
   ];
@@ -326,18 +302,17 @@ export function getStoredTopics() {
 }
 
 export async function getStoredTopicsAsync() {
+  const localTopics = getStoredTopics();
   const remoteTopics = await readRemoteContentCollection<DiscussionTopic>(
     "discussionTopics",
-    [],
+    localTopics,
   );
 
   if (remoteTopics.length) {
     return mergeDefaultTopics(remoteTopics);
   }
 
-  const seededTopics = mergeDefaultTopics(getStoredTopics());
-  await saveRemoteContentCollection("discussionTopics", seededTopics);
-  return seededTopics;
+  return mergeDefaultTopics(localTopics);
 }
 
 export function getPublicTopics() {

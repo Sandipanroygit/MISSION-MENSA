@@ -1,10 +1,16 @@
 import { supabase } from "@/lib/supabase";
 
-type ContentCollectionKey = "publishedBlogs" | "discussionTopics";
+type ContentCollectionKey =
+  | "publishedBlogs"
+  | "discussionTopics"
+  | "feedbackEntries"
+  | "voiceEntries";
 
 interface ContentDatabase {
   publishedBlogs: unknown[];
   discussionTopics: unknown[];
+  feedbackEntries: unknown[];
+  voiceEntries: unknown[];
   updatedAt: string;
 }
 
@@ -15,6 +21,8 @@ function createEmptyDatabase(): ContentDatabase {
   return {
     publishedBlogs: [],
     discussionTopics: [],
+    feedbackEntries: [],
+    voiceEntries: [],
     updatedAt: new Date().toISOString(),
   };
 }
@@ -38,6 +46,12 @@ export function readContentDatabase(): ContentDatabase {
         : [],
       discussionTopics: Array.isArray(parsedDatabase.discussionTopics)
         ? parsedDatabase.discussionTopics
+        : [],
+      feedbackEntries: Array.isArray(parsedDatabase.feedbackEntries)
+        ? parsedDatabase.feedbackEntries
+        : [],
+      voiceEntries: Array.isArray(parsedDatabase.voiceEntries)
+        ? parsedDatabase.voiceEntries
         : [],
       updatedAt: parsedDatabase.updatedAt ?? new Date().toISOString(),
     };

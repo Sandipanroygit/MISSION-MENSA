@@ -5,6 +5,7 @@ import {
   Home,
   Info,
   MessageCircle,
+  MessagesSquare,
   LayoutDashboard,
   ChevronDown,
   LogOut,
@@ -121,6 +122,7 @@ const Header: React.FC = () => {
   const mainNavItems = [
     { name: "Home", href: "/", icon: Home },
     { name: "About Mensa", href: "/about-mensa", icon: Info },
+    { name: "Feedback", href: "/voices-of-mensa", icon: MessagesSquare },
     { name: "Blogs", href: "/about-us", icon: Info },
     { name: "Discussion", href: "/programs", icon: MessageCircle },
     // { name: "Community", href: "/community", icon: Users },
