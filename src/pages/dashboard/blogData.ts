@@ -155,7 +155,7 @@ export const blogs: BlogEntry[] = [
     views: 118,
     likes: 22,
     image:
-      "https://upload.wikimedia.org/wikipedia/commons/2/20/School_children_in_India.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/e/e6/5th_grade_Indian_students.jpg",
     content: [
       "I've been thinking a lot about intelligence lately, not the kind we measure in exams or celebrate in report cards, but something quieter, more fundamental.",
       "We use words like intelligent, talented, and passionate almost interchangeably. I've done it too. But the more I observe children, and honestly adults, the more I feel these words are pointing to very different things.",
