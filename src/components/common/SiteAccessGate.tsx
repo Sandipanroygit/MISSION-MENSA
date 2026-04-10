@@ -9,10 +9,8 @@ import { isSupabaseConfigured, supabase } from "@/lib/supabase";
 
 const ACCESS_STORAGE_KEY = "mission-mensa-site-access-v1";
 const DEVICE_ID_STORAGE_KEY = "mission-mensa-device-id-v1";
-const OTP_COOLDOWN_STORAGE_KEY = "mission-mensa-otp-cooldown-v1";
 const TRUSTED_DEVICE_STORAGE_KEY = "mission-mensa-trusted-device-v1";
 const ALLOWED_DOMAIN = "@indusschool.com";
-const OTP_RESEND_COOLDOWN_MS = 60_000;
 
 interface StoredAccess {
   email: string;
@@ -23,11 +21,6 @@ interface TrustedDeviceRecord {
   deviceId: string;
   email: string;
   unlockedAt: string;
-}
-
-interface OtpCooldownRecord {
-  email: string;
-  expiresAt: string;
 }
 
 function normalizeEmail(value: string) {
@@ -131,73 +124,6 @@ function getOrCreateDeviceId() {
   return generatedDeviceId;
 }
 
-function readOtpCooldown() {
-  if (typeof window === "undefined") {
-    return null;
-  }
-
-  try {
-    const raw = window.localStorage.getItem(OTP_COOLDOWN_STORAGE_KEY);
-    if (!raw) {
-      return null;
-    }
-
-    const parsed = JSON.parse(raw) as Partial<OtpCooldownRecord>;
-    if (!parsed.email || !parsed.expiresAt) {
-      return null;
-    }
-
-    const expiresAtMs = Date.parse(parsed.expiresAt);
-    if (Number.isNaN(expiresAtMs) || expiresAtMs <= Date.now()) {
-      window.localStorage.removeItem(OTP_COOLDOWN_STORAGE_KEY);
-      return null;
-    }
-
-    return {
-      email: normalizeEmail(parsed.email),
-      expiresAt: parsed.expiresAt,
-    } satisfies OtpCooldownRecord;
-  } catch {
-    return null;
-  }
-}
-
-function saveOtpCooldown(email: string) {
-  if (typeof window === "undefined") {
-    return;
-  }
-
-  const payload: OtpCooldownRecord = {
-    email: normalizeEmail(email),
-    expiresAt: new Date(Date.now() + OTP_RESEND_COOLDOWN_MS).toISOString(),
-  };
-
-  window.localStorage.setItem(OTP_COOLDOWN_STORAGE_KEY, JSON.stringify(payload));
-}
-
-function clearOtpCooldown() {
-  if (typeof window === "undefined") {
-    return;
-  }
-
-  window.localStorage.removeItem(OTP_COOLDOWN_STORAGE_KEY);
-}
-
-function getOtpCooldownRemainingSeconds(email: string) {
-  const cooldown = readOtpCooldown();
-  if (!cooldown || cooldown.email !== normalizeEmail(email)) {
-    return 0;
-  }
-
-  const remainingMs = Date.parse(cooldown.expiresAt) - Date.now();
-  if (remainingMs <= 0) {
-    clearOtpCooldown();
-    return 0;
-  }
-
-  return Math.ceil(remainingMs / 1000);
-}
-
 function isOtpRateLimitError(message: string) {
   const normalizedMessage = message.trim().toLowerCase();
   return (
@@ -222,7 +148,6 @@ export default function SiteAccessGate({
   const [isSending, setIsSending] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
   const [isCheckingDevice, setIsCheckingDevice] = useState(true);
-  const [otpCooldownSeconds, setOtpCooldownSeconds] = useState(0);
 
   useEffect(() => {
     function syncAccess() {
@@ -284,22 +209,6 @@ export default function SiteAccessGate({
   const normalizedEmail = useMemo(() => normalizeEmail(email), [email]);
   const emailAllowed = normalizedEmail.endsWith(ALLOWED_DOMAIN);
 
-  useEffect(() => {
-    setOtpCooldownSeconds(getOtpCooldownRemainingSeconds(normalizedEmail));
-  }, [normalizedEmail]);
-
-  useEffect(() => {
-    if (!otpCooldownSeconds) {
-      return;
-    }
-
-    const timer = window.setInterval(() => {
-      setOtpCooldownSeconds(getOtpCooldownRemainingSeconds(normalizedEmail));
-    }, 1000);
-
-    return () => window.clearInterval(timer);
-  }, [normalizedEmail, otpCooldownSeconds]);
-
   if (storedAccess) {
     return <>{children}</>;
   }
@@ -329,16 +238,6 @@ export default function SiteAccessGate({
     }
 
     const targetEmail = normalizedEmail;
-    const cooldownSeconds = getOtpCooldownRemainingSeconds(targetEmail);
-    if (cooldownSeconds > 0) {
-      setOtpSentTo(targetEmail);
-      setOtpCooldownSeconds(cooldownSeconds);
-      setStatusMessage(
-        `An OTP was already requested recently. Check your email or wait ${cooldownSeconds}s before requesting another code.`,
-      );
-      return;
-    }
-
     setIsSending(true);
 
     const { error } = await supabase.auth.signInWithOtp({
@@ -352,12 +251,9 @@ export default function SiteAccessGate({
 
     if (error) {
       if (isOtpRateLimitError(error.message)) {
-        saveOtpCooldown(targetEmail);
-        const cooldownSeconds = getOtpCooldownRemainingSeconds(targetEmail);
         setOtpSentTo(targetEmail);
-        setOtpCooldownSeconds(cooldownSeconds);
         setErrorMessage(
-          `Too many OTP requests were made for ${targetEmail}. Use the latest code already sent to your email, or wait about ${cooldownSeconds}s before trying again.`,
+          "OTP requests are temporarily rate-limited by the authentication service. Use the latest code already sent to your email, or wait a bit before trying again.",
         );
         return;
       }
@@ -366,9 +262,7 @@ export default function SiteAccessGate({
       return;
     }
 
-    saveOtpCooldown(targetEmail);
     setOtpSentTo(targetEmail);
-    setOtpCooldownSeconds(getOtpCooldownRemainingSeconds(targetEmail));
     setStatusMessage("OTP sent. Check your email and enter the code below.");
   }
 
@@ -422,8 +316,6 @@ export default function SiteAccessGate({
       ],
     );
 
-    clearOtpCooldown();
-    setOtpCooldownSeconds(0);
     saveStoredAccess(otpSentTo);
     setStoredAccess(readStoredAccess());
     setStatusMessage("Access verified.");
@@ -475,14 +367,10 @@ export default function SiteAccessGate({
                 <button
                   type="button"
                   onClick={() => void handleSendOtp()}
-                  disabled={isSending || otpCooldownSeconds > 0}
+                  disabled={isSending}
                   className="inline-flex w-full items-center justify-center rounded-2xl bg-[#17353f] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#102a32] disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  {isSending
-                    ? "Sending OTP..."
-                    : otpCooldownSeconds > 0
-                      ? `Resend in ${otpCooldownSeconds}s`
-                      : "Send OTP"}
+                  {isSending ? "Sending OTP..." : "Send OTP"}
                 </button>
 
                 {otpSentTo && (
