@@ -1,4 +1,14 @@
-import { ArrowLeft, Eye, FileText, PlayCircle, Sparkles, ThumbsUp } from "lucide-react";
+import {
+  ArrowLeft,
+  Eye,
+  FileText,
+  MessageCircle,
+  PlayCircle,
+  Send,
+  Sparkles,
+  ThumbsUp,
+  Trash2,
+} from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link, Navigate, useParams } from "react-router-dom";
 import { useAuthContext } from "@/context/AuthContext";
@@ -8,6 +18,8 @@ import {
   getPublishedBlogsAsync,
   incrementBlogView,
   mergePublishedAndSeedBlogs,
+  addBlogComment,
+  deleteBlogComment,
   savePublishedBlogAsync,
   toggleBlogLike,
   type BlogEntry,
@@ -203,6 +215,7 @@ export default function PublicBlogReadPage() {
   const { slug } = useParams<{ slug: string }>();
   const { user } = useAuthContext();
   const [activeVideoIndex, setActiveVideoIndex] = useState<number | null>(null);
+  const [commentBody, setCommentBody] = useState("");
   const hasTrackedViewRef = useRef<string | null>(null);
   const [publishedBlogs, setPublishedBlogs] = useState<BlogEntry[]>(() =>
     getPublishedBlogs(),
@@ -242,6 +255,36 @@ export default function PublicBlogReadPage() {
     if (!user?.email) return;
 
     const updatedBlog = toggleBlogLike(blog.slug, user.email);
+    if (updatedBlog) {
+      setPublishedBlogs(getPublishedBlogs());
+      void savePublishedBlogAsync(updatedBlog).then(() => {
+        setPublishedBlogs(getPublishedBlogs());
+      });
+    }
+  }
+
+  function handlePostComment() {
+    if (!user?.email || !commentBody.trim()) return;
+
+    const updatedBlog = addBlogComment(blog.slug, {
+      authorName: user.name || "User",
+      authorEmail: user.email,
+      body: commentBody,
+    });
+
+    if (updatedBlog) {
+      setCommentBody("");
+      setPublishedBlogs(getPublishedBlogs());
+      void savePublishedBlogAsync(updatedBlog).then(() => {
+        setPublishedBlogs(getPublishedBlogs());
+      });
+    }
+  }
+
+  function handleDeleteComment(commentId: string) {
+    if (!user?.email) return;
+
+    const updatedBlog = deleteBlogComment(blog.slug, commentId, user.email);
     if (updatedBlog) {
       setPublishedBlogs(getPublishedBlogs());
       void savePublishedBlogAsync(updatedBlog).then(() => {
@@ -299,6 +342,10 @@ export default function PublicBlogReadPage() {
                 <span className="inline-flex items-center gap-2">
                   <Eye size={16} className="text-[#2F3E3E]/50" />
                   {stats.views} views
+                </span>
+                <span className="inline-flex items-center gap-2">
+                  <MessageCircle size={16} className="text-[#2F3E3E]/50" />
+                  {stats.comments} comments
                 </span>
                 <button
                   type="button"
@@ -369,6 +416,91 @@ export default function PublicBlogReadPage() {
                   );
                 })}
               </div>
+
+              <section className="mt-12 rounded-[1.9rem] border border-[#DCE8E8] bg-white p-5 shadow-lg sm:p-6">
+                <div className="flex items-center gap-2">
+                  <MessageCircle size={18} className="text-[#2CA4A4]" />
+                  <h2 className="text-2xl font-black text-[#2F3E3E]">
+                    Comments ({blog.comments?.length ?? 0})
+                  </h2>
+                </div>
+
+                <div className="mt-4 space-y-4">
+                  {(blog.comments ?? []).length ? (
+                    (blog.comments ?? []).map((comment) => {
+                      const canDelete =
+                        user?.email?.trim().toLowerCase() ===
+                        comment.authorEmail.trim().toLowerCase();
+
+                      return (
+                        <article
+                          key={comment.id}
+                          className="rounded-2xl border border-[#E3EAEA] bg-[#FDFEFE] p-4"
+                        >
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="min-w-0">
+                              <p className="text-sm font-bold text-[#2F3E3E]">
+                                {comment.authorName}
+                              </p>
+                              <p className="text-xs text-[#6A7673]">
+                                {comment.authorEmail} |{" "}
+                                {new Date(comment.createdAt).toLocaleString()}
+                              </p>
+                            </div>
+                            {canDelete ? (
+                              <button
+                                type="button"
+                                onClick={() => handleDeleteComment(comment.id)}
+                                className="inline-flex items-center gap-1 rounded-full border border-[#EACFCF] px-3 py-1 text-xs font-semibold text-[#9A3D3D] transition hover:bg-[#FFF3F3]"
+                              >
+                                <Trash2 size={12} />
+                                Delete
+                              </button>
+                            ) : null}
+                          </div>
+                          <p className="mt-3 whitespace-pre-wrap text-sm leading-6 text-[#2F3E3E]/86">
+                            {comment.body}
+                          </p>
+                        </article>
+                      );
+                    })
+                  ) : (
+                    <p className="text-sm text-[#6A7673]">
+                      No comments yet. Be the first to comment.
+                    </p>
+                  )}
+                </div>
+
+                {user?.email ? (
+                  <div className="mt-5 space-y-3">
+                    <textarea
+                      value={commentBody}
+                      onChange={(event) => setCommentBody(event.target.value)}
+                      placeholder="Add a comment..."
+                      rows={4}
+                      className="w-full rounded-2xl border border-[#D9E3E3] bg-white px-4 py-3 text-sm text-[#2F3E3E] outline-none transition focus:border-[#2CA4A4]"
+                    />
+                    <div className="flex justify-end">
+                      <button
+                        type="button"
+                        onClick={handlePostComment}
+                        disabled={!commentBody.trim()}
+                        className="inline-flex items-center gap-2 rounded-full bg-[#2F3E3E] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#245543] disabled:cursor-not-allowed disabled:opacity-55"
+                      >
+                        <Send size={14} />
+                        Comment
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <Link
+                    to="/login"
+                    className="mt-5 inline-flex rounded-full border border-[#2CA4A4]/30 px-4 py-2 text-sm font-semibold text-[#2CA4A4] transition hover:bg-[#2CA4A4]/10"
+                  >
+                    Login to comment
+                  </Link>
+                )}
+              </section>
             </div>
           </article>
         </div>

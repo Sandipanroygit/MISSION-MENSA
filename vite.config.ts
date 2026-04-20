@@ -7,6 +7,7 @@ import { fileURLToPath, URL } from "node:url";
 const DEFAULT_BASE_URL = "https://indusschool-team-binv6fmz.atlassian.net";
 const DEFAULT_PROJECT_KEY = "PM";
 const DEFAULT_PROJECT_ID = "10071";
+const DEFAULT_BOARD_ID = "70";
 
 function getProjectSelector(projectIdRaw: string | null, projectKeyRaw: string) {
   const projectId = (projectIdRaw || "").trim();
@@ -25,6 +26,148 @@ function mapIssue(issue: any) {
     assignee: fields.assignee?.displayName || "Unassigned",
     priority: fields.priority?.name || "None",
     updated: fields.updated || "",
+    inSprint: false,
+    inBacklog: false,
+  };
+}
+
+async function fetchBoardBacklogKeys(options: {
+  jiraBaseUrl: string;
+  basicAuth: string;
+  boardId: string;
+  requestedMaxResults: number;
+}) {
+  const { jiraBaseUrl, basicAuth, boardId, requestedMaxResults } = options;
+  const backlogKeys = new Set<string>();
+  let startAt = 0;
+  const pageSize = 50;
+
+  while (backlogKeys.size < requestedMaxResults) {
+    const batchSize = Math.min(pageSize, requestedMaxResults - backlogKeys.size);
+    const backlogUrl =
+      `${jiraBaseUrl}/rest/agile/1.0/board/${encodeURIComponent(boardId)}/backlog` +
+      `?startAt=${startAt}&maxResults=${batchSize}`;
+
+    const response = await fetch(backlogUrl, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        Authorization: `Basic ${basicAuth}`,
+      },
+    });
+
+    if (!response.ok) {
+      return backlogKeys;
+    }
+
+    const payload = await response.json();
+    const issues = Array.isArray(payload?.issues) ? payload.issues : [];
+    for (const issue of issues) {
+      if (issue?.key) backlogKeys.add(issue.key as string);
+    }
+
+    const total = Number(payload?.total || 0);
+    startAt += issues.length;
+    if (issues.length === 0 || startAt >= total) break;
+  }
+
+  return backlogKeys;
+}
+
+async function fetchSprintIssueKeys(options: {
+  jiraBaseUrl: string;
+  basicAuth: string;
+  projectSelector: string;
+}) {
+  const { jiraBaseUrl, basicAuth, projectSelector } = options;
+  const inSprintKeys = new Set<string>();
+  let startAt = 0;
+  const maxResults = 100;
+
+  while (true) {
+    const sprintJql = `project = ${projectSelector} AND sprint IS NOT EMPTY`;
+    const sprintUrl =
+      `${jiraBaseUrl}/rest/api/3/search/jql?jql=${encodeURIComponent(sprintJql)}` +
+      `&startAt=${startAt}&maxResults=${maxResults}` +
+      "&fields=key";
+
+    const response = await fetch(sprintUrl, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        Authorization: `Basic ${basicAuth}`,
+      },
+    });
+
+    if (!response.ok) {
+      return inSprintKeys;
+    }
+
+    const payload = await response.json();
+    const issues = Array.isArray(payload?.issues) ? payload.issues : [];
+    for (const issue of issues) {
+      if (issue?.key) inSprintKeys.add(issue.key as string);
+    }
+
+    const total = Number(payload?.total || 0);
+    startAt += issues.length;
+    if (issues.length === 0 || startAt >= total) break;
+  }
+
+  return inSprintKeys;
+}
+
+async function fetchProjectIssues(options: {
+  jiraBaseUrl: string;
+  basicAuth: string;
+  projectSelector: string;
+  requestedMaxResults: number;
+}) {
+  const { jiraBaseUrl, basicAuth, projectSelector, requestedMaxResults } = options;
+  const allIssues: any[] = [];
+  let startAt = 0;
+  const pageSize = 100;
+
+  while (allIssues.length < requestedMaxResults) {
+    const batchSize = Math.min(pageSize, requestedMaxResults - allIssues.length);
+    const jql = `project = ${projectSelector} ORDER BY updated DESC`;
+    const jiraUrl =
+      `${jiraBaseUrl}/rest/api/3/search/jql?jql=${encodeURIComponent(jql)}` +
+      `&startAt=${startAt}&maxResults=${batchSize}` +
+      "&fields=summary,status,assignee,priority,updated,issuetype";
+
+    const jiraResponse = await fetch(jiraUrl, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        Authorization: `Basic ${basicAuth}`,
+      },
+    });
+
+    if (!jiraResponse.ok) {
+      const details = await jiraResponse.text();
+      return {
+        ok: false as const,
+        status: jiraResponse.status,
+        details,
+        issues: [] as any[],
+      };
+    }
+
+    const payload = await jiraResponse.json();
+    const issues = Array.isArray(payload?.issues) ? payload.issues : [];
+    allIssues.push(...issues);
+
+    const total = Number(payload?.total || 0);
+    startAt += issues.length;
+    if (issues.length === 0 || startAt >= total) break;
+  }
+
+  return {
+    ok: true as const,
+    status: 200,
+    details: "",
+    issues: allIssues,
   };
 }
 
@@ -63,6 +206,10 @@ function jiraDevApiPlugin(env: Record<string, string>): Plugin {
           url.searchParams.get("projectId") ||
           env.JIRA_PROJECT_ID ||
           DEFAULT_PROJECT_ID;
+        const boardId =
+          url.searchParams.get("boardId") ||
+          env.JIRA_BOARD_ID ||
+          DEFAULT_BOARD_ID;
         const projectSelector = getProjectSelector(projectId, projectKey);
 
         if (!jiraEmail || !jiraApiToken) {
@@ -78,45 +225,53 @@ function jiraDevApiPlugin(env: Record<string, string>): Plugin {
         }
 
         const maxResults = Math.min(
-          Number.parseInt(url.searchParams.get("maxResults") || "30", 10) || 30,
-          100,
+          Number.parseInt(url.searchParams.get("maxResults") || "200", 10) || 200,
+          500,
         );
-
-        const jql = `project = ${projectSelector} ORDER BY updated DESC`;
-        const jiraUrl =
-          `${jiraBaseUrl}/rest/api/3/search/jql?jql=${encodeURIComponent(jql)}` +
-          `&maxResults=${maxResults}` +
-          "&fields=summary,status,assignee,priority,updated,issuetype";
 
         const basicAuth = Buffer.from(`${jiraEmail}:${jiraApiToken}`).toString(
           "base64",
         );
 
         try {
-          const jiraResponse = await fetch(jiraUrl, {
-            method: "GET",
-            headers: {
-              Accept: "application/json",
-              Authorization: `Basic ${basicAuth}`,
-            },
+          const inSprintKeys = await fetchSprintIssueKeys({
+            jiraBaseUrl,
+            basicAuth,
+            projectSelector,
+          });
+          const backlogKeys = await fetchBoardBacklogKeys({
+            jiraBaseUrl,
+            basicAuth,
+            boardId,
+            requestedMaxResults: maxResults,
           });
 
-          if (!jiraResponse.ok) {
-            const details = await jiraResponse.text();
-            res.statusCode = jiraResponse.status;
+          const searchResponse = await fetchProjectIssues({
+            jiraBaseUrl,
+            basicAuth,
+            projectSelector,
+            requestedMaxResults: maxResults,
+          });
+
+          if (!searchResponse.ok) {
+            res.statusCode = searchResponse.status;
             res.setHeader("Content-Type", "application/json");
             res.end(
               JSON.stringify({
                 error: "Jira request failed",
-                details: details.slice(0, 500),
+                details: searchResponse.details.slice(0, 500),
               }),
             );
             return;
           }
 
-          const payload = await jiraResponse.json();
-          const issues = Array.isArray(payload?.issues)
-            ? payload.issues.map(mapIssue)
+          const issues = Array.isArray(searchResponse.issues)
+            ? searchResponse.issues.map((issue: any) => {
+                const mapped = mapIssue(issue);
+                mapped.inSprint = inSprintKeys.has(mapped.key);
+                mapped.inBacklog = backlogKeys.has(mapped.key);
+                return mapped;
+              })
             : [];
 
           res.statusCode = 200;

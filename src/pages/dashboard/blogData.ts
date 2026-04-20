@@ -31,11 +31,20 @@ export interface BlogHeadingBlock {
   text: string;
 }
 
+export interface BlogComment {
+  id: string;
+  authorName: string;
+  authorEmail: string;
+  body: string;
+  createdAt: string;
+}
+
 export type BlogContentBlock =
   | string
   | BlogYoutubeBlock
   | BlogPdfBlock
-  | BlogTableBlock;
+  | BlogTableBlock
+  | BlogHeadingBlock;
 
 export interface BlogEntry {
   slug: string;
@@ -47,6 +56,7 @@ export interface BlogEntry {
   content: BlogContentBlock[];
   viewCount?: number;
   likedBy?: string[];
+  comments?: BlogComment[];
 }
 
 export const DEFAULT_BLOG_COVER_IMAGES = [
@@ -65,6 +75,29 @@ export function getDefaultBlogCover(seed: string) {
 }
 
 function normalizeBlogEntry(blog: BlogEntry): BlogEntry {
+  const normalizedComments = Array.isArray(blog.comments)
+    ? blog.comments
+        .filter(
+          (comment): comment is BlogComment =>
+            Boolean(
+              comment &&
+                typeof comment.id === "string" &&
+                typeof comment.authorName === "string" &&
+                typeof comment.authorEmail === "string" &&
+                typeof comment.body === "string" &&
+                typeof comment.createdAt === "string",
+            ),
+        )
+        .map((comment) => ({
+          id: comment.id,
+          authorName: comment.authorName.trim() || "User",
+          authorEmail: comment.authorEmail.trim().toLowerCase(),
+          body: comment.body.trim(),
+          createdAt: comment.createdAt,
+        }))
+        .filter((comment) => Boolean(comment.body))
+    : [];
+
   return {
     ...blog,
     image:
@@ -87,6 +120,7 @@ function normalizeBlogEntry(blog: BlogEntry): BlogEntry {
           ),
         )
       : [],
+    comments: normalizedComments,
   };
 }
 
@@ -354,6 +388,7 @@ export function getBlogStats(blog: BlogEntry) {
   return {
     views: blog.viewCount ?? 0,
     likes: blog.likedBy?.length ?? 0,
+    comments: blog.comments?.length ?? 0,
   };
 }
 
@@ -472,6 +507,79 @@ export function toggleBlogLike(slug: string, userEmail: string) {
   const updatedBlog = normalizeBlogEntry({
     ...existingBlog,
     likedBy: Array.from(likedBy),
+  });
+
+  savePublishedBlog(updatedBlog);
+  return updatedBlog;
+}
+
+function createBlogCommentId() {
+  if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
+    return crypto.randomUUID();
+  }
+
+  return `blog-comment-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+}
+
+export function addBlogComment(
+  slug: string,
+  payload: {
+    authorName: string;
+    authorEmail: string;
+    body: string;
+  },
+) {
+  const existingBlog = getMergedBlogBySlug(slug);
+  if (!existingBlog) return null;
+
+  const normalizedAuthorEmail = payload.authorEmail.trim().toLowerCase();
+  const normalizedAuthorName = payload.authorName.trim();
+  const normalizedBody = payload.body.trim();
+  if (!normalizedAuthorEmail || !normalizedBody) return null;
+
+  const updatedBlog = normalizeBlogEntry({
+    ...existingBlog,
+    comments: [
+      ...(existingBlog.comments ?? []),
+      {
+        id: createBlogCommentId(),
+        authorName: normalizedAuthorName || "User",
+        authorEmail: normalizedAuthorEmail,
+        body: normalizedBody,
+        createdAt: new Date().toISOString(),
+      },
+    ],
+  });
+
+  savePublishedBlog(updatedBlog);
+  return updatedBlog;
+}
+
+export function deleteBlogComment(
+  slug: string,
+  commentId: string,
+  userEmail: string,
+) {
+  const existingBlog = getMergedBlogBySlug(slug);
+  if (!existingBlog) return null;
+
+  const normalizedUserEmail = userEmail.trim().toLowerCase();
+  if (!normalizedUserEmail) return null;
+
+  const targetComment = (existingBlog.comments ?? []).find(
+    (comment) => comment.id === commentId,
+  );
+  if (!targetComment) return null;
+
+  if (targetComment.authorEmail.trim().toLowerCase() !== normalizedUserEmail) {
+    return null;
+  }
+
+  const updatedBlog = normalizeBlogEntry({
+    ...existingBlog,
+    comments: (existingBlog.comments ?? []).filter(
+      (comment) => comment.id !== commentId,
+    ),
   });
 
   savePublishedBlog(updatedBlog);

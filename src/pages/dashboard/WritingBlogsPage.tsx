@@ -233,7 +233,11 @@ export default function WritingBlogsPage() {
                     {canEdit ? (
                       <>
                         <button
-                          onClick={() => navigate("/dashboard/writing-blogs/new")}
+                          onClick={() =>
+                            navigate("/dashboard/writing-blogs/new", {
+                              state: { editSlug: blog.slug },
+                            })
+                          }
                           className="rounded-full border border-[#2CA4A4]/30 px-4 py-2 text-sm font-semibold text-[#2CA4A4] transition hover:bg-[#2CA4A4]/10"
                         >
                           Edit

@@ -9,6 +9,7 @@ import {
   Filter,
   ListTodo,
   Search,
+  Sparkles,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import apiClient from "@/lib/axios";
@@ -16,6 +17,8 @@ import apiClient from "@/lib/axios";
 const JIRA_BASE_URL = "https://indusschool-team-binv6fmz.atlassian.net";
 const PROJECT_KEY = "PM";
 const PROJECT_ID = "10071";
+const MAX_RESULTS = "500";
+const ITEMS_PER_PAGE = 8;
 
 interface JiraIssue {
   id: string;
@@ -26,6 +29,8 @@ interface JiraIssue {
   assignee: string;
   priority: string;
   updated: string;
+  inSprint?: boolean;
+  inBacklog?: boolean;
 }
 
 function formatDateTime(value: string) {
@@ -65,14 +70,31 @@ function getPriorityTone(priority: string) {
   return "bg-[#eef2ff] text-[#3730a3]";
 }
 
-type LaneKey = "todo" | "inProgress" | "done" | "other";
+type LaneKey = "backlog" | "todo" | "inProgress" | "done" | "other";
 
-function classifyStatus(status: string): LaneKey {
+function isDoneStatus(status: string) {
   const normalized = status.toLowerCase();
+  return (
+    normalized.includes("done") ||
+    normalized.includes("closed") ||
+    normalized.includes("resolved")
+  );
+}
+
+function classifyIssue(issue: JiraIssue): LaneKey {
+  const normalized = issue.status.toLowerCase();
+  if (
+    issue.inBacklog &&
+    (normalized.includes("todo") ||
+      normalized.includes("to do") ||
+      normalized.includes("open") ||
+      normalized.includes("backlog"))
+  ) {
+    return "backlog";
+  }
   if (
     normalized.includes("todo") ||
     normalized.includes("to do") ||
-    normalized.includes("backlog") ||
     normalized.includes("open")
   ) {
     return "todo";
@@ -86,7 +108,7 @@ function classifyStatus(status: string): LaneKey {
   ) {
     return "inProgress";
   }
-  if (normalized.includes("done") || normalized.includes("closed") || normalized.includes("resolved")) {
+  if (isDoneStatus(issue.status)) {
     return "done";
   }
   return "other";
@@ -106,12 +128,155 @@ async function readErrorMessage(response: Response, source: string) {
   return `${source} failed with ${response.status}: ${details.slice(0, 280)}`;
 }
 
+function getLaneCardPalette(lane: LaneKey, index: number) {
+  const palettes: Record<
+    LaneKey,
+    Array<{ card: string; key: string; meta: string; glow: string }>
+  > = {
+    backlog: [
+      {
+        card: "border-[#d8c4ff] bg-[linear-gradient(135deg,#faf5ff_0%,#efe3ff_100%)]",
+        key: "text-[#6b21a8]",
+        meta: "bg-[#f3e8ff] text-[#5b21b6]",
+        glow: "shadow-[0_12px_26px_-18px_rgba(139,92,246,0.95)]",
+      },
+      {
+        card: "border-[#e9d5ff] bg-[linear-gradient(135deg,#fdf4ff_0%,#f5e9ff_100%)]",
+        key: "text-[#7e22ce]",
+        meta: "bg-[#fae8ff] text-[#86198f]",
+        glow: "shadow-[0_12px_26px_-18px_rgba(192,132,252,0.95)]",
+      },
+      {
+        card: "border-[#c4b5fd] bg-[linear-gradient(135deg,#ede9fe_0%,#ddd6fe_100%)]",
+        key: "text-[#5b21b6]",
+        meta: "bg-[#ddd6fe] text-[#4c1d95]",
+        glow: "shadow-[0_12px_26px_-18px_rgba(124,58,237,0.95)]",
+      },
+      {
+        card: "border-[#f0abfc] bg-[linear-gradient(135deg,#fdf4ff_0%,#fae8ff_100%)]",
+        key: "text-[#a21caf]",
+        meta: "bg-[#f5d0fe] text-[#86198f]",
+        glow: "shadow-[0_12px_26px_-18px_rgba(217,70,239,0.95)]",
+      },
+    ],
+    todo: [
+      {
+        card: "border-[#bae6fd] bg-[linear-gradient(135deg,#f0f9ff_0%,#e0f2fe_100%)]",
+        key: "text-[#0369a1]",
+        meta: "bg-[#e0f2fe] text-[#0c4a6e]",
+        glow: "shadow-[0_12px_26px_-18px_rgba(14,165,233,0.95)]",
+      },
+      {
+        card: "border-[#99f6e4] bg-[linear-gradient(135deg,#ecfeff_0%,#ccfbf1_100%)]",
+        key: "text-[#0f766e]",
+        meta: "bg-[#ccfbf1] text-[#134e4a]",
+        glow: "shadow-[0_12px_26px_-18px_rgba(20,184,166,0.95)]",
+      },
+      {
+        card: "border-[#7dd3fc] bg-[linear-gradient(135deg,#f0f9ff_0%,#dbeafe_100%)]",
+        key: "text-[#0369a1]",
+        meta: "bg-[#dbeafe] text-[#1e3a8a]",
+        glow: "shadow-[0_12px_26px_-18px_rgba(56,189,248,0.95)]",
+      },
+      {
+        card: "border-[#5eead4] bg-[linear-gradient(135deg,#f0fdfa_0%,#ccfbf1_100%)]",
+        key: "text-[#0f766e]",
+        meta: "bg-[#99f6e4] text-[#115e59]",
+        glow: "shadow-[0_12px_26px_-18px_rgba(45,212,191,0.95)]",
+      },
+    ],
+    inProgress: [
+      {
+        card: "border-[#fcd34d] bg-[linear-gradient(135deg,#fffbeb_0%,#fef3c7_100%)]",
+        key: "text-[#b45309]",
+        meta: "bg-[#fef3c7] text-[#92400e]",
+        glow: "shadow-[0_12px_26px_-18px_rgba(245,158,11,0.95)]",
+      },
+      {
+        card: "border-[#fdba74] bg-[linear-gradient(135deg,#fff7ed_0%,#ffedd5_100%)]",
+        key: "text-[#c2410c]",
+        meta: "bg-[#ffedd5] text-[#9a3412]",
+        glow: "shadow-[0_12px_26px_-18px_rgba(249,115,22,0.95)]",
+      },
+      {
+        card: "border-[#fbbf24] bg-[linear-gradient(135deg,#fffbeb_0%,#fde68a_100%)]",
+        key: "text-[#a16207]",
+        meta: "bg-[#fde68a] text-[#854d0e]",
+        glow: "shadow-[0_12px_26px_-18px_rgba(234,179,8,0.95)]",
+      },
+      {
+        card: "border-[#fb923c] bg-[linear-gradient(135deg,#fff7ed_0%,#fed7aa_100%)]",
+        key: "text-[#c2410c]",
+        meta: "bg-[#fed7aa] text-[#9a3412]",
+        glow: "shadow-[0_12px_26px_-18px_rgba(251,146,60,0.95)]",
+      },
+    ],
+    done: [
+      {
+        card: "border-[#86efac] bg-[linear-gradient(135deg,#f0fdf4_0%,#dcfce7_100%)]",
+        key: "text-[#15803d]",
+        meta: "bg-[#dcfce7] text-[#166534]",
+        glow: "shadow-[0_12px_26px_-18px_rgba(34,197,94,0.95)]",
+      },
+      {
+        card: "border-[#a7f3d0] bg-[linear-gradient(135deg,#ecfdf5_0%,#d1fae5_100%)]",
+        key: "text-[#047857]",
+        meta: "bg-[#d1fae5] text-[#065f46]",
+        glow: "shadow-[0_12px_26px_-18px_rgba(16,185,129,0.95)]",
+      },
+      {
+        card: "border-[#4ade80] bg-[linear-gradient(135deg,#f0fdf4_0%,#bbf7d0_100%)]",
+        key: "text-[#15803d]",
+        meta: "bg-[#bbf7d0] text-[#166534]",
+        glow: "shadow-[0_12px_26px_-18px_rgba(74,222,128,0.95)]",
+      },
+      {
+        card: "border-[#6ee7b7] bg-[linear-gradient(135deg,#ecfdf5_0%,#a7f3d0_100%)]",
+        key: "text-[#047857]",
+        meta: "bg-[#a7f3d0] text-[#065f46]",
+        glow: "shadow-[0_12px_26px_-18px_rgba(52,211,153,0.95)]",
+      },
+    ],
+    other: [
+      {
+        card: "border-[#fecaca] bg-[linear-gradient(135deg,#fef2f2_0%,#fee2e2_100%)]",
+        key: "text-[#b91c1c]",
+        meta: "bg-[#fee2e2] text-[#991b1b]",
+        glow: "shadow-[0_12px_26px_-18px_rgba(239,68,68,0.95)]",
+      },
+      {
+        card: "border-[#fed7aa] bg-[linear-gradient(135deg,#fff7ed_0%,#ffedd5_100%)]",
+        key: "text-[#c2410c]",
+        meta: "bg-[#ffedd5] text-[#9a3412]",
+        glow: "shadow-[0_12px_26px_-18px_rgba(251,146,60,0.95)]",
+      },
+      {
+        card: "border-[#fca5a5] bg-[linear-gradient(135deg,#fff1f2_0%,#fecdd3_100%)]",
+        key: "text-[#be123c]",
+        meta: "bg-[#fecdd3] text-[#9f1239]",
+        glow: "shadow-[0_12px_26px_-18px_rgba(244,63,94,0.95)]",
+      },
+      {
+        card: "border-[#fdba74] bg-[linear-gradient(135deg,#fff7ed_0%,#fed7aa_100%)]",
+        key: "text-[#b45309]",
+        meta: "bg-[#fed7aa] text-[#92400e]",
+        glow: "shadow-[0_12px_26px_-18px_rgba(251,146,60,0.95)]",
+      },
+    ],
+  };
+
+  const paletteList = palettes[lane];
+  return paletteList[index % paletteList.length];
+}
+
 export default function JiraPage() {
   const [issues, setIssues] = useState<JiraIssue[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
+  const [activeLane, setActiveLane] = useState<LaneKey>("todo");
+  const [activeLanePage, setActiveLanePage] = useState(1);
 
   useEffect(() => {
     async function fetchIssues() {
@@ -121,7 +286,7 @@ export default function JiraPage() {
         const query = new URLSearchParams({
           projectKey: PROJECT_KEY,
           projectId: PROJECT_ID,
-          maxResults: "30",
+          maxResults: MAX_RESULTS,
         }).toString();
         const localUrl = `/api/jira/issues?${query}`;
 
@@ -143,7 +308,7 @@ export default function JiraPage() {
               params: {
                 projectKey: PROJECT_KEY,
                 projectId: PROJECT_ID,
-                maxResults: 30,
+                maxResults: Number(MAX_RESULTS),
               },
             });
             payload = remoteResponse.data as { issues?: JiraIssue[] };
@@ -199,27 +364,24 @@ export default function JiraPage() {
   ).length;
   const completionRatio = issues.length ? Math.round((doneCount / issues.length) * 100) : 0;
 
-  const statusSummary = useMemo(() => {
-    const buckets = new Map<string, number>();
-    for (const issue of issues) {
-      buckets.set(issue.status, (buckets.get(issue.status) ?? 0) + 1);
-    }
-
-    return Array.from(buckets.entries())
-      .map(([label, count]) => ({ label, count }))
-      .sort((a, b) => b.count - a.count);
-  }, [issues]);
-
   const classifiedIssues = useMemo(() => {
     return filteredIssues.reduce<Record<LaneKey, JiraIssue[]>>(
       (acc, issue) => {
-        const lane = classifyStatus(issue.status);
+        const lane = classifyIssue(issue);
         acc[lane].push(issue);
         return acc;
       },
-      { todo: [], inProgress: [], done: [], other: [] },
+      { backlog: [], todo: [], inProgress: [], done: [], other: [] },
     );
   }, [filteredIssues]);
+
+  const activeLaneIssues = classifiedIssues[activeLane];
+  const totalLanePages = Math.max(1, Math.ceil(activeLaneIssues.length / ITEMS_PER_PAGE));
+  const safePage = Math.min(activeLanePage, totalLanePages);
+  const lanePreviewIssues = activeLaneIssues.slice(
+    (safePage - 1) * ITEMS_PER_PAGE,
+    safePage * ITEMS_PER_PAGE,
+  );
 
   const lanes: Array<{
     key: LaneKey;
@@ -228,7 +390,17 @@ export default function JiraPage() {
     accent: string;
     bg: string;
     border: string;
+    glow: string;
   }> = [
+    {
+      key: "backlog",
+      title: "Backlog",
+      subtitle: "Idea parking lot",
+      accent: "text-[#7c3aed]",
+      bg: "bg-[#f5f3ff]",
+      border: "border-[#ddd6fe]",
+      glow: "shadow-[0_10px_28px_-18px_rgba(124,58,237,0.9)]",
+    },
     {
       key: "todo",
       title: "To Do",
@@ -236,6 +408,7 @@ export default function JiraPage() {
       accent: "text-[#1d4ed8]",
       bg: "bg-[#eff6ff]",
       border: "border-[#bfdbfe]",
+      glow: "shadow-[0_10px_28px_-18px_rgba(59,130,246,0.9)]",
     },
     {
       key: "inProgress",
@@ -244,6 +417,7 @@ export default function JiraPage() {
       accent: "text-[#0f766e]",
       bg: "bg-[#ecfeff]",
       border: "border-[#99f6e4]",
+      glow: "shadow-[0_10px_28px_-18px_rgba(20,184,166,0.9)]",
     },
     {
       key: "done",
@@ -252,6 +426,7 @@ export default function JiraPage() {
       accent: "text-[#166534]",
       bg: "bg-[#f0fdf4]",
       border: "border-[#bbf7d0]",
+      glow: "shadow-[0_10px_28px_-18px_rgba(34,197,94,0.9)]",
     },
     {
       key: "other",
@@ -260,6 +435,7 @@ export default function JiraPage() {
       accent: "text-[#7c2d12]",
       bg: "bg-[#fff7ed]",
       border: "border-[#fed7aa]",
+      glow: "shadow-[0_10px_28px_-18px_rgba(249,115,22,0.9)]",
     },
   ];
 
@@ -364,31 +540,6 @@ export default function JiraPage() {
           </article>
         </section>
 
-        <section className="mb-6 rounded-2xl border border-[#dfe9ea] bg-white p-5 shadow-sm">
-          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-[#5e7880]">
-            Status Breakdown
-          </p>
-          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-            {statusSummary.slice(0, 8).map((item) => {
-              const width = issues.length ? Math.max(6, Math.round((item.count / issues.length) * 100)) : 0;
-              return (
-                <article key={item.label} className="rounded-xl border border-[#e3edf0] bg-[#fbfefe] p-3">
-                  <div className="mb-2 flex items-center justify-between gap-3">
-                    <p className="truncate text-sm font-semibold text-[#173237]">{item.label}</p>
-                    <span className="text-sm font-black text-[#24454d]">{item.count}</span>
-                  </div>
-                  <div className="h-2 w-full overflow-hidden rounded-full bg-[#dbe8eb]">
-                    <div
-                      className="h-full rounded-full bg-[linear-gradient(90deg,#0ea5e9_0%,#14b8a6_100%)]"
-                      style={{ width: `${width}%` }}
-                    />
-                  </div>
-                </article>
-              );
-            })}
-          </div>
-        </section>
-
         <section className="rounded-2xl border border-[#dfe9ea] bg-white p-5 shadow-sm">
           <div className="mb-4 flex flex-col gap-3 md:flex-row">
             <label className="relative flex-1">
@@ -438,133 +589,143 @@ export default function JiraPage() {
               No issues matched your filter.
             </p>
           ) : (
-            <div className="space-y-6">
-              <section>
-                <div className="mb-3 flex items-center justify-between">
-                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#5e7880]">
-                    Classified Board
-                  </p>
+            <div className="space-y-5">
+              <section className="rounded-2xl border border-[#dce7ea] bg-[linear-gradient(180deg,#fbffff_0%,#f5fbfb_100%)] p-4">
+                <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex items-center gap-2">
+                    <Sparkles size={16} className="text-[#0f766e]" />
+                    <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#4d666f]">
+                      Classified Board
+                    </p>
+                  </div>
                   <p className="text-xs font-semibold text-[#5e7880]">
-                    {filteredIssues.length} issues in current view
+                    Focus mode: one lane at a time
                   </p>
                 </div>
-                <div className="grid gap-4 xl:grid-cols-4">
+
+                <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-5">
                   {lanes.map((lane) => {
-                    const laneIssues = classifiedIssues[lane.key];
+                    const isActive = lane.key === activeLane;
+                    const count = classifiedIssues[lane.key].length;
                     return (
-                      <article
+                      <button
                         key={lane.key}
-                        className={`rounded-2xl border ${lane.border} ${lane.bg} p-3`}
+                        type="button"
+                        onClick={() => {
+                          setActiveLane(lane.key);
+                          setActiveLanePage(1);
+                        }}
+                        className={`rounded-2xl border p-3 text-left transition-all duration-200 ${lane.bg} ${lane.border} ${
+                          isActive ? `${lane.glow} scale-[1.02]` : "opacity-75 hover:opacity-100"
+                        }`}
                       >
-                        <div className="mb-3 flex items-start justify-between gap-2">
+                        <div className="flex items-center justify-between gap-2">
                           <div>
-                            <h3 className={`text-base font-black ${lane.accent}`}>
-                              {lane.title}
-                            </h3>
-                            <p className="text-xs text-[#4f6368]">{lane.subtitle}</p>
+                            <p className={`text-sm font-black ${lane.accent}`}>{lane.title}</p>
+                            <p className="text-xs text-[#5f757c]">{lane.subtitle}</p>
                           </div>
-                          <span className="rounded-full bg-white px-2.5 py-1 text-xs font-bold text-[#1f343a] shadow-sm">
-                            {laneIssues.length}
+                          <span className="rounded-full bg-white px-2.5 py-1 text-xs font-black text-[#21404a]">
+                            {count}
                           </span>
                         </div>
-
-                        {laneIssues.length === 0 ? (
-                          <div className="rounded-xl border border-dashed border-[#cbdde1] bg-white/70 p-3 text-xs text-[#698187]">
-                            No issues
-                          </div>
-                        ) : (
-                          <div className="space-y-2">
-                            {laneIssues.map((issue) => (
-                              <a
-                                key={issue.id}
-                                href={`${JIRA_BASE_URL}/browse/${issue.key}`}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="block rounded-xl border border-[#d8e8eb] bg-white p-3 transition hover:-translate-y-0.5 hover:shadow-sm"
-                              >
-                                <div className="flex items-center justify-between gap-2">
-                                  <p className="text-xs font-black text-[#1f5f71]">
-                                    {issue.key}
-                                  </p>
-                                  <ArrowUpRight size={12} className="text-[#6a868d]" />
-                                </div>
-                                <p className="mt-1 line-clamp-2 text-sm font-semibold text-[#1d2a2a]">
-                                  {issue.summary}
-                                </p>
-                                <div className="mt-2 flex flex-wrap gap-1.5">
-                                  <span
-                                    className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${getPriorityTone(
-                                      issue.priority,
-                                    )}`}
-                                  >
-                                    {issue.priority}
-                                  </span>
-                                  <span className="rounded-full bg-[#eef6f8] px-2 py-0.5 text-[10px] font-semibold text-[#39565e]">
-                                    {issue.assignee}
-                                  </span>
-                                </div>
-                              </a>
-                            ))}
-                          </div>
-                        )}
-                      </article>
+                      </button>
                     );
                   })}
                 </div>
-              </section>
 
-              <section>
-                <p className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-[#5e7880]">
-                  All Issues
-                </p>
-                <div className="grid gap-3 lg:grid-cols-2">
-                  {filteredIssues.map((issue) => (
-                    <article
-                      key={issue.id}
-                      className="rounded-2xl border border-[#e1ebec] bg-[linear-gradient(180deg,#fcfefe_0%,#f7fbfb_100%)] p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
-                    >
-                      <div className="flex flex-wrap items-start justify-between gap-3">
-                        <div>
-                          <a
-                            href={`${JIRA_BASE_URL}/browse/${issue.key}`}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="inline-flex items-center gap-1 text-sm font-bold text-[#1f5f71]"
-                          >
-                            {issue.key}
-                            <ArrowUpRight size={13} />
-                          </a>
-                          <h3 className="mt-1 text-base font-semibold text-[#1d2a2a]">
-                            {issue.summary}
-                          </h3>
-                        </div>
-                        <div className="flex flex-wrap gap-1.5">
-                          <span
-                            className={`rounded-full px-2.5 py-1 text-xs font-semibold ${getStatusTone(
-                              issue.status,
-                            )}`}
-                          >
-                            {issue.status}
-                          </span>
-                          <span
-                            className={`rounded-full px-2.5 py-1 text-xs font-semibold ${getPriorityTone(
-                              issue.priority,
-                            )}`}
-                          >
-                            {issue.priority}
-                          </span>
-                        </div>
-                      </div>
+                <div className="mt-4 rounded-2xl border border-[#d7e6e9] bg-white p-4">
+                  <div className="mb-3 flex items-center justify-between gap-2">
+                    <p className="text-sm font-black text-[#17363f]">
+                      {lanes.find((lane) => lane.key === activeLane)?.title} Lane
+                    </p>
+                    <p className="text-xs font-semibold text-[#607b82]">
+                      {activeLaneIssues.length} issues
+                    </p>
+                  </div>
 
-                      <div className="mt-3 flex flex-wrap gap-3 text-xs text-[#607679]">
-                        <span>Type: {issue.issueType}</span>
-                        <span>Assignee: {issue.assignee}</span>
-                        <span className="inline-flex items-center gap-1">
-                          <Clock3 size={12} /> Updated: {formatDateTime(issue.updated)}
-                        </span>
-                      </div>
-                    </article>
-                  ))}
+                  {activeLaneIssues.length === 0 ? (
+                    <div className="rounded-xl border border-dashed border-[#cbdde1] bg-[#f8fcfd] p-4 text-sm text-[#698187]">
+                      No issues in this lane.
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      {lanePreviewIssues.map((issue, index) => {
+                        const palette = getLaneCardPalette(
+                          activeLane,
+                          (safePage - 1) * ITEMS_PER_PAGE + index,
+                        );
+                        return (
+                          <article
+                            key={issue.id}
+                            className={`rounded-xl border p-3 transition hover:-translate-y-0.5 ${palette.card} ${palette.glow}`}
+                          >
+                            <p className={`text-xs font-black ${palette.key}`}>{issue.key}</p>
+                            <p className="mt-1 text-sm font-semibold text-[#1d2a2a]">
+                              {issue.summary}
+                            </p>
+                            <div className="mt-2 flex flex-wrap gap-2">
+                              <span
+                                className={`rounded-full px-2.5 py-1 text-xs font-semibold ${getStatusTone(
+                                  issue.status,
+                                )}`}
+                              >
+                                {issue.status}
+                              </span>
+                              <span
+                                className={`rounded-full px-2.5 py-1 text-xs font-semibold ${getPriorityTone(
+                                  issue.priority,
+                                )}`}
+                              >
+                                {issue.priority}
+                              </span>
+                            </div>
+                            <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
+                              <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${palette.meta}`}>
+                                {issue.assignee}
+                              </span>
+                              <div className="ml-auto flex flex-wrap items-center justify-end gap-x-3 gap-y-1 text-right text-xs leading-tight text-[#607679]">
+                                <span>Type: {issue.issueType}</span>
+                                <span className="inline-flex items-center gap-1">
+                                  <Clock3 size={12} /> Updated: {formatDateTime(issue.updated)}
+                                </span>
+                                <a
+                                  href={`${JIRA_BASE_URL}/browse/${issue.key}`}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="inline-flex items-center gap-1 font-bold text-[#1f5f71]"
+                                >
+                                  Open in Jira <ArrowUpRight size={12} />
+                                </a>
+                              </div>
+                            </div>
+                          </article>
+                        );
+                      })}
+
+                      {totalLanePages > 1 && (
+                        <div className="flex justify-center pt-2">
+                          <div className="inline-flex flex-wrap items-center justify-center gap-1 rounded-xl border border-[#bbf7d0] bg-[#f0fdf4] px-2 py-1.5">
+                          {Array.from({ length: totalLanePages }, (_, index) => index + 1).map(
+                            (pageNumber) => (
+                              <button
+                                key={pageNumber}
+                                type="button"
+                                onClick={() => setActiveLanePage(pageNumber)}
+                                className={`h-7 min-w-7 rounded-md px-2 text-xs font-semibold transition ${
+                                  safePage === pageNumber
+                                    ? "bg-[#16a34a] text-white shadow-sm"
+                                    : "bg-white text-[#36565f] hover:bg-[#dcfce7]"
+                                }`}
+                              >
+                                {pageNumber}
+                              </button>
+                            ),
+                          )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               </section>
             </div>
