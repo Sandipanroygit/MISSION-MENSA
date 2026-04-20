@@ -31,6 +31,14 @@ import * as mammoth from "mammoth/mammoth.browser";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuthContext } from "@/context/AuthContext";
 import {
+  deleteBlogDraftByEmail,
+  deleteBlogDraftByEmailAsync,
+  getBlogDraftByEmailAsync,
+  type BlogDraftEntry,
+  upsertBlogDraftEntry,
+  upsertBlogDraftEntryAsync,
+} from "./blogDraftData";
+import {
   type BlogContentBlock,
   type BlogEntry,
   getDefaultBlogCover,
@@ -529,99 +537,138 @@ export default function BlogDraftEditorPage() {
   }, [hasCustomCover, title]);
 
   useEffect(() => {
-    if (editSlugFromRoute) {
-      const blogToEdit = mergePublishedAndSeedBlogs(getPublishedBlogs()).find(
-        (blog) => blog.slug === editSlugFromRoute,
+    let isCancelled = false;
+
+    const applyDraft = (draft: BlogDraftEntry) => {
+      const normalizedTitle = normalizeDraftTitle(draft.title);
+      const normalizedSummary = normalizeDraftSummary(draft.summary);
+      const normalizedContent = normalizeDraftContent(draft.content);
+
+      setTitle(normalizedTitle);
+      setSummary(normalizedSummary);
+      setEditingSlug(draft.editingSlug?.trim() || null);
+      setFontFamily(draft.fontFamily);
+      setFontSize(draft.fontSize);
+      setLineSpacing(
+        typeof draft.lineSpacing === "number"
+          ? draft.lineSpacing
+          : defaultLineSpacing,
       );
+      setParagraphSpacing(
+        typeof draft.paragraphSpacing === "number"
+          ? draft.paragraphSpacing
+          : defaultParagraphSpacing,
+      );
+      setEditorHtml(normalizedContent);
+      setHasCustomCover(Boolean(draft.hasCustomCover && draft.coverImage));
+      setCoverImage(
+        draft.coverImage && draft.coverImage.trim().length > 0
+          ? draft.coverImage
+          : getDefaultBlogCover(normalizedTitle || defaultTitle),
+      );
+      setSaveMessage(`Saved ${new Date(draft.savedAt).toLocaleString()}`);
 
-      if (blogToEdit) {
-        const convertedHtml = convertBlocksToEditorHtml(blogToEdit.content);
-        setEditingSlug(blogToEdit.slug);
-        setTitle(blogToEdit.title);
-        setSummary(blogToEdit.summary);
-        setLineSpacing(
-          typeof blogToEdit.lineSpacing === "number"
-            ? blogToEdit.lineSpacing
-            : defaultLineSpacing,
-        );
-        setParagraphSpacing(
-          typeof blogToEdit.paragraphSpacing === "number"
-            ? blogToEdit.paragraphSpacing
-            : defaultParagraphSpacing,
-        );
-        setEditorHtml(convertedHtml);
-        setCoverImage(blogToEdit.image || getDefaultBlogCover(blogToEdit.title));
-        setHasCustomCover(Boolean(blogToEdit.image));
-        setSaveMessage(`Editing "${blogToEdit.title}"`);
+      if (editorRef.current) {
+        editorRef.current.innerHTML = normalizedContent;
+      }
+    };
 
-        if (editorRef.current) {
-          editorRef.current.innerHTML = convertedHtml;
+    const loadDraft = async () => {
+      if (editSlugFromRoute) {
+        const blogToEdit = mergePublishedAndSeedBlogs(getPublishedBlogs()).find(
+          (blog) => blog.slug === editSlugFromRoute,
+        );
+
+        if (blogToEdit) {
+          const convertedHtml = convertBlocksToEditorHtml(blogToEdit.content);
+          if (isCancelled) return;
+
+          setEditingSlug(blogToEdit.slug);
+          setTitle(blogToEdit.title);
+          setSummary(blogToEdit.summary);
+          setLineSpacing(
+            typeof blogToEdit.lineSpacing === "number"
+              ? blogToEdit.lineSpacing
+              : defaultLineSpacing,
+          );
+          setParagraphSpacing(
+            typeof blogToEdit.paragraphSpacing === "number"
+              ? blogToEdit.paragraphSpacing
+              : defaultParagraphSpacing,
+          );
+          setEditorHtml(convertedHtml);
+          setCoverImage(blogToEdit.image || getDefaultBlogCover(blogToEdit.title));
+          setHasCustomCover(Boolean(blogToEdit.image));
+          setSaveMessage(`Editing "${blogToEdit.title}"`);
+
+          if (editorRef.current) {
+            editorRef.current.innerHTML = convertedHtml;
+          }
+          return;
         }
+      }
+
+      let localFallbackDraft: BlogDraftEntry | null = null;
+      const savedDraft = localStorage.getItem(getDraftStorageKey(user?.email));
+      if (savedDraft) {
+        try {
+          const parsed = JSON.parse(savedDraft) as Partial<BlogDraftEntry>;
+          localFallbackDraft = {
+            authorEmail: user?.email ?? "guest",
+            title: parsed.title ?? defaultTitle,
+            summary: parsed.summary ?? defaultSummary,
+            editingSlug: parsed.editingSlug ?? null,
+            fontFamily: parsed.fontFamily ?? fontFamilies[0].value,
+            fontSize: parsed.fontSize ?? fontSizes[2].value,
+            lineSpacing:
+              typeof parsed.lineSpacing === "number"
+                ? parsed.lineSpacing
+                : defaultLineSpacing,
+            paragraphSpacing:
+              typeof parsed.paragraphSpacing === "number"
+                ? parsed.paragraphSpacing
+                : defaultParagraphSpacing,
+            content: parsed.content ?? "",
+            coverImage:
+              parsed.coverImage && parsed.coverImage.trim().length > 0
+                ? parsed.coverImage
+                : getDefaultBlogCover(parsed.title ?? defaultTitle),
+            hasCustomCover: Boolean(parsed.hasCustomCover && parsed.coverImage),
+            savedAt: parsed.savedAt ?? new Date().toISOString(),
+          };
+        } catch {
+          localStorage.removeItem(getDraftStorageKey(user?.email));
+        }
+      }
+
+      const remoteDraft = await getBlogDraftByEmailAsync(user?.email);
+      if (isCancelled) return;
+
+      if (remoteDraft) {
+        applyDraft(remoteDraft);
         return;
       }
-    }
 
-    const savedDraft = localStorage.getItem(getDraftStorageKey(user?.email));
-
-    if (savedDraft) {
-      try {
-        const parsed = JSON.parse(savedDraft) as {
-          title: string;
-          summary: string;
-          fontFamily: string;
-          fontSize: string;
-          lineSpacing?: number;
-          paragraphSpacing?: number;
-          content: string;
-          editingSlug?: string;
-          coverImage?: string;
-          hasCustomCover?: boolean;
-          savedAt: string;
-        };
-
-        const normalizedTitle = normalizeDraftTitle(parsed.title);
-        const normalizedSummary = normalizeDraftSummary(parsed.summary);
-        const normalizedContent = normalizeDraftContent(parsed.content);
-
-        setTitle(normalizedTitle);
-        setSummary(normalizedSummary);
-        setEditingSlug(parsed.editingSlug?.trim() || null);
-        setFontFamily(parsed.fontFamily);
-        setFontSize(parsed.fontSize);
-        setLineSpacing(
-          typeof parsed.lineSpacing === "number"
-            ? parsed.lineSpacing
-            : defaultLineSpacing,
-        );
-        setParagraphSpacing(
-          typeof parsed.paragraphSpacing === "number"
-            ? parsed.paragraphSpacing
-            : defaultParagraphSpacing,
-        );
-        setEditorHtml(normalizedContent);
-        setHasCustomCover(Boolean(parsed.hasCustomCover && parsed.coverImage));
-        setCoverImage(
-          parsed.coverImage && parsed.coverImage.trim().length > 0
-            ? parsed.coverImage
-            : getDefaultBlogCover(normalizedTitle || defaultTitle),
-        );
-        setSaveMessage(`Saved ${new Date(parsed.savedAt).toLocaleString()}`);
-
-        if (editorRef.current) {
-          editorRef.current.innerHTML = normalizedContent;
-        }
+      if (localFallbackDraft) {
+        applyDraft(localFallbackDraft);
+        upsertBlogDraftEntry(localFallbackDraft);
+        void upsertBlogDraftEntryAsync(localFallbackDraft);
         return;
-      } catch {
-        localStorage.removeItem(getDraftStorageKey(user?.email));
       }
-    }
 
-    if (editorRef.current && !editorRef.current.innerHTML.trim()) {
-      editorRef.current.innerHTML = "";
-      setEditorHtml("");
-    }
+      if (editorRef.current && !editorRef.current.innerHTML.trim()) {
+        editorRef.current.innerHTML = "";
+        setEditorHtml("");
+      }
 
-    setCoverImage(getDefaultBlogCover(title || defaultTitle));
+      setCoverImage(getDefaultBlogCover(title || defaultTitle));
+    };
+
+    void loadDraft();
+
+    return () => {
+      isCancelled = true;
+    };
   }, [editSlugFromRoute, user?.email]);
 
   useEffect(() => {
@@ -1130,7 +1177,7 @@ export default function BlogDraftEditorPage() {
     removeMediaElement(adjacent);
   };
 
-  const handleResetDraft = () => {
+  const handleResetDraft = async () => {
     clearSelectedMedia();
     setTitle("");
     setSummary("");
@@ -1146,29 +1193,52 @@ export default function BlogDraftEditorPage() {
     setHasCustomCover(false);
     setCoverImage(getDefaultBlogCover(defaultTitle));
     localStorage.removeItem(getDraftStorageKey(user?.email));
+    deleteBlogDraftByEmail(user?.email);
+
+    try {
+      await deleteBlogDraftByEmailAsync(user?.email, { requireRemoteSync: true });
+    } catch {
+      setSaveMessage(
+        "Draft reset locally, but Supabase sync failed. Please retry when online.",
+      );
+      return;
+    }
+
     setSaveMessage("Draft reset");
   };
 
-  const handleSaveDraft = () => {
+  const handleSaveDraft = async () => {
     const content = editorRef.current?.innerHTML ?? editorHtml;
     const savedAt = new Date().toISOString();
+    const draftPayload: BlogDraftEntry = {
+      authorEmail: user?.email ?? "guest",
+      title: title.trim() || defaultTitle,
+      summary: summary.trim() || defaultSummary,
+      editingSlug,
+      fontFamily,
+      fontSize,
+      lineSpacing,
+      paragraphSpacing,
+      content,
+      coverImage,
+      hasCustomCover,
+      savedAt,
+    };
 
     localStorage.setItem(
       getDraftStorageKey(user?.email),
-      JSON.stringify({
-        title: title.trim() || defaultTitle,
-        summary: summary.trim() || defaultSummary,
-        editingSlug,
-        fontFamily,
-        fontSize,
-        lineSpacing,
-        paragraphSpacing,
-        content,
-        coverImage,
-        hasCustomCover,
-        savedAt,
-      }),
+      JSON.stringify(draftPayload),
     );
+    upsertBlogDraftEntry(draftPayload);
+
+    try {
+      await upsertBlogDraftEntryAsync(draftPayload, { requireRemoteSync: true });
+    } catch {
+      setSaveMessage(
+        "Draft saved locally, but Supabase sync failed. Please retry save when online.",
+      );
+      return;
+    }
 
     setEditorHtml(content);
     setSaveMessage(`Saved ${new Date(savedAt).toLocaleString()}`);
@@ -1188,22 +1258,23 @@ export default function BlogDraftEditorPage() {
           )
         : null;
 
-    localStorage.setItem(
-      getDraftStorageKey(user?.email),
-      JSON.stringify({
-        title,
-        summary,
-        editingSlug,
-        fontFamily,
-        fontSize,
-        lineSpacing,
-        paragraphSpacing,
-        content,
-        coverImage,
-        hasCustomCover,
-        savedAt,
-      }),
-    );
+    const draftPayload: BlogDraftEntry = {
+      authorEmail: user?.email ?? "guest",
+      title: title.trim() || defaultTitle,
+      summary: summary.trim() || defaultSummary,
+      editingSlug,
+      fontFamily,
+      fontSize,
+      lineSpacing,
+      paragraphSpacing,
+      content,
+      coverImage,
+      hasCustomCover,
+      savedAt,
+    };
+
+    localStorage.setItem(getDraftStorageKey(user?.email), JSON.stringify(draftPayload));
+    upsertBlogDraftEntry(draftPayload);
 
     const publishedBlog = {
       slug:
@@ -1229,15 +1300,18 @@ export default function BlogDraftEditorPage() {
     savePublishedBlog(publishedBlog);
 
     try {
+      await upsertBlogDraftEntryAsync(draftPayload, { requireRemoteSync: true });
       await savePublishedBlogAsync(publishedBlog, { requireRemoteSync: true });
+      await deleteBlogDraftByEmailAsync(user?.email, { requireRemoteSync: true });
     } catch {
       setSaveMessage(
-        "Published locally, but Supabase sync failed. Please retry publish when online.",
+        "Publish sync failed with Supabase. Draft is still saved, please retry publish when online.",
       );
       return;
     }
 
     localStorage.removeItem(getDraftStorageKey(user?.email));
+    deleteBlogDraftByEmail(user?.email);
 
     setEditorHtml(content);
     setSaveMessage(`Published ${new Date(savedAt).toLocaleString()}`);

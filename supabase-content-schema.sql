@@ -16,11 +16,11 @@ drop policy if exists "Public can upsert content collections" on public.content_
 create policy "Public can upsert content collections"
   on public.content_collections
   for insert
-  with check (key in ('publishedBlogs', 'discussionTopics', 'feedbackEntries', 'voiceEntries', 'trustedDevices'));
+  with check (key in ('publishedBlogs', 'blogDrafts', 'discussionTopics', 'feedbackEntries', 'voiceEntries', 'trustedDevices', 'meetingMinutesDrafts'));
 
 drop policy if exists "Public can update content collections" on public.content_collections;
 create policy "Public can update content collections"
   on public.content_collections
   for update
-  using (key in ('publishedBlogs', 'discussionTopics', 'feedbackEntries', 'voiceEntries', 'trustedDevices'))
-  with check (key in ('publishedBlogs', 'discussionTopics', 'feedbackEntries', 'voiceEntries', 'trustedDevices'));
+  using (key in ('publishedBlogs', 'blogDrafts', 'discussionTopics', 'feedbackEntries', 'voiceEntries', 'trustedDevices', 'meetingMinutesDrafts'))
+  with check (key in ('publishedBlogs', 'blogDrafts', 'discussionTopics', 'feedbackEntries', 'voiceEntries', 'trustedDevices', 'meetingMinutesDrafts'));

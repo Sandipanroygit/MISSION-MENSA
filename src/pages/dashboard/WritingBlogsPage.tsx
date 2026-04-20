@@ -11,9 +11,7 @@ import {
   mergePublishedAndSeedBlogs,
   type BlogEntry,
 } from "./blogData";
-
-const getDraftStorageKey = (email?: string | null) =>
-  `mission-mensa-blog-draft:${email ?? "guest"}`;
+import { getBlogDraftByEmail, getBlogDraftByEmailAsync } from "./blogDraftData";
 
 export default function WritingBlogsPage() {
   const location = useLocation();
@@ -25,6 +23,7 @@ export default function WritingBlogsPage() {
   const [visibleBlogs, setVisibleBlogs] = useState<BlogEntry[]>([
     ...mergePublishedAndSeedBlogs(getPublishedBlogs()),
   ]);
+  const [savedDraft, setSavedDraft] = useState(() => getBlogDraftByEmail(user?.email));
 
   useEffect(() => {
     const message = (
@@ -43,6 +42,13 @@ export default function WritingBlogsPage() {
     });
   }, [saveSuccessMessage]);
 
+  useEffect(() => {
+    setSavedDraft(getBlogDraftByEmail(user?.email));
+    void getBlogDraftByEmailAsync(user?.email).then((draft) => {
+      setSavedDraft(draft);
+    });
+  }, [saveSuccessMessage, user?.email]);
+
   const recentDrafts = useMemo(() => {
     const publishedBlogs = getPublishedBlogs();
     const publishedItems = publishedBlogs.map((blog) => ({
@@ -51,41 +57,30 @@ export default function WritingBlogsPage() {
       updatedAt: "Published recently",
     }));
 
-    let savedDraftItems: Array<{
+    const savedDraftItems: Array<{
       title: string;
       status: "Draft";
       updatedAt: string;
     }> = [];
 
-    try {
-      const rawDraft = localStorage.getItem(getDraftStorageKey(user?.email));
-      if (rawDraft) {
-        const parsed = JSON.parse(rawDraft) as {
-          title?: string;
-          savedAt?: string;
-        };
-        const isAlreadyPublished = publishedBlogs.some(
-          (blog) => blog.title === (parsed.title || "Untitled Blog Draft"),
-        );
-        if (isAlreadyPublished) {
-          return publishedItems.slice(0, 10);
-        }
-        savedDraftItems = [
-          {
-            title: parsed.title || "Untitled Blog Draft",
-            status: "Draft",
-            updatedAt: parsed.savedAt
-              ? `Saved ${new Date(parsed.savedAt).toLocaleDateString()}`
-              : "Saved recently",
-          },
-        ];
+    if (savedDraft) {
+      const isAlreadyPublished = publishedBlogs.some(
+        (blog) => blog.title === (savedDraft.title || "Untitled Blog Draft"),
+      );
+      if (isAlreadyPublished) {
+        return publishedItems.slice(0, 10);
       }
-    } catch {
-      savedDraftItems = [];
+      savedDraftItems.push({
+        title: savedDraft.title || "Untitled Blog Draft",
+        status: "Draft",
+        updatedAt: savedDraft.savedAt
+          ? `Saved ${new Date(savedDraft.savedAt).toLocaleDateString()}`
+          : "Saved recently",
+      });
     }
 
     return [...savedDraftItems, ...publishedItems].slice(0, 10);
-  }, [saveSuccessMessage, user?.email]);
+  }, [saveSuccessMessage, savedDraft]);
 
   function handleDeleteBlog(slug: string) {
     deletePublishedBlog(slug);

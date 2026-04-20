@@ -2,6 +2,7 @@ import { supabase } from "@/lib/supabase";
 
 type ContentCollectionKey =
   | "publishedBlogs"
+  | "blogDrafts"
   | "discussionTopics"
   | "feedbackEntries"
   | "voiceEntries"
@@ -10,6 +11,7 @@ type ContentCollectionKey =
 
 interface ContentDatabase {
   publishedBlogs: unknown[];
+  blogDrafts: unknown[];
   discussionTopics: unknown[];
   feedbackEntries: unknown[];
   voiceEntries: unknown[];
@@ -24,6 +26,7 @@ const CONTENT_COLLECTIONS_TABLE = "content_collections";
 function createEmptyDatabase(): ContentDatabase {
   return {
     publishedBlogs: [],
+    blogDrafts: [],
     discussionTopics: [],
     feedbackEntries: [],
     voiceEntries: [],
@@ -49,6 +52,9 @@ export function readContentDatabase(): ContentDatabase {
     return {
       publishedBlogs: Array.isArray(parsedDatabase.publishedBlogs)
         ? parsedDatabase.publishedBlogs
+        : [],
+      blogDrafts: Array.isArray(parsedDatabase.blogDrafts)
+        ? parsedDatabase.blogDrafts
         : [],
       discussionTopics: Array.isArray(parsedDatabase.discussionTopics)
         ? parsedDatabase.discussionTopics
