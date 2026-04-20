@@ -31,6 +31,11 @@ export interface BlogHeadingBlock {
   text: string;
 }
 
+export interface BlogHtmlBlock {
+  type: "html";
+  html: string;
+}
+
 export interface BlogComment {
   id: string;
   authorName: string;
@@ -44,7 +49,8 @@ export type BlogContentBlock =
   | BlogYoutubeBlock
   | BlogPdfBlock
   | BlogTableBlock
-  | BlogHeadingBlock;
+  | BlogHeadingBlock
+  | BlogHtmlBlock;
 
 export interface BlogEntry {
   slug: string;

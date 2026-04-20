@@ -290,6 +290,15 @@ function parseEditorHtmlToBlocks(html: string): BlogContentBlock[] {
     if (normalized) blocks.push(normalized);
   };
 
+  const pushHtmlBlock = (value: string) => {
+    const normalized = value.trim();
+    if (!normalized) return;
+    blocks.push({
+      type: "html",
+      html: normalized,
+    });
+  };
+
   const visitNode = (node: Node) => {
     if (node.nodeType === Node.TEXT_NODE) {
       pushTextBlock(node.textContent ?? "");
@@ -330,6 +339,39 @@ function parseEditorHtmlToBlocks(html: string): BlogContentBlock[] {
       return;
     }
 
+    if (tag === "figure") {
+      const ytPlaceholder = element.querySelector(
+        "[data-youtube-embed]",
+      ) as HTMLElement | null;
+      if (ytPlaceholder) {
+        const url = ytPlaceholder.getAttribute("data-youtube-embed")?.trim() ?? "";
+        if (url) {
+          blocks.push({
+            type: "youtube",
+            url,
+            title: "Embedded YouTube video",
+          });
+          return;
+        }
+      }
+
+      const embedded = element.querySelector("iframe");
+      if (embedded) {
+        visitNode(embedded);
+        return;
+      }
+
+      const embeddedTable = element.querySelector("table") as HTMLTableElement | null;
+      if (embeddedTable) {
+        const tableBlock = extractTableBlock(embeddedTable);
+        if (tableBlock) blocks.push(tableBlock);
+        return;
+      }
+
+      pushHtmlBlock(element.outerHTML);
+      return;
+    }
+
     if (tag === "iframe") {
       const src = element.getAttribute("src")?.trim() ?? "";
       if (!src) return;
@@ -343,53 +385,32 @@ function parseEditorHtmlToBlocks(html: string): BlogContentBlock[] {
         return;
       }
 
-      pushTextBlock(`Embedded content: ${src}`);
-      return;
-    }
-
-    if (tag === "ul" || tag === "ol") {
-      const items = Array.from(element.querySelectorAll(":scope > li"))
-        .map((item, index) => {
-          const value = normalizeBlockText(inlineNodeToMarkdown(item));
-          if (!value) return "";
-          return tag === "ol" ? `${index + 1}. ${value}` : `• ${value}`;
-        })
-        .filter(Boolean);
-      if (items.length) {
-        pushTextBlock(items.join("\n"));
-      }
+      pushHtmlBlock(element.outerHTML);
       return;
     }
 
     if (
-      ["p", "blockquote", "pre", "figcaption", "li"].includes(tag)
+      [
+        "p",
+        "blockquote",
+        "pre",
+        "figcaption",
+        "ul",
+        "ol",
+        "div",
+        "section",
+        "article",
+        "img",
+        "video",
+      ].includes(tag)
     ) {
+      pushHtmlBlock(element.outerHTML);
+      return;
+    }
+
+    if (["li", "span", "strong", "em", "a", "u", "b", "i"].includes(tag)) {
       pushTextBlock(inlineNodeToMarkdown(element));
       return;
-    }
-
-    if (tag === "img") {
-      const src = element.getAttribute("src")?.trim() ?? "";
-      const alt = element.getAttribute("alt")?.trim() ?? "Image";
-      if (src) pushTextBlock(`${alt}: ${src}`);
-      return;
-    }
-
-    if (tag === "video") {
-      const src =
-        element.getAttribute("src")?.trim() ||
-        element.querySelector("source")?.getAttribute("src")?.trim() ||
-        "";
-      if (src) pushTextBlock(`Video: ${src}`);
-      return;
-    }
-
-    if (tag === "figure") {
-      const embedded = element.querySelector("iframe");
-      if (embedded) {
-        visitNode(embedded);
-        return;
-      }
     }
 
     const children = Array.from(element.childNodes);
@@ -446,6 +467,10 @@ function convertBlocksToEditorHtml(content: BlogEntry["content"]) {
 
       if (block.type === "heading") {
         return `<h${block.level}>${markdownToHtml(block.text)}</h${block.level}>`;
+      }
+
+      if (block.type === "html") {
+        return block.html;
       }
 
       if (block.type === "table") {
@@ -1777,3 +1802,4 @@ export default function BlogDraftEditorPage() {
     </div>
   );
 }
+

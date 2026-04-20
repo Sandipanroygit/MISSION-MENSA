@@ -23,6 +23,7 @@ import {
   savePublishedBlogAsync,
   toggleBlogLike,
   type BlogEntry,
+  type BlogHtmlBlock,
   type BlogHeadingBlock,
   type BlogPdfBlock,
   type BlogTableBlock,
@@ -40,13 +41,49 @@ function getYouTubeVideoId(url: string) {
     }
 
     if (parsedUrl.hostname.includes("youtube.com")) {
-      return parsedUrl.searchParams.get("v");
+      const fromQuery = parsedUrl.searchParams.get("v");
+      if (fromQuery) return fromQuery;
+
+      const parts = parsedUrl.pathname.split("/").filter(Boolean);
+      const embedIndex = parts.findIndex((part) => part === "embed");
+      if (embedIndex >= 0 && parts[embedIndex + 1]) {
+        return parts[embedIndex + 1];
+      }
     }
   } catch {
     return null;
   }
 
   return null;
+}
+
+function sanitizeRichHtml(html: string) {
+  const documentRoot = new DOMParser().parseFromString(html, "text/html");
+  documentRoot.querySelectorAll("script, style, iframe, object, embed").forEach((node) => {
+    node.remove();
+  });
+  documentRoot.querySelectorAll("*").forEach((element) => {
+    Array.from(element.attributes).forEach((attribute) => {
+      if (attribute.name.toLowerCase().startsWith("on")) {
+        element.removeAttribute(attribute.name);
+      }
+    });
+  });
+  documentRoot.querySelectorAll("a").forEach((anchor) => {
+    anchor.setAttribute("target", "_blank");
+    anchor.setAttribute("rel", "noreferrer");
+  });
+
+  return documentRoot.body.innerHTML;
+}
+
+function PublicHtmlBlock({ block }: { block: BlogHtmlBlock }) {
+  return (
+    <div
+      className="rounded-xl bg-white/75 p-1 [&_a]:text-[#0f766e] [&_a]:underline [&_img]:max-w-full [&_img]:rounded-2xl [&_ol]:list-decimal [&_ol]:pl-6 [&_table]:w-full [&_table]:border-collapse [&_td]:border [&_td]:border-[#DCE8E8] [&_td]:px-3 [&_td]:py-2 [&_th]:border [&_th]:border-[#DCE8E8] [&_th]:bg-[#F7FAFA] [&_th]:px-3 [&_th]:py-2 [&_ul]:list-disc [&_ul]:pl-6 [&_video]:h-auto [&_video]:max-w-full"
+      dangerouslySetInnerHTML={{ __html: sanitizeRichHtml(block.html) }}
+    />
+  );
 }
 
 function PublicYouTubeBlock({
@@ -383,6 +420,15 @@ export default function PublicBlogReadPage() {
                   return (
                     <PublicHeadingBlock
                       key={`${blog.slug}-heading-${index}`}
+                      block={block}
+                    />
+                  );
+                }
+
+                if (block.type === "html") {
+                  return (
+                    <PublicHtmlBlock
+                      key={`${blog.slug}-html-${index}`}
                       block={block}
                     />
                   );
