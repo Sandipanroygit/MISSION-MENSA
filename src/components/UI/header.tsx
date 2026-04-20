@@ -6,6 +6,7 @@ import {
   Info,
   MessageCircle,
   MessagesSquare,
+  FileText,
   LayoutDashboard,
   ChevronDown,
   LogOut,
@@ -125,6 +126,11 @@ const Header: React.FC = () => {
     { name: "Feedback", href: "/voices-of-mensa", icon: MessagesSquare },
     { name: "Blogs", href: "/about-us", icon: Info },
     { name: "Discussion", href: "/programs", icon: MessageCircle },
+    {
+      name: "Minutes of Meetings",
+      href: "/login#minutes-of-meetings",
+      icon: FileText,
+    },
     // { name: "Community", href: "/community", icon: Users },
   ];
 

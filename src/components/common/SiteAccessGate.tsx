@@ -10,7 +10,7 @@ import { isSupabaseConfigured, supabase } from "@/lib/supabase";
 const ACCESS_STORAGE_KEY = "mission-mensa-site-access-v1";
 const DEVICE_ID_STORAGE_KEY = "mission-mensa-device-id-v1";
 const TRUSTED_DEVICE_STORAGE_KEY = "mission-mensa-trusted-device-v1";
-const ALLOWED_DOMAIN = "@indusschool.com";
+const ADMIN_UNLOCK_PASSWORD = "26MENSA";
 
 interface StoredAccess {
   email: string;
@@ -25,6 +25,10 @@ interface TrustedDeviceRecord {
 
 function normalizeEmail(value: string) {
   return value.trim().toLowerCase();
+}
+
+function isValidEmail(value: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 }
 
 function readStoredAccess() {
@@ -142,6 +146,7 @@ export default function SiteAccessGate({
   );
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
+  const [adminPassword, setAdminPassword] = useState("");
   const [otpSentTo, setOtpSentTo] = useState<string | null>(null);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -207,7 +212,7 @@ export default function SiteAccessGate({
   }, []);
 
   const normalizedEmail = useMemo(() => normalizeEmail(email), [email]);
-  const emailAllowed = normalizedEmail.endsWith(ALLOWED_DOMAIN);
+  const emailAllowed = isValidEmail(normalizedEmail);
 
   if (storedAccess) {
     return <>{children}</>;
@@ -233,7 +238,7 @@ export default function SiteAccessGate({
     }
 
     if (!emailAllowed) {
-      setErrorMessage("Use an email address ending with @indusschool.com.");
+      setErrorMessage("Enter a valid email address.");
       return;
     }
 
@@ -322,6 +327,25 @@ export default function SiteAccessGate({
     void supabase.auth.signOut();
   }
 
+  function handleAdminUnlock() {
+    setErrorMessage(null);
+    setStatusMessage(null);
+
+    if (!adminPassword.trim()) {
+      setErrorMessage("Enter the admin password.");
+      return;
+    }
+
+    if (adminPassword.trim() !== ADMIN_UNLOCK_PASSWORD) {
+      setErrorMessage("Incorrect admin password.");
+      return;
+    }
+
+    saveStoredAccess("admin@missionmensa.local");
+    setStoredAccess(readStoredAccess());
+    setStatusMessage("Access verified.");
+  }
+
   return (
     <div className="min-h-screen bg-[linear-gradient(135deg,#163a44_0%,#1f5d68_44%,#f3dfb9_100%)] px-4 py-10">
       <div className="mx-auto flex min-h-[calc(100vh-5rem)] max-w-5xl items-center justify-center">
@@ -345,58 +369,92 @@ export default function SiteAccessGate({
             <div className="max-w-md">
               <div className="inline-flex items-center gap-2 rounded-full bg-[#17353f]/8 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-[#17353f]">
                 <Mail size={14} />
-                Email Verification
+                Access Options
               </div>
               <h2 className="mt-4 text-3xl font-black leading-tight text-[#17353f]">
                 Unlock this website
               </h2>
 
               <div className="mt-8 space-y-4">
-                <div className="space-y-2">
-                  <label className="text-xs font-semibold uppercase tracking-[0.16em] text-[#617275]">
-                    School Email
-                  </label>
-                  <input
-                    value={email}
-                    onChange={(event) => setEmail(event.target.value)}
-                    placeholder="name@indusschool.com"
-                    className="w-full rounded-2xl border border-gray-200 px-4 py-3 text-sm text-[#1d2a2a] outline-none transition focus:border-[#17353f]"
-                  />
+                <div className="space-y-4 rounded-[1.7rem] border border-[#e2ebea] bg-[#f8fbfb] p-4">
+                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#617275]">
+                    Option 1: Email OTP
+                  </p>
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold uppercase tracking-[0.16em] text-[#617275]">
+                      Email
+                    </label>
+                    <input
+                      value={email}
+                      onChange={(event) => setEmail(event.target.value)}
+                      placeholder="name@example.com"
+                      className="w-full rounded-2xl border border-gray-200 px-4 py-3 text-sm text-[#1d2a2a] outline-none transition focus:border-[#17353f]"
+                    />
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => void handleSendOtp()}
+                    disabled={isSending}
+                    className="inline-flex w-full items-center justify-center rounded-2xl bg-[#17353f] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#102a32] disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    {isSending ? "Sending OTP..." : "Send OTP"}
+                  </button>
+
+                  {otpSentTo && (
+                    <div className="space-y-4 rounded-[1.7rem] border border-[#e2ebea] bg-[#f8fbfb] p-4">
+                      <div className="space-y-2">
+                        <label className="text-xs font-semibold uppercase tracking-[0.16em] text-[#617275]">
+                          OTP Code
+                        </label>
+                        <input
+                          value={otp}
+                          onChange={(event) => setOtp(event.target.value)}
+                          placeholder="Enter the code from email"
+                          className="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-[#1d2a2a] outline-none transition focus:border-[#17353f]"
+                        />
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => void handleVerifyOtp()}
+                        disabled={isVerifying}
+                        className="inline-flex w-full items-center justify-center rounded-2xl bg-[#2e6c55] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#245543] disabled:cursor-not-allowed disabled:opacity-60"
+                      >
+                        {isVerifying ? "Verifying..." : "Verify OTP"}
+                      </button>
+                    </div>
+                  )}
                 </div>
 
-                <button
-                  type="button"
-                  onClick={() => void handleSendOtp()}
-                  disabled={isSending}
-                  className="inline-flex w-full items-center justify-center rounded-2xl bg-[#17353f] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#102a32] disabled:cursor-not-allowed disabled:opacity-60"
-                >
-                  {isSending ? "Sending OTP..." : "Send OTP"}
-                </button>
-
-                {otpSentTo && (
-                  <div className="space-y-4 rounded-[1.7rem] border border-[#e2ebea] bg-[#f8fbfb] p-4">
-                    <div className="space-y-2">
-                      <label className="text-xs font-semibold uppercase tracking-[0.16em] text-[#617275]">
-                        OTP Code
-                      </label>
-                      <input
-                        value={otp}
-                        onChange={(event) => setOtp(event.target.value)}
-                        placeholder="Enter the code from email"
-                        className="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-[#1d2a2a] outline-none transition focus:border-[#17353f]"
-                      />
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={() => void handleVerifyOtp()}
-                      disabled={isVerifying}
-                      className="inline-flex w-full items-center justify-center rounded-2xl bg-[#2e6c55] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#245543] disabled:cursor-not-allowed disabled:opacity-60"
-                    >
-                      {isVerifying ? "Verifying..." : "Verify OTP"}
-                    </button>
+                <div className="space-y-4 rounded-[1.7rem] border border-[#e2ebea] bg-[#f8fbfb] p-4">
+                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#617275]">
+                    Option 2: Admin Password
+                  </p>
+                  <p className="text-sm text-[#617275]">
+                    Ask Admin for the password.
+                  </p>
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold uppercase tracking-[0.16em] text-[#617275]">
+                      Admin Password
+                    </label>
+                    <input
+                      type="password"
+                      value={adminPassword}
+                      onChange={(event) => setAdminPassword(event.target.value)}
+                      placeholder="Enter admin password"
+                      className="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-[#1d2a2a] outline-none transition focus:border-[#17353f]"
+                    />
                   </div>
-                )}
+
+                  <button
+                    type="button"
+                    onClick={handleAdminUnlock}
+                    className="inline-flex w-full items-center justify-center rounded-2xl bg-[#1e4b68] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#16374c]"
+                  >
+                    Unlock with Admin Password
+                  </button>
+                </div>
 
                 {statusMessage && (
                   <div className="rounded-2xl border border-[#d7e8da] bg-[#eef8f0] px-4 py-3 text-sm text-[#29543a]">
