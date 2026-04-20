@@ -1,4 +1,5 @@
-﻿import { useEffect, useState } from "react";
+﻿import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import ScrollToTop from "@/components/common/ScrolltoTop";
 import {
   getPublishedMeetingMinutesEntries,
@@ -53,6 +54,15 @@ function normalizeText(value: string) {
     .replace(/â€™/g, "'")
     .replace(/â€œ/g, '"')
     .replace(/â€/g, '"');
+}
+
+function formatHeading(value: string) {
+  return normalizeText(value)
+    .replace(/\)Date:/g, ") Date:")
+    .replace(/([A-Za-z])(\d)/g, "$1 $2")
+    .replace(/(\d)([A-Za-z])/g, "$1 $2")
+    .replace(/\s{2,}/g, " ")
+    .trim();
 }
 
 function splitMinutesBlocks(minutes: string): MinutesBlock[] {
@@ -111,11 +121,19 @@ export default function MinutesOfMeetingsPage() {
   const [entries, setEntries] = useState<MeetingMinutesEntry[]>(() =>
     getPublishedMeetingMinutesEntries(),
   );
-  const [expandedIds, setExpandedIds] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     void getPublishedMeetingMinutesEntriesAsync().then(setEntries);
   }, []);
+
+  const summarized = useMemo(
+    () =>
+      entries.map((entry) => ({
+        entry,
+        previewBlocks: splitMinutesBlocks(entry.minutes).slice(0, 4),
+      })),
+    [entries],
+  );
 
   return (
     <main className="min-h-screen bg-[linear-gradient(180deg,#F6F1E7_0%,#FBF8F1_34%,#F4F8F8_100%)] px-4 py-16 sm:px-6 lg:px-8">
@@ -153,90 +171,69 @@ export default function MinutesOfMeetingsPage() {
             </div>
           ) : (
             <div className="space-y-5">
-              {entries.map((entry) => {
-                const blocks = splitMinutesBlocks(entry.minutes);
-                const isExpanded = Boolean(expandedIds[entry.id]);
-                const visibleBlocks = isExpanded ? blocks : blocks.slice(0, 6);
-                const hasMore = blocks.length > 6;
-
-                return (
-                  <article
-                    key={entry.id}
-                    className="overflow-hidden rounded-[1.6rem] border border-[#E7ECE7] bg-[#FCFDFC] shadow-sm"
-                  >
-                    <div className="grid md:grid-cols-[240px_1fr]">
-                      <div className="relative h-44 md:h-full">
+              {summarized.map(({ entry, previewBlocks }) => (
+                <article
+                  key={entry.id}
+                  className="overflow-hidden rounded-[1.4rem] border border-[#E7ECE7] bg-[#FCFDFC] shadow-sm"
+                >
+                  <div className="grid md:grid-cols-[180px_1fr]">
+                    <div className="relative h-28 md:h-full">
                         <img
                           src={getCoverImage(entry.id)}
-                          alt={normalizeText(entry.title)}
+                          alt={formatHeading(entry.title)}
                           className="h-full w-full object-cover"
                         />
-                        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(13,35,40,0)_0%,rgba(13,35,40,0.5)_100%)]" />
-                      </div>
-
-                      <div className="p-6">
-                        <div className="flex flex-wrap items-start justify-between gap-3">
-                          <div>
-                            <h2 className="text-2xl font-black tracking-tight text-[#122E34] sm:text-[1.8rem]">
-                              {normalizeText(entry.title)}
-                            </h2>
-                            <p className="mt-1 text-sm text-[#5E6F73]">
-                              {formatMeetingDate(entry.meetingDate)} • by{" "}
-                              {entry.authorName}
-                            </p>
-                          </div>
-                          <span className="rounded-full bg-[#E8F5E8] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#285B2A]">
-                            Published
-                          </span>
-                        </div>
-
-                        <div className="mt-4 space-y-3 text-[15px] leading-7 text-[#22383C]">
-                          {visibleBlocks.map((block, blockIndex) => {
-                            if (block.type === "paragraph") {
-                              return (
-                                <p
-                                  key={`${entry.id}-p-${blockIndex}`}
-                                  className="font-medium"
-                                >
-                                  {renderFormattedLine(block.text)}
-                                </p>
-                              );
-                            }
-
-                            return (
-                              <ul
-                                key={`${entry.id}-u-${blockIndex}`}
-                                className="list-disc space-y-1 pl-6 text-[#33474A]"
-                              >
-                                {block.items.map((item, itemIndex) => (
-                                  <li key={`${entry.id}-u-${blockIndex}-${itemIndex}`}>
-                                    {renderFormattedLine(item)}
-                                  </li>
-                                ))}
-                              </ul>
-                            );
-                          })}
-                        </div>
-
-                        {hasMore && (
-                          <button
-                            type="button"
-                            onClick={() =>
-                              setExpandedIds((prev) => ({
-                                ...prev,
-                                [entry.id]: !prev[entry.id],
-                              }))
-                            }
-                            className="mt-5 inline-flex items-center rounded-full border border-[#173B45]/20 bg-white px-4 py-2 text-sm font-semibold text-[#173B45] transition hover:bg-[#F1F7F8]"
-                          >
-                            {isExpanded ? "Read less" : "Read more"}
-                          </button>
-                        )}
-                      </div>
+                      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(13,35,40,0)_0%,rgba(13,35,40,0.45)_100%)]" />
                     </div>
-                  </article>
-                );
-              })}
+
+                    <div className="p-5">
+                      <div className="flex flex-wrap items-start justify-between gap-3">
+                        <div>
+                          <h2 className="text-xl font-black tracking-tight text-[#122E34] sm:text-2xl">
+                            {formatHeading(entry.title)}
+                          </h2>
+                          <p className="mt-1 text-sm text-[#5E6F73]">
+                            {formatMeetingDate(entry.meetingDate)} • by {entry.authorName}
+                          </p>
+                        </div>
+                        <span className="rounded-full bg-[#E8F5E8] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#285B2A]">
+                          Published
+                        </span>
+                      </div>
+
+                      <div className="mt-3 space-y-2 text-[14px] leading-6 text-[#22383C]">
+                        {previewBlocks.map((block, blockIndex) => {
+                          if (block.type === "paragraph") {
+                            return (
+                              <p key={`${entry.id}-p-${blockIndex}`} className="font-medium line-clamp-2">
+                                {renderFormattedLine(block.text)}
+                              </p>
+                            );
+                          }
+
+                          return (
+                            <ul
+                              key={`${entry.id}-u-${blockIndex}`}
+                              className="list-disc space-y-1 pl-5 text-[#33474A]"
+                            >
+                              {block.items.slice(0, 2).map((item, itemIndex) => (
+                                <li key={`${entry.id}-u-${blockIndex}-${itemIndex}`}>{renderFormattedLine(item)}</li>
+                              ))}
+                            </ul>
+                          );
+                        })}
+                      </div>
+
+                      <Link
+                        to={`/minutes-of-meetings/${encodeURIComponent(entry.id)}`}
+                        className="mt-4 inline-flex items-center rounded-full border border-[#173B45]/20 bg-white px-4 py-2 text-sm font-semibold text-[#173B45] transition hover:bg-[#F1F7F8]"
+                      >
+                        Read more
+                      </Link>
+                    </div>
+                  </div>
+                </article>
+              ))}
             </div>
           )}
         </section>

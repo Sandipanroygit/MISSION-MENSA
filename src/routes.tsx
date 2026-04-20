@@ -12,6 +12,9 @@ const AboutMensaPage = lazy(() => import("./pages/AboutMensa"));
 const VoicesOfMensaPage = lazy(() => import("./pages/VoicesOfMensa"));
 const AboutUsPage = lazy(() => import("./pages/Aboutus"));
 const MinutesOfMeetingsPage = lazy(() => import("./pages/MinutesOfMeetings"));
+const MinutesOfMeetingReadPage = lazy(
+  () => import("./pages/MinutesOfMeetingRead"),
+);
 const PublicBlogReadPage = lazy(() => import("./pages/PublicBlogRead"));
 const PublicDiscussionReadPage = lazy(() => import("./pages/PublicDiscussionRead"));
 const ContactUs = lazy(() => import("./pages/ContactUs"));
@@ -61,6 +64,10 @@ const AppRoutes = () => {
           <Route
             path="/minutes-of-meetings"
             element={<MinutesOfMeetingsPage />}
+          />
+          <Route
+            path="/minutes-of-meetings/:minutesId"
+            element={<MinutesOfMeetingReadPage />}
           />
           <Route path="/about-us" element={<AboutUsPage />} />
           <Route path="/about-us/:slug" element={<PublicBlogReadPage />} />
