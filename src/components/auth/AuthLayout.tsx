@@ -6,18 +6,6 @@ interface Props {
 }
 
 const DOTS = ["#FFC94B", "#A5C85A", "#5EC1E8", "#8B5FBF"] as const;
-const FEEDBACK_PREVIEW = [
-  {
-    quote:
-      "My son finally feels seen for the way he thinks, not only for the marks he brings home.",
-    author: "Parent voice",
-  },
-  {
-    quote:
-      "I like that ideas become drafts, discussions, and real work instead of staying inside notebooks.",
-    author: "Student voice",
-  },
-] as const;
 
 export default function AuthLayout({ children }: Props) {
   return (
@@ -80,35 +68,6 @@ export default function AuthLayout({ children }: Props) {
           </div>
         </div>
 
-        <div className="relative z-10 rounded-[2rem] border border-white/12 bg-white/10 p-5 backdrop-blur-md">
-          <div className="flex items-center justify-between gap-4">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/64">
-                Feedback Draft
-              </p>
-              <h2 className="mt-2 text-xl font-black text-white">
-                Parents and students
-              </h2>
-            </div>
-            <div className="rounded-full border border-white/15 bg-[#FFC94B]/18 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#FFE4A1]">
-              Homepage
-            </div>
-          </div>
-
-          <div className="mt-5 grid gap-3">
-            {FEEDBACK_PREVIEW.map((item) => (
-              <article
-                key={item.quote}
-                className="rounded-[1.4rem] border border-white/10 bg-[#0F2730]/38 p-4"
-              >
-                <p className="text-sm leading-6 text-white/82">{item.quote}</p>
-                <p className="mt-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-white/54">
-                  {item.author}
-                </p>
-              </article>
-            ))}
-          </div>
-        </div>
       </div>
 
       <div className="flex flex-1 flex-col bg-[linear-gradient(180deg,#FCFAF6_0%,#F6F1E8_100%)]">
