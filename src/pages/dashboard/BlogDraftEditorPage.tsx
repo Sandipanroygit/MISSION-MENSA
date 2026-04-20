@@ -1227,7 +1227,15 @@ export default function BlogDraftEditorPage() {
     };
 
     savePublishedBlog(publishedBlog);
-    await savePublishedBlogAsync(publishedBlog);
+
+    try {
+      await savePublishedBlogAsync(publishedBlog, { requireRemoteSync: true });
+    } catch {
+      setSaveMessage(
+        "Published locally, but Supabase sync failed. Please retry publish when online.",
+      );
+      return;
+    }
 
     localStorage.removeItem(getDraftStorageKey(user?.email));
 

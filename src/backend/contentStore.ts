@@ -150,10 +150,16 @@ export async function readRemoteContentCollection<T>(
 export async function saveRemoteContentCollection<T>(
   key: ContentCollectionKey,
   collection: T[],
+  options?: {
+    throwOnError?: boolean;
+  },
 ) {
   saveContentCollection(key, collection);
 
   if (!supabase) {
+    if (options?.throwOnError) {
+      throw new Error("Supabase is not configured.");
+    }
     return;
   }
 
@@ -165,5 +171,8 @@ export async function saveRemoteContentCollection<T>(
 
   if (error) {
     console.warn(`Failed to save ${key} to Supabase`, error);
+    if (options?.throwOnError) {
+      throw new Error(`Failed to sync ${key} to Supabase: ${error.message}`);
+    }
   }
 }

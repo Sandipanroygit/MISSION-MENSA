@@ -635,11 +635,16 @@ export function savePublishedBlog(blog: BlogEntry) {
   saveContentCollection("publishedBlogs", [normalizedBlog, ...filtered]);
 }
 
-export async function savePublishedBlogAsync(blog: BlogEntry) {
+export async function savePublishedBlogAsync(
+  blog: BlogEntry,
+  options?: { requireRemoteSync?: boolean },
+) {
   const normalizedBlog = normalizeBlogEntry(blog);
   const current = await getPublishedBlogsAsync();
   const filtered = current.filter((entry) => entry.slug !== normalizedBlog.slug);
-  await saveRemoteContentCollection("publishedBlogs", [normalizedBlog, ...filtered]);
+  await saveRemoteContentCollection("publishedBlogs", [normalizedBlog, ...filtered], {
+    throwOnError: options?.requireRemoteSync ?? false,
+  });
 }
 
 export function deletePublishedBlog(slug: string) {
