@@ -5,6 +5,7 @@ import apiClient from "@/lib/axios";
 
 const JIRA_BASE_URL = "https://indusschool-team-binv6fmz.atlassian.net";
 const PROJECT_KEY = "PM";
+const PROJECT_ID = "10071";
 
 interface JiraIssue {
   id: string;
@@ -37,6 +38,20 @@ function getStatusTone(status: string) {
   return "bg-[#FFF3E7] text-[#915E1E]";
 }
 
+async function readErrorMessage(response: Response, source: string) {
+  const bodyText = await response.text();
+  let details = bodyText;
+
+  try {
+    const parsed = JSON.parse(bodyText) as { error?: string; details?: string };
+    details = parsed.details || parsed.error || bodyText;
+  } catch {
+    // keep raw text fallback
+  }
+
+  return `${source} failed with ${response.status}: ${details.slice(0, 280)}`;
+}
+
 export default function JiraPage() {
   const [issues, setIssues] = useState<JiraIssue[]>([]);
   const [loading, setLoading] = useState(true);
@@ -49,34 +64,43 @@ export default function JiraPage() {
       setLoading(true);
       setError(null);
       try {
-        const query = `projectKey=${encodeURIComponent(
-          PROJECT_KEY,
-        )}&maxResults=30`;
+        const query = new URLSearchParams({
+          projectKey: PROJECT_KEY,
+          projectId: PROJECT_ID,
+          maxResults: "30",
+        }).toString();
         const localUrl = `/api/jira/issues?${query}`;
 
         let payload: { issues?: JiraIssue[] } | null = null;
-        try {
-          const localResponse = await fetch(localUrl, {
-            method: "GET",
-            headers: { Accept: "application/json" },
-          });
-          if (!localResponse.ok) {
-            // fallback to configured backend below
-          } else {
-            payload = (await localResponse.json()) as { issues?: JiraIssue[] };
-          }
-        } catch (error) {
-          // fallback to configured backend below
+        const localResponse = await fetch(localUrl, {
+          method: "GET",
+          headers: { Accept: "application/json" },
+        });
+
+        if (localResponse.ok) {
+          payload = (await localResponse.json()) as { issues?: JiraIssue[] };
+        } else if (localResponse.status !== 404) {
+          throw new Error(await readErrorMessage(localResponse, "Local Jira API"));
         }
 
         if (!payload) {
-          const remoteResponse = await apiClient.get("/api/jira/issues", {
-            params: {
-              projectKey: PROJECT_KEY,
-              maxResults: 30,
-            },
-          });
-          payload = remoteResponse.data as { issues?: JiraIssue[] };
+          try {
+            const remoteResponse = await apiClient.get("/api/jira/issues", {
+              params: {
+                projectKey: PROJECT_KEY,
+                projectId: PROJECT_ID,
+                maxResults: 30,
+              },
+            });
+            payload = remoteResponse.data as { issues?: JiraIssue[] };
+          } catch (remoteError: any) {
+            const details =
+              remoteError?.response?.data?.details ||
+              remoteError?.response?.data?.error ||
+              remoteError?.message ||
+              "Unable to read Jira data.";
+            throw new Error(`Backend Jira API failed: ${String(details).slice(0, 280)}`);
+          }
         }
 
         setIssues(payload.issues ?? []);

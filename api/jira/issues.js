@@ -1,5 +1,12 @@
 const DEFAULT_BASE_URL = "https://indusschool-team-binv6fmz.atlassian.net";
 const DEFAULT_PROJECT_KEY = "PM";
+const DEFAULT_PROJECT_ID = "10071";
+
+function getProjectSelector(projectIdRaw, projectKeyRaw) {
+  const projectId = (projectIdRaw || "").toString().trim();
+  if (projectId) return projectId;
+  return (projectKeyRaw || DEFAULT_PROJECT_KEY).toString().trim().toUpperCase();
+}
 
 function mapIssue(issue) {
   const fields = issue?.fields || {};
@@ -29,6 +36,11 @@ export default async function handler(req, res) {
       .toString()
       .trim()
       .toUpperCase();
+  const projectId =
+    (req.query.projectId || process.env.JIRA_PROJECT_ID || DEFAULT_PROJECT_ID)
+      .toString()
+      .trim();
+  const projectSelector = getProjectSelector(projectId, projectKey);
 
   if (!jiraEmail || !jiraApiToken) {
     res.status(500).json({
@@ -42,9 +54,9 @@ export default async function handler(req, res) {
     100,
   );
 
-  const jql = `project = ${projectKey} ORDER BY updated DESC`;
+  const jql = `project = ${projectSelector} ORDER BY updated DESC`;
   const jiraUrl =
-    `${jiraBaseUrl}/rest/api/3/search?jql=${encodeURIComponent(jql)}` +
+    `${jiraBaseUrl}/rest/api/3/search/jql?jql=${encodeURIComponent(jql)}` +
     `&maxResults=${maxResults}` +
     "&fields=summary,status,assignee,priority,updated,issuetype";
 
@@ -75,7 +87,7 @@ export default async function handler(req, res) {
       ? payload.issues.map(mapIssue)
       : [];
 
-    res.status(200).json({ issues, projectKey });
+    res.status(200).json({ issues, projectKey, projectId: projectSelector });
   } catch (error) {
     res.status(500).json({
       error: "Failed to fetch Jira data",
