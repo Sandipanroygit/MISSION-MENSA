@@ -1,16 +1,10 @@
-import { type FormEvent, useEffect, useState } from "react";
+import { type FormEvent, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { AxiosError } from "axios";
 import AuthLayout from "@/components/auth/AuthLayout";
 import { useLogin } from "@/hooks/useAuth";
 import { getApiError, mapFieldErrors } from "@/utils/apiError";
-import {
-  getMeetingMinutesDraftsAsync,
-  upsertMeetingMinutesDraft,
-  upsertMeetingMinutesDraftAsync,
-  type MeetingMinutesDraft,
-} from "@/pages/dashboard/meetingMinutesData";
 
 // ─── Validation ───────────────────────────────────────────────────────────────
 
@@ -29,17 +23,6 @@ function validate(email: string, password: string): FieldErrors {
   return errs;
 }
 
-function getTodayDate() {
-  return new Date().toISOString().slice(0, 10);
-}
-
-function createDraftId() {
-  if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
-    return crypto.randomUUID();
-  }
-  return `minutes-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-}
-
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function LoginPage() {
@@ -55,21 +38,6 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [serverError, setServerError] = useState<string | null>(null);
-  const [meetingTitle, setMeetingTitle] = useState("");
-  const [meetingDate, setMeetingDate] = useState(getTodayDate());
-  const [meetingMinutes, setMeetingMinutes] = useState("");
-  const [minutesError, setMinutesError] = useState<string | null>(null);
-  const [minutesMessage, setMinutesMessage] = useState<string | null>(null);
-  const [isSavingMinutes, setIsSavingMinutes] = useState(false);
-  const [recentMinutesDrafts, setRecentMinutesDrafts] = useState<
-    MeetingMinutesDraft[]
-  >([]);
-
-  useEffect(() => {
-    void getMeetingMinutesDraftsAsync().then((entries) => {
-      setRecentMinutesDrafts(entries.slice(0, 5));
-    });
-  }, []);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -110,57 +78,6 @@ export default function LoginPage() {
         },
       },
     );
-  };
-
-  const handleSaveMinutesDraft = async (e: FormEvent) => {
-    e.preventDefault();
-    setMinutesError(null);
-    setMinutesMessage(null);
-
-    if (!meetingTitle.trim()) {
-      setMinutesError("Meeting title is required.");
-      return;
-    }
-
-    if (!meetingDate.trim()) {
-      setMinutesError("Meeting date is required.");
-      return;
-    }
-
-    if (!meetingMinutes.trim()) {
-      setMinutesError("Minutes details are required.");
-      return;
-    }
-
-    const now = new Date().toISOString();
-    const entry: MeetingMinutesDraft = {
-      id: createDraftId(),
-      title: meetingTitle,
-      meetingDate,
-      minutes: meetingMinutes,
-      authorEmail:
-        /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim().toLowerCase())
-          ? email.trim().toLowerCase()
-          : "guest@missionmensa.local",
-      createdAt: now,
-      updatedAt: now,
-    };
-
-    const localEntries = upsertMeetingMinutesDraft(entry);
-    setRecentMinutesDrafts(localEntries.slice(0, 5));
-    setIsSavingMinutes(true);
-
-    try {
-      const syncedEntries = await upsertMeetingMinutesDraftAsync(entry);
-      setRecentMinutesDrafts(syncedEntries.slice(0, 5));
-      setMinutesMessage("Daily minutes draft saved.");
-      setMeetingTitle("");
-      setMeetingMinutes("");
-    } catch {
-      setMinutesError("Saved locally. Supabase sync failed.");
-    } finally {
-      setIsSavingMinutes(false);
-    }
   };
 
   return (
@@ -275,105 +192,6 @@ export default function LoginPage() {
           Create one
         </Link>
       </p>
-
-      <section
-        id="minutes-of-meetings"
-        className="mt-10 rounded-2xl border border-[#dbe9e9] bg-white/90 p-5"
-      >
-        <div className="mb-4">
-          <h3 className="text-base font-bold text-[#2F3E3E]">
-            Daily Minutes of Meetings
-          </h3>
-          <p className="mt-1 text-xs text-gray-500">
-            Draft meeting minutes here. Entries are synced to Supabase.
-          </p>
-        </div>
-
-        {minutesMessage && (
-          <div className="mb-3 rounded-lg border border-green-200 bg-green-50 px-3 py-2 text-xs text-green-700">
-            {minutesMessage}
-          </div>
-        )}
-
-        {minutesError && (
-          <div className="mb-3 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
-            {minutesError}
-          </div>
-        )}
-
-        <form onSubmit={handleSaveMinutesDraft} className="space-y-3">
-          <div className="space-y-1">
-            <label className="block text-xs font-semibold uppercase tracking-[0.12em] text-[#2F3E3E]">
-              Meeting Title
-            </label>
-            <input
-              type="text"
-              value={meetingTitle}
-              onChange={(e) => setMeetingTitle(e.target.value)}
-              placeholder="Daily standup - product and engineering"
-              className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-[#2F3E3E] outline-none transition focus:border-[#2CA4A4] focus:ring-2 focus:ring-[#2CA4A4]/20"
-            />
-          </div>
-
-          <div className="space-y-1">
-            <label className="block text-xs font-semibold uppercase tracking-[0.12em] text-[#2F3E3E]">
-              Meeting Date
-            </label>
-            <input
-              type="date"
-              value={meetingDate}
-              onChange={(e) => setMeetingDate(e.target.value)}
-              className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-[#2F3E3E] outline-none transition focus:border-[#2CA4A4] focus:ring-2 focus:ring-[#2CA4A4]/20"
-            />
-          </div>
-
-          <div className="space-y-1">
-            <label className="block text-xs font-semibold uppercase tracking-[0.12em] text-[#2F3E3E]">
-              Minutes
-            </label>
-            <textarea
-              value={meetingMinutes}
-              onChange={(e) => setMeetingMinutes(e.target.value)}
-              rows={5}
-              placeholder="Agenda, decisions, action items, owners, and due dates"
-              className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-[#2F3E3E] outline-none transition focus:border-[#2CA4A4] focus:ring-2 focus:ring-[#2CA4A4]/20"
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={isSavingMinutes}
-            className="inline-flex items-center justify-center rounded-lg bg-[#1f6f8b] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#18576d] disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            {isSavingMinutes ? "Saving..." : "Save Minutes Draft"}
-          </button>
-        </form>
-
-        <div className="mt-5">
-          <h4 className="text-xs font-semibold uppercase tracking-[0.12em] text-gray-500">
-            Recent Minutes
-          </h4>
-          {recentMinutesDrafts.length === 0 ? (
-            <p className="mt-2 text-sm text-gray-500">No drafts yet.</p>
-          ) : (
-            <ul className="mt-2 space-y-2">
-              {recentMinutesDrafts.map((entry) => (
-                <li
-                  key={entry.id}
-                  className="rounded-lg border border-gray-200 bg-[#f8fbfb] px-3 py-2"
-                >
-                  <p className="text-sm font-semibold text-[#2F3E3E]">
-                    {entry.title}
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    {entry.meetingDate} • {entry.authorEmail}
-                  </p>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      </section>
     </AuthLayout>
   );
 }

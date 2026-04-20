@@ -128,7 +128,7 @@ const Header: React.FC = () => {
     { name: "Discussion", href: "/programs", icon: MessageCircle },
     {
       name: "Minutes of Meetings",
-      href: "/login#minutes-of-meetings",
+      href: "/minutes-of-meetings",
       icon: FileText,
     },
     // { name: "Community", href: "/community", icon: Users },

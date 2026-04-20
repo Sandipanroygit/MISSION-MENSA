@@ -4,6 +4,7 @@ import {
   Home,
   LayoutDashboard,
   PenSquare,
+  FileText,
   MessageSquare,
   MessageSquareText,
   MessageSquareQuote,
@@ -21,6 +22,11 @@ import LearnerSwitcher from "@/components/dashboard/LearnerSwitcher";
 
 const parentNavItems = [
   { name: "Writing Blogs", href: "/dashboard/writing-blogs", icon: PenSquare },
+  {
+    name: "Minutes of Meetings",
+    href: "/dashboard/minutes-of-meetings",
+    icon: FileText,
+  },
   { name: "Discussion", href: "/dashboard/discussion", icon: MessageSquare },
   {
     name: "Voices Draft",
@@ -176,6 +182,14 @@ export default function DashboardHeader() {
                     Account settings
                   </Link>
                   <Link
+                    to="/dashboard/minutes-of-meetings"
+                    onClick={() => setUserMenuOpen(false)}
+                    className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-[#2F3E3E] hover:bg-[#FAF7F2] transition-colors"
+                  >
+                    <FileText size={14} className="text-gray-400" />
+                    Minutes of Meetings
+                  </Link>
+                  <Link
                     to="/dashboard/voices"
                     onClick={() => setUserMenuOpen(false)}
                     className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-[#2F3E3E] hover:bg-[#FAF7F2] transition-colors"
@@ -255,6 +269,13 @@ export default function DashboardHeader() {
             );
           })}
           <div className="border-t border-gray-100 pt-2 mt-2">
+            <Link
+              to="/dashboard/minutes-of-meetings"
+              className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-[#2F3E3E] hover:bg-[#FAF7F2] transition-colors"
+            >
+              <FileText size={18} className="text-gray-400" />
+              Minutes of Meetings
+            </Link>
             <Link
               to="/dashboard/voices"
               className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-[#2F3E3E] hover:bg-[#FAF7F2] transition-colors"

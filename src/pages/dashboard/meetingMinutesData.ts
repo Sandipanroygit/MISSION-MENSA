@@ -6,32 +6,44 @@ import {
   saveRemoteContentCollection,
 } from "@/backend/contentStore";
 
-export interface MeetingMinutesDraft {
+export interface MeetingMinutesEntry {
   id: string;
   title: string;
   meetingDate: string;
   minutes: string;
+  authorName: string;
   authorEmail: string;
   createdAt: string;
   updatedAt: string;
+  isPublished: boolean;
 }
 
-function normalizeMeetingMinutesDraft(
-  entry: MeetingMinutesDraft,
-): MeetingMinutesDraft {
+function normalizeMeetingMinutesEntry(
+  entry: Partial<MeetingMinutesEntry>,
+): MeetingMinutesEntry {
+  const now = new Date().toISOString();
+  const createdAt = entry.createdAt || now;
   return {
-    ...entry,
-    title: entry.title.trim(),
-    minutes: entry.minutes.trim(),
-    authorEmail: entry.authorEmail.trim().toLowerCase(),
+    id: entry.id || `minutes-${Date.now()}`,
+    title: (entry.title || "Untitled Minutes").trim(),
+    meetingDate: entry.meetingDate || now.slice(0, 10),
+    minutes: (entry.minutes || "").trim(),
+    authorName: (entry.authorName || "Mission MENSA").trim(),
+    authorEmail: (entry.authorEmail || "team@missionmensa.org")
+      .trim()
+      .toLowerCase(),
+    createdAt,
+    updatedAt: entry.updatedAt || createdAt,
+    isPublished: Boolean(entry.isPublished),
   };
 }
 
-function dedupeMeetingMinutesDrafts(entries: MeetingMinutesDraft[]) {
-  const uniqueEntries = new Map<string, MeetingMinutesDraft>();
+function dedupeMeetingMinutesEntries(entries: Partial<MeetingMinutesEntry>[]) {
+  const uniqueEntries = new Map<string, MeetingMinutesEntry>();
 
   entries.forEach((entry) => {
-    uniqueEntries.set(entry.id, normalizeMeetingMinutesDraft(entry));
+    const normalizedEntry = normalizeMeetingMinutesEntry(entry);
+    uniqueEntries.set(normalizedEntry.id, normalizedEntry);
   });
 
   return Array.from(uniqueEntries.values()).sort((a, b) =>
@@ -39,57 +51,81 @@ function dedupeMeetingMinutesDrafts(entries: MeetingMinutesDraft[]) {
   );
 }
 
-export function getMeetingMinutesDrafts() {
+export function getMeetingMinutesEntries() {
   if (!hasPersistedContentCollection("meetingMinutesDrafts")) {
-    return [] as MeetingMinutesDraft[];
+    return [] as MeetingMinutesEntry[];
   }
 
-  return dedupeMeetingMinutesDrafts(
-    readContentCollection<MeetingMinutesDraft>("meetingMinutesDrafts", []),
+  return dedupeMeetingMinutesEntries(
+    readContentCollection<MeetingMinutesEntry>("meetingMinutesDrafts", []),
   );
 }
 
-export async function getMeetingMinutesDraftsAsync() {
-  const localEntries = getMeetingMinutesDrafts();
-  const remoteEntries = await readRemoteContentCollection<MeetingMinutesDraft>(
+export async function getMeetingMinutesEntriesAsync() {
+  const localEntries = getMeetingMinutesEntries();
+  const remoteEntries = await readRemoteContentCollection<MeetingMinutesEntry>(
     "meetingMinutesDrafts",
     localEntries,
   );
 
-  return dedupeMeetingMinutesDrafts(remoteEntries);
+  return dedupeMeetingMinutesEntries(remoteEntries);
 }
 
-export function saveMeetingMinutesDrafts(entries: MeetingMinutesDraft[]) {
+export function getPublishedMeetingMinutesEntries() {
+  return getMeetingMinutesEntries().filter((entry) => entry.isPublished);
+}
+
+export async function getPublishedMeetingMinutesEntriesAsync() {
+  const entries = await getMeetingMinutesEntriesAsync();
+  return entries.filter((entry) => entry.isPublished);
+}
+
+export function saveMeetingMinutesEntries(entries: MeetingMinutesEntry[]) {
   saveContentCollection(
     "meetingMinutesDrafts",
-    dedupeMeetingMinutesDrafts(entries),
+    dedupeMeetingMinutesEntries(entries),
   );
 }
 
-export async function saveMeetingMinutesDraftsAsync(
-  entries: MeetingMinutesDraft[],
+export async function saveMeetingMinutesEntriesAsync(
+  entries: MeetingMinutesEntry[],
 ) {
   await saveRemoteContentCollection(
     "meetingMinutesDrafts",
-    dedupeMeetingMinutesDrafts(entries),
+    dedupeMeetingMinutesEntries(entries),
   );
 }
 
-export function upsertMeetingMinutesDraft(entry: MeetingMinutesDraft) {
-  const updatedEntries = dedupeMeetingMinutesDrafts([
-    normalizeMeetingMinutesDraft(entry),
-    ...getMeetingMinutesDrafts(),
+export function upsertMeetingMinutesEntry(entry: MeetingMinutesEntry) {
+  const updatedEntries = dedupeMeetingMinutesEntries([
+    normalizeMeetingMinutesEntry(entry),
+    ...getMeetingMinutesEntries().filter((item) => item.id !== entry.id),
   ]);
-  saveMeetingMinutesDrafts(updatedEntries);
+  saveMeetingMinutesEntries(updatedEntries);
   return updatedEntries;
 }
 
-export async function upsertMeetingMinutesDraftAsync(entry: MeetingMinutesDraft) {
-  const currentEntries = await getMeetingMinutesDraftsAsync();
-  const updatedEntries = dedupeMeetingMinutesDrafts([
-    normalizeMeetingMinutesDraft(entry),
-    ...currentEntries,
+export async function upsertMeetingMinutesEntryAsync(entry: MeetingMinutesEntry) {
+  const currentEntries = await getMeetingMinutesEntriesAsync();
+  const updatedEntries = dedupeMeetingMinutesEntries([
+    normalizeMeetingMinutesEntry(entry),
+    ...currentEntries.filter((item) => item.id !== entry.id),
   ]);
-  await saveMeetingMinutesDraftsAsync(updatedEntries);
-  return getMeetingMinutesDrafts();
+  await saveMeetingMinutesEntriesAsync(updatedEntries);
+  return getMeetingMinutesEntries();
+}
+
+export function deleteMeetingMinutesEntry(id: string) {
+  const updatedEntries = getMeetingMinutesEntries().filter(
+    (entry) => entry.id !== id,
+  );
+  saveMeetingMinutesEntries(updatedEntries);
+  return updatedEntries;
+}
+
+export async function deleteMeetingMinutesEntryAsync(id: string) {
+  const currentEntries = await getMeetingMinutesEntriesAsync();
+  const updatedEntries = currentEntries.filter((entry) => entry.id !== id);
+  await saveMeetingMinutesEntriesAsync(updatedEntries);
+  return getMeetingMinutesEntries();
 }

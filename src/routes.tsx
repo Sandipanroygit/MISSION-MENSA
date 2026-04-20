@@ -11,6 +11,7 @@ const CommunityPage = lazy(() => import("./pages/Community"));
 const AboutMensaPage = lazy(() => import("./pages/AboutMensa"));
 const VoicesOfMensaPage = lazy(() => import("./pages/VoicesOfMensa"));
 const AboutUsPage = lazy(() => import("./pages/Aboutus"));
+const MinutesOfMeetingsPage = lazy(() => import("./pages/MinutesOfMeetings"));
 const PublicBlogReadPage = lazy(() => import("./pages/PublicBlogRead"));
 const PublicDiscussionReadPage = lazy(() => import("./pages/PublicDiscussionRead"));
 const ContactUs = lazy(() => import("./pages/ContactUs"));
@@ -37,6 +38,9 @@ const DiscussionPage = lazy(() => import("./pages/dashboard/DiscussionPage"));
 const DiscussionTopicPage = lazy(() => import("./pages/dashboard/DiscussionTopicPage"));
 const FeedbackPage = lazy(() => import("./pages/dashboard/FeedbackPage"));
 const VoicesDraftPage = lazy(() => import("./pages/dashboard/VoicesDraftPage"));
+const MinutesOfMeetingsDraftPage = lazy(
+  () => import("./pages/dashboard/MinutesOfMeetingsDraftPage"),
+);
 
 const routeFallback = (
   <div className="min-h-[50vh] bg-[#FAF7F2] flex items-center justify-center text-sm font-semibold text-[#24544c]">
@@ -54,6 +58,10 @@ const AppRoutes = () => {
           <Route path="/programs/:topicId" element={<PublicDiscussionReadPage />} />
           <Route path="/about-mensa" element={<AboutMensaPage />} />
           <Route path="/voices-of-mensa" element={<VoicesOfMensaPage />} />
+          <Route
+            path="/minutes-of-meetings"
+            element={<MinutesOfMeetingsPage />}
+          />
           <Route path="/about-us" element={<AboutUsPage />} />
           <Route path="/about-us/:slug" element={<PublicBlogReadPage />} />
           <Route path="/contact-us" element={<ContactUs />} />
@@ -92,6 +100,10 @@ const AppRoutes = () => {
               element={<DiscussionTopicPage />}
             />
             <Route path="/dashboard/voices" element={<VoicesDraftPage />} />
+            <Route
+              path="/dashboard/minutes-of-meetings"
+              element={<MinutesOfMeetingsDraftPage />}
+            />
             <Route path="/dashboard/feedback" element={<FeedbackPage />} />
             <Route path="/dashboard/overview" element={<ParentOverview />} />
             <Route
