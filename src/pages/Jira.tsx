@@ -65,6 +65,33 @@ function getPriorityTone(priority: string) {
   return "bg-[#eef2ff] text-[#3730a3]";
 }
 
+type LaneKey = "todo" | "inProgress" | "done" | "other";
+
+function classifyStatus(status: string): LaneKey {
+  const normalized = status.toLowerCase();
+  if (
+    normalized.includes("todo") ||
+    normalized.includes("to do") ||
+    normalized.includes("backlog") ||
+    normalized.includes("open")
+  ) {
+    return "todo";
+  }
+  if (
+    normalized.includes("progress") ||
+    normalized.includes("review") ||
+    normalized.includes("testing") ||
+    normalized.includes("qa") ||
+    normalized.includes("blocked")
+  ) {
+    return "inProgress";
+  }
+  if (normalized.includes("done") || normalized.includes("closed") || normalized.includes("resolved")) {
+    return "done";
+  }
+  return "other";
+}
+
 async function readErrorMessage(response: Response, source: string) {
   const bodyText = await response.text();
   let details = bodyText;
@@ -182,6 +209,59 @@ export default function JiraPage() {
       .map(([label, count]) => ({ label, count }))
       .sort((a, b) => b.count - a.count);
   }, [issues]);
+
+  const classifiedIssues = useMemo(() => {
+    return filteredIssues.reduce<Record<LaneKey, JiraIssue[]>>(
+      (acc, issue) => {
+        const lane = classifyStatus(issue.status);
+        acc[lane].push(issue);
+        return acc;
+      },
+      { todo: [], inProgress: [], done: [], other: [] },
+    );
+  }, [filteredIssues]);
+
+  const lanes: Array<{
+    key: LaneKey;
+    title: string;
+    subtitle: string;
+    accent: string;
+    bg: string;
+    border: string;
+  }> = [
+    {
+      key: "todo",
+      title: "To Do",
+      subtitle: "Planned next",
+      accent: "text-[#1d4ed8]",
+      bg: "bg-[#eff6ff]",
+      border: "border-[#bfdbfe]",
+    },
+    {
+      key: "inProgress",
+      title: "In Progress",
+      subtitle: "Actively moving",
+      accent: "text-[#0f766e]",
+      bg: "bg-[#ecfeff]",
+      border: "border-[#99f6e4]",
+    },
+    {
+      key: "done",
+      title: "Done",
+      subtitle: "Completed",
+      accent: "text-[#166534]",
+      bg: "bg-[#f0fdf4]",
+      border: "border-[#bbf7d0]",
+    },
+    {
+      key: "other",
+      title: "Other",
+      subtitle: "Unmapped status",
+      accent: "text-[#7c2d12]",
+      bg: "bg-[#fff7ed]",
+      border: "border-[#fed7aa]",
+    },
+  ];
 
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top,#fff7ed_0%,#f8fafc_46%,#ecfeff_100%)] px-4 py-10 sm:px-6 lg:px-8">
@@ -358,54 +438,135 @@ export default function JiraPage() {
               No issues matched your filter.
             </p>
           ) : (
-            <div className="grid gap-3 lg:grid-cols-2">
-              {filteredIssues.map((issue) => (
-                <article
-                  key={issue.id}
-                  className="rounded-2xl border border-[#e1ebec] bg-[linear-gradient(180deg,#fcfefe_0%,#f7fbfb_100%)] p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
-                >
-                  <div className="flex flex-wrap items-start justify-between gap-3">
-                    <div>
-                      <a
-                        href={`${JIRA_BASE_URL}/browse/${issue.key}`}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="inline-flex items-center gap-1 text-sm font-bold text-[#1f5f71]"
+            <div className="space-y-6">
+              <section>
+                <div className="mb-3 flex items-center justify-between">
+                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#5e7880]">
+                    Classified Board
+                  </p>
+                  <p className="text-xs font-semibold text-[#5e7880]">
+                    {filteredIssues.length} issues in current view
+                  </p>
+                </div>
+                <div className="grid gap-4 xl:grid-cols-4">
+                  {lanes.map((lane) => {
+                    const laneIssues = classifiedIssues[lane.key];
+                    return (
+                      <article
+                        key={lane.key}
+                        className={`rounded-2xl border ${lane.border} ${lane.bg} p-3`}
                       >
-                        {issue.key}
-                        <ArrowUpRight size={13} />
-                      </a>
-                      <h3 className="mt-1 text-base font-semibold text-[#1d2a2a]">
-                        {issue.summary}
-                      </h3>
-                    </div>
-                    <div className="flex flex-wrap gap-1.5">
-                      <span
-                        className={`rounded-full px-2.5 py-1 text-xs font-semibold ${getStatusTone(
-                          issue.status,
-                        )}`}
-                      >
-                        {issue.status}
-                      </span>
-                      <span
-                        className={`rounded-full px-2.5 py-1 text-xs font-semibold ${getPriorityTone(
-                          issue.priority,
-                        )}`}
-                      >
-                        {issue.priority}
-                      </span>
-                    </div>
-                  </div>
+                        <div className="mb-3 flex items-start justify-between gap-2">
+                          <div>
+                            <h3 className={`text-base font-black ${lane.accent}`}>
+                              {lane.title}
+                            </h3>
+                            <p className="text-xs text-[#4f6368]">{lane.subtitle}</p>
+                          </div>
+                          <span className="rounded-full bg-white px-2.5 py-1 text-xs font-bold text-[#1f343a] shadow-sm">
+                            {laneIssues.length}
+                          </span>
+                        </div>
 
-                  <div className="mt-3 flex flex-wrap gap-3 text-xs text-[#607679]">
-                    <span>Type: {issue.issueType}</span>
-                    <span>Assignee: {issue.assignee}</span>
-                    <span className="inline-flex items-center gap-1">
-                      <Clock3 size={12} /> Updated: {formatDateTime(issue.updated)}
-                    </span>
-                  </div>
-                </article>
-              ))}
+                        {laneIssues.length === 0 ? (
+                          <div className="rounded-xl border border-dashed border-[#cbdde1] bg-white/70 p-3 text-xs text-[#698187]">
+                            No issues
+                          </div>
+                        ) : (
+                          <div className="space-y-2">
+                            {laneIssues.map((issue) => (
+                              <a
+                                key={issue.id}
+                                href={`${JIRA_BASE_URL}/browse/${issue.key}`}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="block rounded-xl border border-[#d8e8eb] bg-white p-3 transition hover:-translate-y-0.5 hover:shadow-sm"
+                              >
+                                <div className="flex items-center justify-between gap-2">
+                                  <p className="text-xs font-black text-[#1f5f71]">
+                                    {issue.key}
+                                  </p>
+                                  <ArrowUpRight size={12} className="text-[#6a868d]" />
+                                </div>
+                                <p className="mt-1 line-clamp-2 text-sm font-semibold text-[#1d2a2a]">
+                                  {issue.summary}
+                                </p>
+                                <div className="mt-2 flex flex-wrap gap-1.5">
+                                  <span
+                                    className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${getPriorityTone(
+                                      issue.priority,
+                                    )}`}
+                                  >
+                                    {issue.priority}
+                                  </span>
+                                  <span className="rounded-full bg-[#eef6f8] px-2 py-0.5 text-[10px] font-semibold text-[#39565e]">
+                                    {issue.assignee}
+                                  </span>
+                                </div>
+                              </a>
+                            ))}
+                          </div>
+                        )}
+                      </article>
+                    );
+                  })}
+                </div>
+              </section>
+
+              <section>
+                <p className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-[#5e7880]">
+                  All Issues
+                </p>
+                <div className="grid gap-3 lg:grid-cols-2">
+                  {filteredIssues.map((issue) => (
+                    <article
+                      key={issue.id}
+                      className="rounded-2xl border border-[#e1ebec] bg-[linear-gradient(180deg,#fcfefe_0%,#f7fbfb_100%)] p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+                    >
+                      <div className="flex flex-wrap items-start justify-between gap-3">
+                        <div>
+                          <a
+                            href={`${JIRA_BASE_URL}/browse/${issue.key}`}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center gap-1 text-sm font-bold text-[#1f5f71]"
+                          >
+                            {issue.key}
+                            <ArrowUpRight size={13} />
+                          </a>
+                          <h3 className="mt-1 text-base font-semibold text-[#1d2a2a]">
+                            {issue.summary}
+                          </h3>
+                        </div>
+                        <div className="flex flex-wrap gap-1.5">
+                          <span
+                            className={`rounded-full px-2.5 py-1 text-xs font-semibold ${getStatusTone(
+                              issue.status,
+                            )}`}
+                          >
+                            {issue.status}
+                          </span>
+                          <span
+                            className={`rounded-full px-2.5 py-1 text-xs font-semibold ${getPriorityTone(
+                              issue.priority,
+                            )}`}
+                          >
+                            {issue.priority}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="mt-3 flex flex-wrap gap-3 text-xs text-[#607679]">
+                        <span>Type: {issue.issueType}</span>
+                        <span>Assignee: {issue.assignee}</span>
+                        <span className="inline-flex items-center gap-1">
+                          <Clock3 size={12} /> Updated: {formatDateTime(issue.updated)}
+                        </span>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </section>
             </div>
           )}
         </section>
