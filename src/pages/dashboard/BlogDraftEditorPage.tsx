@@ -130,12 +130,14 @@ function createYouTubePlaceholderHtml(embedUrl: string, title = "Embedded YouTub
 
   return `
     <figure data-media-block="true" data-youtube-embed="${escapeHtml(embedUrl)}" contenteditable="false" style="margin: 24px 0;">
-      <div style="position: relative; width: 100%; aspect-ratio: 16 / 9; overflow: hidden; border-radius: 18px; border: 1px solid #d1d5db; background: #111827;">
-        ${thumbnail ? `<img src="${thumbnail}" alt="YouTube preview" style="width: 100%; height: 100%; object-fit: cover;" />` : ""}
-        <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;">
-          <span style="display: inline-flex; align-items: center; gap: 8px; border-radius: 9999px; background: rgba(255,255,255,0.92); color: #111827; padding: 8px 14px; font-weight: 700; font-size: 13px;">
-            ▶ Play Video
-          </span>
+      <div style="width: min(100%, 760px); max-width: 100%; min-width: 220px; resize: both; overflow: auto; border: 1px dashed #9ca3af; border-radius: 18px; padding: 4px;">
+        <div style="position: relative; width: 100%; aspect-ratio: 16 / 9; overflow: hidden; border-radius: 14px; border: 1px solid #d1d5db; background: #111827;">
+          ${thumbnail ? `<img src="${thumbnail}" alt="YouTube preview" style="width: 100%; height: 100%; object-fit: cover;" />` : ""}
+          <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;">
+            <span style="display: inline-flex; align-items: center; gap: 8px; border-radius: 9999px; background: rgba(255,255,255,0.92); color: #111827; padding: 8px 14px; font-weight: 700; font-size: 13px;">
+              ▶ Play Video
+            </span>
+          </div>
         </div>
       </div>
       <figcaption style="margin-top: 8px; color: #6b7280; font-size: 14px;">${escapeHtml(title)}</figcaption>
@@ -862,7 +864,9 @@ export default function BlogDraftEditorPage() {
       if (kind === "image") {
         insertHtmlAtCursor(`
           <figure data-media-block="true" contenteditable="false" style="margin: 24px 0;">
-            <img src="${url}" alt="${file.name}" style="max-width: 100%; border-radius: 18px;" />
+            <div style="width: min(100%, 760px); max-width: 100%; min-width: 180px; resize: both; overflow: auto; border: 1px dashed #9ca3af; border-radius: 18px; padding: 4px;">
+              <img src="${url}" alt="${file.name}" style="width: 100%; height: auto; display: block; border-radius: 14px;" />
+            </div>
             <figcaption style="margin-top: 8px; color: #6b7280; font-size: 14px;">${file.name}</figcaption>
           </figure>
           <p><br /></p>
@@ -870,9 +874,11 @@ export default function BlogDraftEditorPage() {
       } else {
         insertHtmlAtCursor(`
           <figure data-media-block="true" contenteditable="false" style="margin: 24px 0;">
-            <video controls style="max-width: 100%; border-radius: 18px;">
-              <source src="${url}" type="${file.type}" />
-            </video>
+            <div style="width: min(100%, 760px); max-width: 100%; min-width: 220px; resize: both; overflow: auto; border: 1px dashed #9ca3af; border-radius: 18px; padding: 4px;">
+              <video controls style="width: 100%; height: auto; display: block; border-radius: 14px;">
+                <source src="${url}" type="${file.type}" />
+              </video>
+            </div>
             <figcaption style="margin-top: 8px; color: #6b7280; font-size: 14px;">${file.name}</figcaption>
           </figure>
           <p><br /></p>
@@ -1264,6 +1270,16 @@ export default function BlogDraftEditorPage() {
     { label: "Indent -", action: () => runCommand("outdent") },
   ];
 
+  const formatButtons = textToolbarButtons.filter((button) =>
+    ["Bold", "Italic", "Underline"].includes(button.label),
+  );
+  const alignmentButtons = textToolbarButtons.filter((button) =>
+    ["Left", "Center", "Right"].includes(button.label),
+  );
+  const listButtons = textToolbarButtons.filter((button) =>
+    ["Bullets", "Numbered"].includes(button.label),
+  );
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <style>{`
@@ -1452,155 +1468,203 @@ export default function BlogDraftEditorPage() {
               <p className={summary ? "text-sm text-gray-500" : "text-sm text-[#2F3E3E]"}>
                 {summary || defaultSummary}
               </p>
-              <div className="flex flex-wrap items-center gap-2 border-t border-gray-100 pt-4">
-                <select
-                  value={fontFamily}
-                  onChange={(e) => applyFontFamily(e.target.value)}
-                  className="rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-[#2F3E3E] outline-none"
-                >
-                  {fontFamilies.map((font) => (
-                    <option key={font.value} value={font.value}>
-                      {font.label}
-                    </option>
-                  ))}
-                </select>
+              <div className="grid gap-3 border-t border-gray-100 pt-4 lg:grid-cols-2">
+                <div className="rounded-2xl border border-gray-200 bg-[#FCFEFE] p-3">
+                  <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.16em] text-[#6b7d82]">
+                    Typography
+                  </p>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <select
+                      value={fontFamily}
+                      onChange={(e) => applyFontFamily(e.target.value)}
+                      className="rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-[#2F3E3E] outline-none"
+                    >
+                      {fontFamilies.map((font) => (
+                        <option key={font.value} value={font.value}>
+                          {font.label}
+                        </option>
+                      ))}
+                    </select>
+                    <select
+                      value={fontSize}
+                      onChange={(e) => applyFontSize(e.target.value)}
+                      className="rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-[#2F3E3E] outline-none"
+                    >
+                      {fontSizes.map((size) => (
+                        <option key={size.value} value={size.value}>
+                          {size.label}px
+                        </option>
+                      ))}
+                    </select>
+                    {formatButtons.map(({ icon: Icon, action, label }) => (
+                      <button
+                        key={label}
+                        type="button"
+                        onMouseDown={(e) => e.preventDefault()}
+                        onClick={action}
+                        className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-[#2F3E3E] transition hover:border-[#2CA4A4]/40 hover:text-[#2CA4A4]"
+                        aria-label={label}
+                        title={label}
+                      >
+                        <Icon size={16} />
+                        <span>{label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
 
-                <select
-                  value={fontSize}
-                  onChange={(e) => applyFontSize(e.target.value)}
-                  className="rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-[#2F3E3E] outline-none"
-                >
-                  {fontSizes.map((size) => (
-                    <option key={size.value} value={size.value}>
-                      {size.label}px
-                    </option>
-                  ))}
-                </select>
+                <div className="rounded-2xl border border-gray-200 bg-[#FCFEFE] p-3">
+                  <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.16em] text-[#6b7d82]">
+                    Spacing
+                  </p>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <label className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2 text-xs font-medium text-[#2F3E3E]">
+                      <span>Line</span>
+                      <input
+                        type="range"
+                        min="1"
+                        max="3"
+                        step="0.1"
+                        value={lineSpacing}
+                        onChange={(event) => setLineSpacing(Number(event.target.value))}
+                        className="h-2 w-24 accent-[#2CA4A4]"
+                        title="Line spacing"
+                      />
+                      <span className="w-8 text-right">{lineSpacing.toFixed(1)}</span>
+                    </label>
+                    <label className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2 text-xs font-medium text-[#2F3E3E]">
+                      <span>Para</span>
+                      <input
+                        type="range"
+                        min="0"
+                        max="40"
+                        step="1"
+                        value={paragraphSpacing}
+                        onChange={(event) => setParagraphSpacing(Number(event.target.value))}
+                        className="h-2 w-24 accent-[#2CA4A4]"
+                        title="Paragraph spacing"
+                      />
+                      <span className="w-10 text-right">{paragraphSpacing}px</span>
+                    </label>
+                    {indentationButtons.map(({ label, action }) => (
+                      <button
+                        key={label}
+                        type="button"
+                        onMouseDown={(e) => e.preventDefault()}
+                        onClick={action}
+                        className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-[#2F3E3E] transition hover:border-[#2CA4A4]/40 hover:text-[#2CA4A4]"
+                        aria-label={label}
+                        title={label}
+                      >
+                        <span>{label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
 
-                <label className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2 text-xs font-medium text-[#2F3E3E]">
-                  <span>Line</span>
-                  <input
-                    type="range"
-                    min="1"
-                    max="3"
-                    step="0.1"
-                    value={lineSpacing}
-                    onChange={(event) => setLineSpacing(Number(event.target.value))}
-                    className="h-2 w-24 accent-[#2CA4A4]"
-                    title="Line spacing"
-                  />
-                  <span className="w-8 text-right">{lineSpacing.toFixed(1)}</span>
-                </label>
+                <div className="rounded-2xl border border-gray-200 bg-[#FCFEFE] p-3">
+                  <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.16em] text-[#6b7d82]">
+                    Layout
+                  </p>
+                  <div className="flex flex-wrap items-center gap-2">
+                    {alignmentButtons.map(({ icon: Icon, action, label }) => (
+                      <button
+                        key={label}
+                        type="button"
+                        onMouseDown={(e) => e.preventDefault()}
+                        onClick={action}
+                        className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-[#2F3E3E] transition hover:border-[#2CA4A4]/40 hover:text-[#2CA4A4]"
+                        aria-label={label}
+                        title={label}
+                      >
+                        <Icon size={16} />
+                        <span>{label}</span>
+                      </button>
+                    ))}
+                    {listButtons.map(({ icon: Icon, action, label }) => (
+                      <button
+                        key={label}
+                        type="button"
+                        onMouseDown={(e) => e.preventDefault()}
+                        onClick={action}
+                        className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-[#2F3E3E] transition hover:border-[#2CA4A4]/40 hover:text-[#2CA4A4]"
+                        aria-label={label}
+                        title={label}
+                      >
+                        <Icon size={16} />
+                        <span>{label}</span>
+                      </button>
+                    ))}
+                    {headingButtons.map(({ label, action }) => (
+                      <button
+                        key={label}
+                        type="button"
+                        onMouseDown={(e) => e.preventDefault()}
+                        onClick={action}
+                        className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-semibold text-[#2F3E3E] transition hover:border-[#2CA4A4]/40 hover:text-[#2CA4A4]"
+                        aria-label={label}
+                        title={label}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
 
-                <label className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2 text-xs font-medium text-[#2F3E3E]">
-                  <span>Para</span>
-                  <input
-                    type="range"
-                    min="0"
-                    max="40"
-                    step="1"
-                    value={paragraphSpacing}
-                    onChange={(event) => setParagraphSpacing(Number(event.target.value))}
-                    className="h-2 w-24 accent-[#2CA4A4]"
-                    title="Paragraph spacing"
-                  />
-                  <span className="w-10 text-right">{paragraphSpacing}px</span>
-                </label>
-
-                {textToolbarButtons.map(({ icon: Icon, action, label }) => (
-                  <button
-                    key={label}
-                    type="button"
-                    onMouseDown={(e) => e.preventDefault()}
-                    onClick={action}
-                    className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-[#2F3E3E] transition hover:border-[#2CA4A4]/40 hover:text-[#2CA4A4]"
-                    aria-label={label}
-                    title={label}
-                  >
-                    <Icon size={16} />
-                    <span>{label}</span>
-                  </button>
-                ))}
-
-                {headingButtons.map(({ label, action }) => (
-                  <button
-                    key={label}
-                    type="button"
-                    onMouseDown={(e) => e.preventDefault()}
-                    onClick={action}
-                    className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-semibold text-[#2F3E3E] transition hover:border-[#2CA4A4]/40 hover:text-[#2CA4A4]"
-                    aria-label={label}
-                    title={label}
-                  >
-                    {label}
-                  </button>
-                ))}
-
-                {indentationButtons.map(({ label, action }) => (
-                  <button
-                    key={label}
-                    type="button"
-                    onMouseDown={(e) => e.preventDefault()}
-                    onClick={action}
-                    className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-[#2F3E3E] transition hover:border-[#2CA4A4]/40 hover:text-[#2CA4A4]"
-                    aria-label={label}
-                    title={label}
-                  >
-                    <span>{label}</span>
-                  </button>
-                ))}
-
-                {iconToolbarButtons.map(({ icon: Icon, action, label }) => (
-                  <button
-                    key={label}
-                    type="button"
-                    onMouseDown={(e) => e.preventDefault()}
-                    onClick={action}
-                    className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-[#2F3E3E] transition hover:border-[#2CA4A4]/40 hover:text-[#2CA4A4]"
-                    aria-label={label}
-                    title={label}
-                  >
-                    <Icon size={16} />
-                    <span>{label}</span>
-                  </button>
-                ))}
-
-                <button
-                  type="button"
-                  onMouseDown={(e) => e.preventDefault()}
-                  onClick={insertTable}
-                  className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-[#2F3E3E] transition hover:border-[#2CA4A4]/40 hover:text-[#2CA4A4]"
-                >
-                  <Table2 size={16} />
-                  Table
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => documentInputRef.current?.click()}
-                  className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-[#2F3E3E] transition hover:border-[#2CA4A4]/40 hover:text-[#2CA4A4]"
-                >
-                  <FileUp size={16} />
-                  Document
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => imageInputRef.current?.click()}
-                  className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-[#2F3E3E] transition hover:border-[#2CA4A4]/40 hover:text-[#2CA4A4]"
-                >
-                  <ImagePlus size={16} />
-                  Images
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => videoInputRef.current?.click()}
-                  className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-[#2F3E3E] transition hover:border-[#2CA4A4]/40 hover:text-[#2CA4A4]"
-                >
-                  <Video size={16} />
-                  Videos
-                </button>
+                <div className="rounded-2xl border border-gray-200 bg-[#FCFEFE] p-3">
+                  <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.16em] text-[#6b7d82]">
+                    Actions
+                  </p>
+                  <div className="flex flex-wrap items-center gap-2">
+                    {iconToolbarButtons.map(({ icon: Icon, action, label }) => (
+                      <button
+                        key={label}
+                        type="button"
+                        onMouseDown={(e) => e.preventDefault()}
+                        onClick={action}
+                        className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-[#2F3E3E] transition hover:border-[#2CA4A4]/40 hover:text-[#2CA4A4]"
+                        aria-label={label}
+                        title={label}
+                      >
+                        <Icon size={16} />
+                        <span>{label}</span>
+                      </button>
+                    ))}
+                    <button
+                      type="button"
+                      onMouseDown={(e) => e.preventDefault()}
+                      onClick={insertTable}
+                      className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-[#2F3E3E] transition hover:border-[#2CA4A4]/40 hover:text-[#2CA4A4]"
+                    >
+                      <Table2 size={16} />
+                      Table
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => documentInputRef.current?.click()}
+                      className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-[#2F3E3E] transition hover:border-[#2CA4A4]/40 hover:text-[#2CA4A4]"
+                    >
+                      <FileUp size={16} />
+                      Document
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => imageInputRef.current?.click()}
+                      className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-[#2F3E3E] transition hover:border-[#2CA4A4]/40 hover:text-[#2CA4A4]"
+                    >
+                      <ImagePlus size={16} />
+                      Images
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => videoInputRef.current?.click()}
+                      className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-[#2F3E3E] transition hover:border-[#2CA4A4]/40 hover:text-[#2CA4A4]"
+                    >
+                      <Video size={16} />
+                      Videos
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
