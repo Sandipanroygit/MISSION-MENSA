@@ -1,5 +1,15 @@
 import ScrollToTop from "@/components/common/ScrolltoTop";
-import { AlertCircle, ArrowUpRight, Clock3, Filter, Search } from "lucide-react";
+import {
+  AlertCircle,
+  ArrowUpRight,
+  BarChart3,
+  CheckCircle2,
+  CircleDotDashed,
+  Clock3,
+  Filter,
+  ListTodo,
+  Search,
+} from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import apiClient from "@/lib/axios";
 
@@ -36,6 +46,23 @@ function getStatusTone(status: string) {
     return "bg-[#F3F4F6] text-[#46505A]";
   }
   return "bg-[#FFF3E7] text-[#915E1E]";
+}
+
+function getPriorityTone(priority: string) {
+  const normalized = priority.toLowerCase();
+  if (normalized.includes("critical") || normalized.includes("highest")) {
+    return "bg-[#fee2e2] text-[#991b1b]";
+  }
+  if (normalized.includes("high")) {
+    return "bg-[#ffedd5] text-[#9a3412]";
+  }
+  if (normalized.includes("medium")) {
+    return "bg-[#fef3c7] text-[#92400e]";
+  }
+  if (normalized.includes("low")) {
+    return "bg-[#dcfce7] text-[#166534]";
+  }
+  return "bg-[#eef2ff] text-[#3730a3]";
 }
 
 async function readErrorMessage(response: Response, source: string) {
@@ -143,24 +170,51 @@ export default function JiraPage() {
   const doneCount = issues.filter((issue) =>
     issue.status.toLowerCase().includes("done"),
   ).length;
+  const completionRatio = issues.length ? Math.round((doneCount / issues.length) * 100) : 0;
+
+  const statusSummary = useMemo(() => {
+    const buckets = new Map<string, number>();
+    for (const issue of issues) {
+      buckets.set(issue.status, (buckets.get(issue.status) ?? 0) + 1);
+    }
+
+    return Array.from(buckets.entries())
+      .map(([label, count]) => ({ label, count }))
+      .sort((a, b) => b.count - a.count);
+  }, [issues]);
 
   return (
-    <main className="min-h-screen bg-[linear-gradient(180deg,#F6F1E7_0%,#FBF8F1_34%,#F4F8F8_100%)] px-4 py-10 sm:px-6 lg:px-8">
+    <main className="min-h-screen bg-[radial-gradient(circle_at_top,#fff7ed_0%,#f8fafc_46%,#ecfeff_100%)] px-4 py-10 sm:px-6 lg:px-8">
       <ScrollToTop />
       <div className="mx-auto max-w-7xl">
-        <div className="mb-6 rounded-[1.7rem] border border-[#dfe9ea] bg-white p-6 shadow-sm">
-          <h1 className="text-3xl font-black text-[#1D2A2A]">
-            Jira Command Center
-          </h1>
-          <p className="mt-2 text-sm text-[#5E6F73]">
-            Faster project view with filters, quick links, and issue spotlight.
-          </p>
-          <div className="mt-4 flex flex-wrap gap-2">
+        <section className="relative mb-6 overflow-hidden rounded-[1.8rem] border border-[#d7e3e5] bg-[linear-gradient(135deg,#0f172a_0%,#0c4a6e_55%,#115e59_100%)] p-6 shadow-lg">
+          <div className="pointer-events-none absolute -right-12 -top-12 h-44 w-44 rounded-full bg-[#67e8f9]/20 blur-2xl" />
+          <div className="pointer-events-none absolute -bottom-16 left-20 h-44 w-44 rounded-full bg-[#a7f3d0]/20 blur-2xl" />
+          <div className="relative">
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-cyan-100/90">
+              Project Dashboard
+            </p>
+            <h1 className="mt-2 text-3xl font-black text-white">
+              Jira Command Center
+            </h1>
+            <p className="mt-2 max-w-2xl text-sm text-cyan-50/90">
+              Clean, filterable, and real-time friendly view of your PM board.
+            </p>
+            <div className="mt-5 flex flex-wrap gap-2">
+              <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-cyan-50">
+                Project: {PROJECT_KEY}
+              </span>
+              <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-cyan-50">
+                Completion: {completionRatio}%
+              </span>
+            </div>
+          </div>
+          <div className="relative mt-5 flex flex-wrap gap-2">
             <a
               href={`${JIRA_BASE_URL}/jira/software/projects/${PROJECT_KEY}/boards`}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-1 rounded-full border border-[#d6e5e7] bg-[#f7fbfc] px-4 py-2 text-sm font-semibold text-[#254953]"
+              className="inline-flex items-center gap-1 rounded-full border border-cyan-100/30 bg-white/10 px-4 py-2 text-sm font-semibold text-cyan-50 transition hover:bg-white/20"
             >
               Open Board <ArrowUpRight size={14} />
             </a>
@@ -168,7 +222,7 @@ export default function JiraPage() {
               href={`${JIRA_BASE_URL}/jira/software/projects/${PROJECT_KEY}/backlog`}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-1 rounded-full border border-[#d6e5e7] bg-[#f7fbfc] px-4 py-2 text-sm font-semibold text-[#254953]"
+              className="inline-flex items-center gap-1 rounded-full border border-cyan-100/30 bg-white/10 px-4 py-2 text-sm font-semibold text-cyan-50 transition hover:bg-white/20"
             >
               Open Backlog <ArrowUpRight size={14} />
             </a>
@@ -178,34 +232,81 @@ export default function JiraPage() {
               )}`}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-1 rounded-full border border-[#d6e5e7] bg-[#f7fbfc] px-4 py-2 text-sm font-semibold text-[#254953]"
+              className="inline-flex items-center gap-1 rounded-full border border-cyan-100/30 bg-white/10 px-4 py-2 text-sm font-semibold text-cyan-50 transition hover:bg-white/20"
             >
               Advanced Search <ArrowUpRight size={14} />
             </a>
           </div>
-        </div>
+        </section>
 
-        <section className="mb-6 grid gap-4 sm:grid-cols-3">
-          <article className="rounded-2xl border border-[#dfe9ea] bg-white p-4 shadow-sm">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#678086]">
-              Total Issues
-            </p>
-            <p className="mt-2 text-3xl font-black text-[#1D2A2A]">
-              {issues.length}
-            </p>
+        <section className="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <article className="rounded-2xl border border-[#dbe7ea] bg-white p-4 shadow-sm">
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#678086]">
+                Total Issues
+              </p>
+              <BarChart3 size={16} className="text-[#24697a]" />
+            </div>
+            <p className="mt-2 text-3xl font-black text-[#1D2A2A]">{issues.length}</p>
           </article>
-          <article className="rounded-2xl border border-[#dfe9ea] bg-white p-4 shadow-sm">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#678086]">
-              Open
-            </p>
+          <article className="rounded-2xl border border-[#dbe7ea] bg-white p-4 shadow-sm">
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#678086]">
+                Open
+              </p>
+              <ListTodo size={16} className="text-[#24697a]" />
+            </div>
             <p className="mt-2 text-3xl font-black text-[#1D2A2A]">{openCount}</p>
           </article>
-          <article className="rounded-2xl border border-[#dfe9ea] bg-white p-4 shadow-sm">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#678086]">
-              Done
-            </p>
+          <article className="rounded-2xl border border-[#dbe7ea] bg-white p-4 shadow-sm">
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#678086]">
+                Done
+              </p>
+              <CheckCircle2 size={16} className="text-[#24697a]" />
+            </div>
             <p className="mt-2 text-3xl font-black text-[#1D2A2A]">{doneCount}</p>
           </article>
+          <article className="rounded-2xl border border-[#dbe7ea] bg-white p-4 shadow-sm">
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#678086]">
+                Completion
+              </p>
+              <CircleDotDashed size={16} className="text-[#24697a]" />
+            </div>
+            <p className="mt-2 text-3xl font-black text-[#1D2A2A]">{completionRatio}%</p>
+            <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-[#e2edf0]">
+              <div
+                className="h-full rounded-full bg-[linear-gradient(90deg,#22c55e_0%,#14b8a6_100%)]"
+                style={{ width: `${completionRatio}%` }}
+              />
+            </div>
+          </article>
+        </section>
+
+        <section className="mb-6 rounded-2xl border border-[#dfe9ea] bg-white p-5 shadow-sm">
+          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-[#5e7880]">
+            Status Breakdown
+          </p>
+          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+            {statusSummary.slice(0, 8).map((item) => {
+              const width = issues.length ? Math.max(6, Math.round((item.count / issues.length) * 100)) : 0;
+              return (
+                <article key={item.label} className="rounded-xl border border-[#e3edf0] bg-[#fbfefe] p-3">
+                  <div className="mb-2 flex items-center justify-between gap-3">
+                    <p className="truncate text-sm font-semibold text-[#173237]">{item.label}</p>
+                    <span className="text-sm font-black text-[#24454d]">{item.count}</span>
+                  </div>
+                  <div className="h-2 w-full overflow-hidden rounded-full bg-[#dbe8eb]">
+                    <div
+                      className="h-full rounded-full bg-[linear-gradient(90deg,#0ea5e9_0%,#14b8a6_100%)]"
+                      style={{ width: `${width}%` }}
+                    />
+                  </div>
+                </article>
+              );
+            })}
+          </div>
         </section>
 
         <section className="rounded-2xl border border-[#dfe9ea] bg-white p-5 shadow-sm">
@@ -257,11 +358,11 @@ export default function JiraPage() {
               No issues matched your filter.
             </p>
           ) : (
-            <div className="space-y-3">
+            <div className="grid gap-3 lg:grid-cols-2">
               {filteredIssues.map((issue) => (
                 <article
                   key={issue.id}
-                  className="rounded-xl border border-[#e1ebec] bg-[#fcfefe] p-4"
+                  className="rounded-2xl border border-[#e1ebec] bg-[linear-gradient(180deg,#fcfefe_0%,#f7fbfb_100%)] p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
                 >
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
@@ -278,18 +379,26 @@ export default function JiraPage() {
                         {issue.summary}
                       </h3>
                     </div>
-                    <span
-                      className={`rounded-full px-2.5 py-1 text-xs font-semibold ${getStatusTone(
-                        issue.status,
-                      )}`}
-                    >
-                      {issue.status}
-                    </span>
+                    <div className="flex flex-wrap gap-1.5">
+                      <span
+                        className={`rounded-full px-2.5 py-1 text-xs font-semibold ${getStatusTone(
+                          issue.status,
+                        )}`}
+                      >
+                        {issue.status}
+                      </span>
+                      <span
+                        className={`rounded-full px-2.5 py-1 text-xs font-semibold ${getPriorityTone(
+                          issue.priority,
+                        )}`}
+                      >
+                        {issue.priority}
+                      </span>
+                    </div>
                   </div>
 
                   <div className="mt-3 flex flex-wrap gap-3 text-xs text-[#607679]">
                     <span>Type: {issue.issueType}</span>
-                    <span>Priority: {issue.priority}</span>
                     <span>Assignee: {issue.assignee}</span>
                     <span className="inline-flex items-center gap-1">
                       <Clock3 size={12} /> Updated: {formatDateTime(issue.updated)}
