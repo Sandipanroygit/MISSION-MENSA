@@ -48,6 +48,12 @@ function getCoverImage(id: string) {
 
 function normalizeText(value: string) {
   return value
+    .replace(/Ã¢â‚¬Â¢/g, "•")
+    .replace(/Ã¢â‚¬â€/g, "—")
+    .replace(/Ã¢â‚¬â€œ/g, "–")
+    .replace(/Ã¢â‚¬â„¢/g, "'")
+    .replace(/Ã¢â‚¬Å“/g, '"')
+    .replace(/Ã¢â‚¬Â/g, '"')
     .replace(/â€¢/g, "•")
     .replace(/â€”/g, "—")
     .replace(/â€“/g, "–")
@@ -56,13 +62,18 @@ function normalizeText(value: string) {
     .replace(/â€/g, '"');
 }
 
-function formatHeading(value: string) {
-  return normalizeText(value)
-    .replace(/\)Date:/g, ") Date:")
+function cleanSpacing(value: string) {
+  return value
     .replace(/([A-Za-z])(\d)/g, "$1 $2")
     .replace(/(\d)([A-Za-z])/g, "$1 $2")
+    .replace(/([:;,.!?])([A-Za-z0-9])/g, "$1 $2")
+    .replace(/\)\s*Date:/g, ") Date:")
     .replace(/\s{2,}/g, " ")
     .trim();
+}
+
+function formatHeading(value: string) {
+  return cleanSpacing(normalizeText(value));
 }
 
 function splitMinutesBlocks(minutes: string): MinutesBlock[] {
@@ -78,7 +89,7 @@ function splitMinutesBlocks(minutes: string): MinutesBlock[] {
   }
 
   for (const rawLine of lines) {
-    const line = rawLine.trim();
+    const line = cleanSpacing(rawLine.trim());
     if (!line) {
       flushBullets();
       continue;
