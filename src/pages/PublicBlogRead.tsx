@@ -283,6 +283,10 @@ export default function PublicBlogReadPage() {
   }
 
   const stats = getBlogStats(blog);
+  const effectiveLineSpacing =
+    typeof blog.lineSpacing === "number" ? blog.lineSpacing : 1.8;
+  const effectiveParagraphSpacing =
+    typeof blog.paragraphSpacing === "number" ? blog.paragraphSpacing : 14;
   const isLikedByUser = Boolean(
     user?.email &&
       blog.likedBy?.includes(user.email.trim().toLowerCase()),
@@ -332,6 +336,21 @@ export default function PublicBlogReadPage() {
 
   return (
     <main className="min-h-screen overflow-hidden bg-[#FAF7F2]">
+      <style>{`
+        .blog-rich-content p,
+        .blog-rich-content h1,
+        .blog-rich-content h2,
+        .blog-rich-content h3,
+        .blog-rich-content blockquote,
+        .blog-rich-content pre,
+        .blog-rich-content figure,
+        .blog-rich-content table,
+        .blog-rich-content ul,
+        .blog-rich-content ol {
+          margin-top: 0;
+          margin-bottom: var(--paragraph-gap, 14px);
+        }
+      `}</style>
       <ScrollToTop />
       <section className="relative py-12 sm:py-16">
         <div className="absolute inset-0 pointer-events-none">
@@ -406,7 +425,13 @@ export default function PublicBlogReadPage() {
                 )}
               </div>
 
-              <div className="mt-10 space-y-8 text-lg leading-9 text-[#2F3E3E]/82">
+              <div
+                className="blog-rich-content mt-10 text-lg text-[#2F3E3E]/82"
+                style={{
+                  lineHeight: effectiveLineSpacing,
+                  ["--paragraph-gap" as any]: `${effectiveParagraphSpacing}px`,
+                }}
+              >
                 {blog.content.map((block, index) => {
                 if (typeof block === "string") {
                   return (

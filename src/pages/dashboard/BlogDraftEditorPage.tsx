@@ -539,6 +539,16 @@ export default function BlogDraftEditorPage() {
         setEditingSlug(blogToEdit.slug);
         setTitle(blogToEdit.title);
         setSummary(blogToEdit.summary);
+        setLineSpacing(
+          typeof blogToEdit.lineSpacing === "number"
+            ? blogToEdit.lineSpacing
+            : defaultLineSpacing,
+        );
+        setParagraphSpacing(
+          typeof blogToEdit.paragraphSpacing === "number"
+            ? blogToEdit.paragraphSpacing
+            : defaultParagraphSpacing,
+        );
         setEditorHtml(convertedHtml);
         setCoverImage(blogToEdit.image || getDefaultBlogCover(blogToEdit.title));
         setHasCustomCover(Boolean(blogToEdit.image));
@@ -1209,6 +1219,8 @@ export default function BlogDraftEditorPage() {
       content: structuredContent.length
         ? structuredContent
         : ["This published blog is ready to be expanded with your final content."],
+      lineSpacing,
+      paragraphSpacing,
       viewCount: existingBlog?.viewCount ?? 0,
       likedBy: existingBlog?.likedBy ?? [],
       comments: existingBlog?.comments ?? [],

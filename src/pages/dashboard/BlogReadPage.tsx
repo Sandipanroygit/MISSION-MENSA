@@ -286,6 +286,10 @@ export default function BlogReadPage() {
   const canEdit =
     user?.email?.trim().toLowerCase() === blog.authorEmail.trim().toLowerCase();
   const stats = getBlogStats(blog);
+  const effectiveLineSpacing =
+    typeof blog.lineSpacing === "number" ? blog.lineSpacing : 1.8;
+  const effectiveParagraphSpacing =
+    typeof blog.paragraphSpacing === "number" ? blog.paragraphSpacing : 14;
   const isLikedByUser = Boolean(
     user?.email &&
       blog.likedBy?.includes(user.email.trim().toLowerCase()),
@@ -342,6 +346,21 @@ export default function BlogReadPage() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
+      <style>{`
+        .blog-rich-content p,
+        .blog-rich-content h1,
+        .blog-rich-content h2,
+        .blog-rich-content h3,
+        .blog-rich-content blockquote,
+        .blog-rich-content pre,
+        .blog-rich-content figure,
+        .blog-rich-content table,
+        .blog-rich-content ul,
+        .blog-rich-content ol {
+          margin-top: 0;
+          margin-bottom: var(--paragraph-gap, 14px);
+        }
+      `}</style>
       <Link
         to="/dashboard/writing-blogs"
         className="mb-6 inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-[#2F3E3E] transition hover:border-[#2CA4A4]/35 hover:text-[#2CA4A4]"
@@ -401,7 +420,13 @@ export default function BlogReadPage() {
             )}
           </div>
 
-          <div className="mt-8 space-y-8 text-base leading-8 text-[#2F3E3E]/85">
+          <div
+            className="blog-rich-content mt-8 text-base text-[#2F3E3E]/85"
+            style={{
+              lineHeight: effectiveLineSpacing,
+              ["--paragraph-gap" as any]: `${effectiveParagraphSpacing}px`,
+            }}
+          >
             {blog.content.map((block, index) => {
               if (typeof block === "string") {
                 return (

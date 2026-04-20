@@ -60,6 +60,8 @@ export interface BlogEntry {
   authorEmail: string;
   image: string;
   content: BlogContentBlock[];
+  lineSpacing?: number;
+  paragraphSpacing?: number;
   viewCount?: number;
   likedBy?: string[];
   comments?: BlogComment[];
