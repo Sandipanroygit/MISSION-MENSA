@@ -35,7 +35,9 @@ export default function FeedbackPage() {
   const isFeedbackAdmin = FEEDBACK_ADMIN_EMAILS.has(normalizedUserEmail);
 
   useEffect(() => {
-    void getFeedbackEntriesAsync().then(setEntries);
+    void getFeedbackEntriesAsync().then(setEntries).catch(() => {
+      setSaveMessage("Unable to load feedback from Supabase right now.");
+    });
   }, []);
 
   const visibleEntries = useMemo(() => {
@@ -48,7 +50,7 @@ export default function FeedbackPage() {
     );
   }, [entries, isFeedbackAdmin, normalizedUserEmail]);
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!user || !subject.trim() || !message.trim()) return;
 
@@ -62,19 +64,29 @@ export default function FeedbackPage() {
       createdAt: new Date().toISOString(),
     };
 
-    const updatedEntries = addFeedbackEntry(newEntry);
-    setEntries(updatedEntries);
-    setSubject("");
-    setMessage("");
-    setSaveMessage("Feedback submitted.");
+    addFeedbackEntry(newEntry);
 
-    void addFeedbackEntryAsync(newEntry).then(setEntries);
+    try {
+      const updatedEntries = await addFeedbackEntryAsync(newEntry);
+      setEntries(updatedEntries);
+      setSubject("");
+      setMessage("");
+      setSaveMessage("Feedback submitted and synced to Supabase.");
+    } catch {
+      setSaveMessage("Supabase sync failed. Feedback not submitted. Please retry.");
+    }
   }
 
-  function handleDelete(entryId: string) {
+  async function handleDelete(entryId: string) {
     const updatedEntries = deleteFeedbackEntry(entryId);
     setEntries(updatedEntries);
-    void deleteFeedbackEntryAsync(entryId).then(setEntries);
+    try {
+      const syncedEntries = await deleteFeedbackEntryAsync(entryId);
+      setEntries(syncedEntries);
+      setSaveMessage("Feedback deleted and synced.");
+    } catch {
+      setSaveMessage("Supabase sync failed while deleting. Please refresh and retry.");
+    }
   }
 
   return (

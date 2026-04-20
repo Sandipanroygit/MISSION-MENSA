@@ -37,7 +37,9 @@ export default function VoicesDraftPage() {
     user?.email?.trim().toLowerCase() === VOICES_ADMIN_EMAIL;
 
   useEffect(() => {
-    void getVoiceEntriesAsync().then(setEntries);
+    void getVoiceEntriesAsync().then(setEntries).catch(() => {
+      setSaveMessage("Unable to load voices from Supabase right now.");
+    });
   }, []);
 
   const visibleEntries = useMemo(() => {
@@ -59,7 +61,7 @@ export default function VoicesDraftPage() {
     setEditingId(null);
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!user || !speakerName.trim() || !location.trim() || !quote.trim()) {
       return;
@@ -82,12 +84,18 @@ export default function VoicesDraftPage() {
 
     const updatedEntries = upsertVoiceEntry(entry);
     setEntries(updatedEntries);
-    setSaveMessage(
-      isPublished ? "Voice saved and published." : "Voice saved as draft.",
-    );
-    resetForm();
-
-    void upsertVoiceEntryAsync(entry).then(setEntries);
+    try {
+      const syncedEntries = await upsertVoiceEntryAsync(entry);
+      setEntries(syncedEntries);
+      setSaveMessage(
+        isPublished
+          ? "Voice saved, published, and synced to Supabase."
+          : "Voice saved as draft and synced to Supabase.",
+      );
+      resetForm();
+    } catch {
+      setSaveMessage("Supabase sync failed. Entry not confirmed. Please retry.");
+    }
   }
 
   function handleEdit(entry: VoiceEntry) {
@@ -100,13 +108,19 @@ export default function VoicesDraftPage() {
     setSaveMessage(null);
   }
 
-  function handleDelete(id: string) {
+  async function handleDelete(id: string) {
     const updatedEntries = deleteVoiceEntry(id);
     setEntries(updatedEntries);
     if (editingId === id) {
       resetForm();
     }
-    void deleteVoiceEntryAsync(id).then(setEntries);
+    try {
+      const syncedEntries = await deleteVoiceEntryAsync(id);
+      setEntries(syncedEntries);
+      setSaveMessage("Entry deleted and synced.");
+    } catch {
+      setSaveMessage("Supabase sync failed while deleting. Please retry.");
+    }
   }
 
   return (

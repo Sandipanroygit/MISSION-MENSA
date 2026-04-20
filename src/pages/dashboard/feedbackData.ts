@@ -68,8 +68,15 @@ export function saveFeedbackEntries(entries: FeedbackEntry[]) {
   saveContentCollection("feedbackEntries", dedupeFeedbackEntries(entries));
 }
 
-export async function saveFeedbackEntriesAsync(entries: FeedbackEntry[]) {
-  await saveRemoteContentCollection("feedbackEntries", dedupeFeedbackEntries(entries));
+export async function saveFeedbackEntriesAsync(
+  entries: FeedbackEntry[],
+  options?: { requireRemoteSync?: boolean },
+) {
+  await saveRemoteContentCollection(
+    "feedbackEntries",
+    dedupeFeedbackEntries(entries),
+    { throwOnError: options?.requireRemoteSync ?? false },
+  );
 }
 
 export function addFeedbackEntry(entry: FeedbackEntry) {
@@ -87,7 +94,7 @@ export async function addFeedbackEntryAsync(entry: FeedbackEntry) {
     normalizeFeedbackEntry(entry),
     ...currentEntries,
   ]);
-  await saveFeedbackEntriesAsync(updatedEntries);
+  await saveFeedbackEntriesAsync(updatedEntries, { requireRemoteSync: true });
   return dedupeFeedbackEntries([...updatedEntries, ...getFeedbackEntries()]);
 }
 
@@ -100,6 +107,6 @@ export function deleteFeedbackEntry(id: string) {
 export async function deleteFeedbackEntryAsync(id: string) {
   const currentEntries = await getFeedbackEntriesAsync();
   const updatedEntries = currentEntries.filter((entry) => entry.id !== id);
-  await saveFeedbackEntriesAsync(updatedEntries);
+  await saveFeedbackEntriesAsync(updatedEntries, { requireRemoteSync: true });
   return dedupeFeedbackEntries([...updatedEntries, ...getFeedbackEntries()]);
 }

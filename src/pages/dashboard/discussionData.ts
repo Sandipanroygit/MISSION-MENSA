@@ -341,8 +341,13 @@ export function saveStoredTopics(topics: DiscussionTopic[]) {
   saveContentCollection("discussionTopics", topics);
 }
 
-export async function saveStoredTopicsAsync(topics: DiscussionTopic[]) {
-  await saveRemoteContentCollection("discussionTopics", mergeDefaultTopics(topics));
+export async function saveStoredTopicsAsync(
+  topics: DiscussionTopic[],
+  options?: { requireRemoteSync?: boolean },
+) {
+  await saveRemoteContentCollection("discussionTopics", mergeDefaultTopics(topics), {
+    throwOnError: options?.requireRemoteSync ?? false,
+  });
 }
 
 export function getTopicCoverImage(topic: DiscussionTopic) {

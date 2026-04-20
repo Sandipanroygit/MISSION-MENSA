@@ -56,15 +56,17 @@ export default function DiscussionTopicPage() {
     DiscussionMedia[]
   >([]);
   const [replyToCommentId, setReplyToCommentId] = useState<string | null>(null);
+  const [syncMessage, setSyncMessage] = useState<string | null>(null);
   const composerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     saveStoredTopics(topics);
-    void saveStoredTopicsAsync(topics);
   }, [topics]);
 
   useEffect(() => {
-    void getStoredTopicsAsync().then(setTopics);
+    void getStoredTopicsAsync().then(setTopics).catch(() => {
+      setSyncMessage("Unable to load discussion from Supabase right now.");
+    });
   }, []);
 
   useEffect(() => {
@@ -145,19 +147,27 @@ export default function DiscussionTopicPage() {
     setEditAttachments((current) => current.filter((item) => item.id !== id));
   }
 
-  function handleDeleteTopic() {
+  async function handleDeleteTopic() {
     if (!selectedTopic || !isOwner) {
       return;
     }
 
     const updatedTopics = topics.filter((topic) => topic.id !== selectedTopic.id);
+    const previousTopics = topics;
     setTopics(updatedTopics);
     saveStoredTopics(updatedTopics);
-    void saveStoredTopicsAsync(updatedTopics);
-    navigate("/dashboard/discussion");
+    try {
+      await saveStoredTopicsAsync(updatedTopics, { requireRemoteSync: true });
+      setSyncMessage("Discussion synced to Supabase.");
+      navigate("/dashboard/discussion");
+    } catch {
+      setTopics(previousTopics);
+      saveStoredTopics(previousTopics);
+      setSyncMessage("Supabase sync failed. Topic delete was not saved.");
+    }
   }
 
-  function handleSaveTopic() {
+  async function handleSaveTopic() {
     if (!selectedTopic || !isOwner || !editTitle.trim() || !editBody.trim()) {
       return;
     }
@@ -173,13 +183,21 @@ export default function DiscussionTopicPage() {
         : topic,
     );
 
+    const previousTopics = topics;
     setTopics(updatedTopics);
     saveStoredTopics(updatedTopics);
-    void saveStoredTopicsAsync(updatedTopics);
-    setIsEditing(false);
+    try {
+      await saveStoredTopicsAsync(updatedTopics, { requireRemoteSync: true });
+      setIsEditing(false);
+      setSyncMessage("Discussion synced to Supabase.");
+    } catch {
+      setTopics(previousTopics);
+      saveStoredTopics(previousTopics);
+      setSyncMessage("Supabase sync failed. Topic update was not saved.");
+    }
   }
 
-  function handlePostComment() {
+  async function handlePostComment() {
     if (!user || !selectedTopic || !commentBody.trim()) {
       return;
     }
@@ -194,16 +212,26 @@ export default function DiscussionTopicPage() {
       replyToCommentId: replyToCommentId ?? undefined,
     };
 
-    setTopics((current) =>
-      current.map((topic) =>
-        topic.id === selectedTopic.id
-          ? { ...topic, comments: [...topic.comments, newComment] }
-          : topic,
-      ),
+    const previousTopics = topics;
+    const updatedTopics = topics.map((topic) =>
+      topic.id === selectedTopic.id
+        ? { ...topic, comments: [...topic.comments, newComment] }
+        : topic,
     );
-    setCommentBody("");
-    setCommentAttachments([]);
-    setReplyToCommentId(null);
+
+    setTopics(updatedTopics);
+    saveStoredTopics(updatedTopics);
+    try {
+      await saveStoredTopicsAsync(updatedTopics, { requireRemoteSync: true });
+      setCommentBody("");
+      setCommentAttachments([]);
+      setReplyToCommentId(null);
+      setSyncMessage("Comment synced to Supabase.");
+    } catch {
+      setTopics(previousTopics);
+      saveStoredTopics(previousTopics);
+      setSyncMessage("Supabase sync failed. Comment was not posted.");
+    }
   }
 
   function handleSelectReply(commentId: string) {
@@ -213,26 +241,33 @@ export default function DiscussionTopicPage() {
     });
   }
 
-  function handleDeleteComment(commentId: string) {
+  async function handleDeleteComment(commentId: string) {
     if (!user || !selectedTopic) {
       return;
     }
 
-    setTopics((current) =>
-      current.map((topic) =>
-        topic.id === selectedTopic.id
-          ? {
-              ...topic,
-              comments: topic.comments.filter(
-                (comment) => comment.id !== commentId,
-              ),
-            }
-          : topic,
-      ),
+    const previousTopics = topics;
+    const updatedTopics = topics.map((topic) =>
+      topic.id === selectedTopic.id
+        ? {
+            ...topic,
+            comments: topic.comments.filter((comment) => comment.id !== commentId),
+          }
+        : topic,
     );
 
-    if (replyToCommentId === commentId) {
-      setReplyToCommentId(null);
+    setTopics(updatedTopics);
+    saveStoredTopics(updatedTopics);
+    try {
+      await saveStoredTopicsAsync(updatedTopics, { requireRemoteSync: true });
+      if (replyToCommentId === commentId) {
+        setReplyToCommentId(null);
+      }
+      setSyncMessage("Comment delete synced to Supabase.");
+    } catch {
+      setTopics(previousTopics);
+      saveStoredTopics(previousTopics);
+      setSyncMessage("Supabase sync failed. Comment delete was not saved.");
     }
   }
 
@@ -295,6 +330,11 @@ export default function DiscussionTopicPage() {
                   <span>&bull;</span>
                   <span>{formatDate(selectedTopic.createdAt)}</span>
                 </div>
+                {syncMessage ? (
+                  <p className="mt-2 text-xs font-medium text-[#8a4b18]">
+                    {syncMessage}
+                  </p>
+                ) : null}
               </div>
             </div>
             </div>

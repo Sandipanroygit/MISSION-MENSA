@@ -49,6 +49,7 @@ export default function PublicDiscussionReadPage() {
   const [commentBody, setCommentBody] = useState("");
   const [commentAttachments, setCommentAttachments] = useState<DiscussionMedia[]>([]);
   const [replyToCommentId, setReplyToCommentId] = useState<string | null>(null);
+  const [syncMessage, setSyncMessage] = useState<string | null>(null);
   const composerRef = useRef<HTMLDivElement>(null);
 
   const selectedTopic = useMemo(
@@ -57,7 +58,9 @@ export default function PublicDiscussionReadPage() {
   );
 
   useEffect(() => {
-    void getPublicTopicsAsync().then(setTopics);
+    void getPublicTopicsAsync().then(setTopics).catch(() => {
+      setSyncMessage("Unable to load discussion from Supabase right now.");
+    });
   }, []);
   const commentsById = useMemo(() => {
     const comments = selectedTopic?.comments ?? [];
@@ -91,7 +94,7 @@ export default function PublicDiscussionReadPage() {
     setCommentAttachments((current) => current.filter((item) => item.id !== id));
   }
 
-  function handlePostComment() {
+  async function handlePostComment() {
     if (!user || !selectedTopic || !commentBody.trim()) {
       return;
     }
@@ -112,12 +115,20 @@ export default function PublicDiscussionReadPage() {
         : topic,
     );
 
+    const previousTopics = topics;
     setTopics(updatedTopics);
     saveStoredTopics(updatedTopics);
-    void saveStoredTopicsAsync(updatedTopics);
-    setCommentBody("");
-    setCommentAttachments([]);
-    setReplyToCommentId(null);
+    try {
+      await saveStoredTopicsAsync(updatedTopics, { requireRemoteSync: true });
+      setCommentBody("");
+      setCommentAttachments([]);
+      setReplyToCommentId(null);
+      setSyncMessage("Comment synced to Supabase.");
+    } catch {
+      setTopics(previousTopics);
+      saveStoredTopics(previousTopics);
+      setSyncMessage("Supabase sync failed. Comment was not posted.");
+    }
   }
 
   function handleSelectReply(commentId: string) {
@@ -127,7 +138,7 @@ export default function PublicDiscussionReadPage() {
     });
   }
 
-  function handleDeleteComment(commentId: string) {
+  async function handleDeleteComment(commentId: string) {
     if (!user || !selectedTopic) {
       return;
     }
@@ -141,11 +152,19 @@ export default function PublicDiscussionReadPage() {
         : topic,
     );
 
+    const previousTopics = topics;
     setTopics(updatedTopics);
     saveStoredTopics(updatedTopics);
-    void saveStoredTopicsAsync(updatedTopics);
-    if (replyToCommentId === commentId) {
-      setReplyToCommentId(null);
+    try {
+      await saveStoredTopicsAsync(updatedTopics, { requireRemoteSync: true });
+      if (replyToCommentId === commentId) {
+        setReplyToCommentId(null);
+      }
+      setSyncMessage("Comment delete synced to Supabase.");
+    } catch {
+      setTopics(previousTopics);
+      saveStoredTopics(previousTopics);
+      setSyncMessage("Supabase sync failed. Comment delete was not saved.");
     }
   }
 
@@ -265,6 +284,11 @@ export default function PublicDiscussionReadPage() {
                 <span>&bull;</span>
                 <span>{formatDate(selectedTopic.createdAt)}</span>
               </div>
+              {syncMessage ? (
+                <p className="mt-2 text-xs font-medium text-[#8a4b18]">
+                  {syncMessage}
+                </p>
+              ) : null}
 
                 <h1 className="mt-4 text-4xl font-black leading-tight tracking-[-0.04em] text-[#2F3E3E] sm:text-5xl">
                 {selectedTopic.title}

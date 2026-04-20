@@ -30,6 +30,7 @@ export default function DiscussionPage() {
   const [topicAttachments, setTopicAttachments] = useState<DiscussionMedia[]>(
     [],
   );
+  const [syncMessage, setSyncMessage] = useState<string | null>(null);
   const categoryOptions = useMemo(
     () =>
       Array.from(
@@ -43,11 +44,12 @@ export default function DiscussionPage() {
 
   useEffect(() => {
     saveStoredTopics(topics);
-    void saveStoredTopicsAsync(topics);
   }, [topics]);
 
   useEffect(() => {
-    void getStoredTopicsAsync().then(setTopics);
+    void getStoredTopicsAsync().then(setTopics).catch(() => {
+      setSyncMessage("Unable to load discussions from Supabase right now.");
+    });
   }, []);
 
   useEffect(() => {
@@ -78,11 +80,20 @@ function removeAttachment(id: string) {
     setTopicAttachments((current) => current.filter((item) => item.id !== id));
   }
 
-  function handleDeleteTopic(topicId: string) {
+  async function handleDeleteTopic(topicId: string) {
+    const previousTopics = topics;
     const updatedTopics = topics.filter((topic) => topic.id !== topicId);
-    saveStoredTopics(updatedTopics);
-    void saveStoredTopicsAsync(updatedTopics);
     setTopics(updatedTopics);
+    saveStoredTopics(updatedTopics);
+
+    try {
+      await saveStoredTopicsAsync(updatedTopics, { requireRemoteSync: true });
+      setSyncMessage("Discussion synced to Supabase.");
+    } catch {
+      setTopics(previousTopics);
+      saveStoredTopics(previousTopics);
+      setSyncMessage("Supabase sync failed. Topic delete was not saved.");
+    }
   }
 
   function resetTopicComposer() {
@@ -94,7 +105,7 @@ function removeAttachment(id: string) {
     setTopicAttachments([]);
   }
 
-  function handleCreateTopic() {
+  async function handleCreateTopic() {
     if (!user || !topicTitle.trim() || !topicBody.trim()) {
       return;
     }
@@ -114,12 +125,21 @@ function removeAttachment(id: string) {
       comments: [],
     };
 
+    const previousTopics = topics;
     const updatedTopics = [newTopic, ...topics];
-    saveStoredTopics(updatedTopics);
-    void saveStoredTopicsAsync(updatedTopics);
     setTopics(updatedTopics);
-    resetTopicComposer();
-    navigate(`/dashboard/discussion/${newTopic.id}`);
+    saveStoredTopics(updatedTopics);
+
+    try {
+      await saveStoredTopicsAsync(updatedTopics, { requireRemoteSync: true });
+      setSyncMessage("Discussion synced to Supabase.");
+      resetTopicComposer();
+      navigate(`/dashboard/discussion/${newTopic.id}`);
+    } catch {
+      setTopics(previousTopics);
+      saveStoredTopics(previousTopics);
+      setSyncMessage("Supabase sync failed. Topic was not created.");
+    }
   }
 
   return (
@@ -156,6 +176,11 @@ function removeAttachment(id: string) {
           Browse discussions first. Open one to read the full discussion in its
           own page.
         </p>
+        {syncMessage ? (
+          <p className="relative z-10 mt-3 text-sm font-medium text-[#8a4b18]">
+            {syncMessage}
+          </p>
+        ) : null}
       </div>
 
       <section className="rounded-[2rem] border border-[#E7ECE7] bg-white p-5 shadow-sm sm:p-6">

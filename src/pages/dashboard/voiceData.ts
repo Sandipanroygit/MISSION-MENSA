@@ -90,8 +90,13 @@ export function saveVoiceEntries(entries: VoiceEntry[]) {
   saveContentCollection("voiceEntries", dedupeVoiceEntries(entries));
 }
 
-export async function saveVoiceEntriesAsync(entries: VoiceEntry[]) {
-  await saveRemoteContentCollection("voiceEntries", dedupeVoiceEntries(entries));
+export async function saveVoiceEntriesAsync(
+  entries: VoiceEntry[],
+  options?: { requireRemoteSync?: boolean },
+) {
+  await saveRemoteContentCollection("voiceEntries", dedupeVoiceEntries(entries), {
+    throwOnError: options?.requireRemoteSync ?? false,
+  });
 }
 
 export function upsertVoiceEntry(entry: VoiceEntry) {
@@ -109,7 +114,7 @@ export async function upsertVoiceEntryAsync(entry: VoiceEntry) {
     normalizeVoiceEntry(entry),
     ...currentEntries.filter((item) => item.id !== entry.id),
   ]);
-  await saveVoiceEntriesAsync(updatedEntries);
+  await saveVoiceEntriesAsync(updatedEntries, { requireRemoteSync: true });
   return mergeSeededVoices([...updatedEntries, ...getVoiceEntries()]);
 }
 
@@ -122,6 +127,6 @@ export function deleteVoiceEntry(id: string) {
 export async function deleteVoiceEntryAsync(id: string) {
   const currentEntries = await getVoiceEntriesAsync();
   const updatedEntries = currentEntries.filter((entry) => entry.id !== id);
-  await saveVoiceEntriesAsync(updatedEntries);
+  await saveVoiceEntriesAsync(updatedEntries, { requireRemoteSync: true });
   return mergeSeededVoices([...updatedEntries, ...getVoiceEntries()]);
 }
