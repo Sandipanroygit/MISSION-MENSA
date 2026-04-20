@@ -16,7 +16,7 @@ import {
   getBlogStats,
   getPublishedBlogs,
   getPublishedBlogsAsync,
-  incrementBlogView,
+  incrementBlogViewAsync,
   mergePublishedAndSeedBlogs,
   addBlogComment,
   deleteBlogComment,
@@ -31,6 +31,42 @@ import {
 } from "./dashboard/blogData";
 import ScrollToTop from "@/components/common/ScrolltoTop";
 import InlineRichText from "@/components/common/InlineRichText";
+
+function getViewTrackerKey(email?: string | null) {
+  return `mission-mensa-blog-viewed:${
+    email?.trim().toLowerCase() || "guest"
+  }`;
+}
+
+function hasTrackedBlogView(slug: string, email?: string | null) {
+  if (typeof window === "undefined") return false;
+
+  try {
+    const raw = window.localStorage.getItem(getViewTrackerKey(email));
+    if (!raw) return false;
+    const parsed = JSON.parse(raw) as string[];
+    return Array.isArray(parsed) && parsed.includes(slug);
+  } catch {
+    return false;
+  }
+}
+
+function trackBlogView(slug: string, email?: string | null) {
+  if (typeof window === "undefined") return;
+
+  try {
+    const key = getViewTrackerKey(email);
+    const raw = window.localStorage.getItem(key);
+    const parsed = raw ? (JSON.parse(raw) as string[]) : [];
+    const next = Array.isArray(parsed) ? parsed : [];
+    if (!next.includes(slug)) {
+      next.push(slug);
+      window.localStorage.setItem(key, JSON.stringify(next));
+    }
+  } catch {
+    // no-op: view counting still works without local tracker persistence
+  }
+}
 
 function getYouTubeVideoId(url: string) {
   try {
@@ -267,16 +303,12 @@ export default function PublicBlogReadPage() {
 
   useEffect(() => {
     if (!slug || hasTrackedViewRef.current === slug) return;
+    if (hasTrackedBlogView(slug, user?.email)) return;
 
     hasTrackedViewRef.current = slug;
-    const updatedBlog = incrementBlogView(slug);
-    if (updatedBlog) {
-      setPublishedBlogs(getPublishedBlogs());
-      void savePublishedBlogAsync(updatedBlog).then(() => {
-        setPublishedBlogs(getPublishedBlogs());
-      });
-    }
-  }, [slug]);
+    trackBlogView(slug, user?.email);
+    void incrementBlogViewAsync(slug).then(setPublishedBlogs);
+  }, [slug, user?.email]);
 
   if (!blog) {
     return <Navigate to="/about-us" replace />;

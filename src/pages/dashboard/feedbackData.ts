@@ -10,15 +10,21 @@ export interface FeedbackEntry {
   id: string;
   authorName: string;
   authorEmail: string;
+  recipientEmail?: string;
   subject: string;
   message: string;
   createdAt: string;
 }
 
+const DEFAULT_FEEDBACK_RECIPIENT = "sandipan.roy@indusschool.com";
+
 function normalizeFeedbackEntry(entry: FeedbackEntry): FeedbackEntry {
   return {
     ...entry,
     authorEmail: entry.authorEmail.trim().toLowerCase(),
+    recipientEmail: (entry.recipientEmail ?? DEFAULT_FEEDBACK_RECIPIENT)
+      .trim()
+      .toLowerCase(),
     subject: entry.subject.trim(),
     message: entry.message.trim(),
   };
@@ -53,7 +59,9 @@ export async function getFeedbackEntriesAsync() {
     localEntries,
   );
 
-  return dedupeFeedbackEntries(remoteEntries);
+  const mergedEntries = dedupeFeedbackEntries([...remoteEntries, ...localEntries]);
+  saveContentCollection("feedbackEntries", mergedEntries);
+  return mergedEntries;
 }
 
 export function saveFeedbackEntries(entries: FeedbackEntry[]) {
@@ -80,7 +88,7 @@ export async function addFeedbackEntryAsync(entry: FeedbackEntry) {
     ...currentEntries,
   ]);
   await saveFeedbackEntriesAsync(updatedEntries);
-  return getFeedbackEntries();
+  return dedupeFeedbackEntries([...updatedEntries, ...getFeedbackEntries()]);
 }
 
 export function deleteFeedbackEntry(id: string) {
@@ -93,5 +101,5 @@ export async function deleteFeedbackEntryAsync(id: string) {
   const currentEntries = await getFeedbackEntriesAsync();
   const updatedEntries = currentEntries.filter((entry) => entry.id !== id);
   await saveFeedbackEntriesAsync(updatedEntries);
-  return getFeedbackEntries();
+  return dedupeFeedbackEntries([...updatedEntries, ...getFeedbackEntries()]);
 }

@@ -131,7 +131,7 @@ async function readErrorMessage(response: Response, source: string) {
 function getLaneCardPalette(lane: LaneKey, index: number) {
   const palettes: Record<
     LaneKey,
-    Array<{ card: string; key: string; meta: string; glow: string }>
+    Array<{ card: string; key: string; meta: string; glow: string; rail: string }>
   > = {
     backlog: [
       {
@@ -139,76 +139,88 @@ function getLaneCardPalette(lane: LaneKey, index: number) {
         key: "text-[#6b21a8]",
         meta: "bg-[#f3e8ff] text-[#5b21b6]",
         glow: "shadow-[0_12px_26px_-18px_rgba(139,92,246,0.95)]",
+        rail: "bg-[linear-gradient(90deg,#a855f7_0%,#7c3aed_100%)]",
       },
       {
         card: "border-[#e9d5ff] bg-[linear-gradient(135deg,#fdf4ff_0%,#f5e9ff_100%)]",
         key: "text-[#7e22ce]",
         meta: "bg-[#fae8ff] text-[#86198f]",
         glow: "shadow-[0_12px_26px_-18px_rgba(192,132,252,0.95)]",
+        rail: "bg-[linear-gradient(90deg,#c026d3_0%,#7c3aed_100%)]",
       },
       {
         card: "border-[#c4b5fd] bg-[linear-gradient(135deg,#ede9fe_0%,#ddd6fe_100%)]",
         key: "text-[#5b21b6]",
         meta: "bg-[#ddd6fe] text-[#4c1d95]",
         glow: "shadow-[0_12px_26px_-18px_rgba(124,58,237,0.95)]",
+        rail: "bg-[linear-gradient(90deg,#7c3aed_0%,#6366f1_100%)]",
       },
       {
         card: "border-[#f0abfc] bg-[linear-gradient(135deg,#fdf4ff_0%,#fae8ff_100%)]",
         key: "text-[#a21caf]",
         meta: "bg-[#f5d0fe] text-[#86198f]",
         glow: "shadow-[0_12px_26px_-18px_rgba(217,70,239,0.95)]",
+        rail: "bg-[linear-gradient(90deg,#d946ef_0%,#a855f7_100%)]",
       },
     ],
     todo: [
       {
-        card: "border-[#bae6fd] bg-[linear-gradient(135deg,#f0f9ff_0%,#e0f2fe_100%)]",
-        key: "text-[#0369a1]",
-        meta: "bg-[#e0f2fe] text-[#0c4a6e]",
-        glow: "shadow-[0_12px_26px_-18px_rgba(14,165,233,0.95)]",
-      },
-      {
-        card: "border-[#99f6e4] bg-[linear-gradient(135deg,#ecfeff_0%,#ccfbf1_100%)]",
-        key: "text-[#0f766e]",
-        meta: "bg-[#ccfbf1] text-[#134e4a]",
-        glow: "shadow-[0_12px_26px_-18px_rgba(20,184,166,0.95)]",
-      },
-      {
-        card: "border-[#7dd3fc] bg-[linear-gradient(135deg,#f0f9ff_0%,#dbeafe_100%)]",
-        key: "text-[#0369a1]",
+        card: "border-[#7dd3fc] bg-[linear-gradient(130deg,#e0f2fe_0%,#dbeafe_52%,#e0e7ff_100%)]",
+        key: "text-[#1e40af]",
         meta: "bg-[#dbeafe] text-[#1e3a8a]",
-        glow: "shadow-[0_12px_26px_-18px_rgba(56,189,248,0.95)]",
+        glow: "shadow-[0_18px_36px_-18px_rgba(59,130,246,1)]",
+        rail: "bg-[linear-gradient(90deg,#0ea5e9_0%,#2563eb_55%,#4f46e5_100%)]",
       },
       {
-        card: "border-[#5eead4] bg-[linear-gradient(135deg,#f0fdfa_0%,#ccfbf1_100%)]",
-        key: "text-[#0f766e]",
-        meta: "bg-[#99f6e4] text-[#115e59]",
-        glow: "shadow-[0_12px_26px_-18px_rgba(45,212,191,0.95)]",
+        card: "border-[#67e8f9] bg-[linear-gradient(130deg,#ecfeff_0%,#dbeafe_62%,#e0f2fe_100%)]",
+        key: "text-[#075985]",
+        meta: "bg-[#cffafe] text-[#0c4a6e]",
+        glow: "shadow-[0_18px_36px_-18px_rgba(14,165,233,1)]",
+        rail: "bg-[linear-gradient(90deg,#06b6d4_0%,#0ea5e9_50%,#2563eb_100%)]",
+      },
+      {
+        card: "border-[#93c5fd] bg-[linear-gradient(130deg,#eff6ff_0%,#dbeafe_50%,#c7d2fe_100%)]",
+        key: "text-[#1d4ed8]",
+        meta: "bg-[#dbeafe] text-[#1e3a8a]",
+        glow: "shadow-[0_18px_36px_-18px_rgba(37,99,235,1)]",
+        rail: "bg-[linear-gradient(90deg,#38bdf8_0%,#3b82f6_55%,#6366f1_100%)]",
+      },
+      {
+        card: "border-[#60a5fa] bg-[linear-gradient(130deg,#ecfeff_0%,#dbeafe_56%,#dbeafe_100%)]",
+        key: "text-[#1e3a8a]",
+        meta: "bg-[#bfdbfe] text-[#1e3a8a]",
+        glow: "shadow-[0_18px_36px_-18px_rgba(37,99,235,1)]",
+        rail: "bg-[linear-gradient(90deg,#22d3ee_0%,#3b82f6_55%,#4338ca_100%)]",
       },
     ],
     inProgress: [
       {
-        card: "border-[#fcd34d] bg-[linear-gradient(135deg,#fffbeb_0%,#fef3c7_100%)]",
+        card: "border-[#fdba74] bg-[linear-gradient(135deg,#fff7ed_0%,#ffedd5_45%,#fee2e2_100%)]",
         key: "text-[#b45309]",
-        meta: "bg-[#fef3c7] text-[#92400e]",
-        glow: "shadow-[0_12px_26px_-18px_rgba(245,158,11,0.95)]",
-      },
-      {
-        card: "border-[#fdba74] bg-[linear-gradient(135deg,#fff7ed_0%,#ffedd5_100%)]",
-        key: "text-[#c2410c]",
         meta: "bg-[#ffedd5] text-[#9a3412]",
-        glow: "shadow-[0_12px_26px_-18px_rgba(249,115,22,0.95)]",
+        glow: "shadow-[0_18px_36px_-18px_rgba(249,115,22,1)]",
+        rail: "bg-[linear-gradient(90deg,#fb923c_0%,#f97316_55%,#ef4444_100%)]",
       },
       {
-        card: "border-[#fbbf24] bg-[linear-gradient(135deg,#fffbeb_0%,#fde68a_100%)]",
-        key: "text-[#a16207]",
-        meta: "bg-[#fde68a] text-[#854d0e]",
-        glow: "shadow-[0_12px_26px_-18px_rgba(234,179,8,0.95)]",
-      },
-      {
-        card: "border-[#fb923c] bg-[linear-gradient(135deg,#fff7ed_0%,#fed7aa_100%)]",
+        card: "border-[#fb923c] bg-[linear-gradient(135deg,#fff7ed_0%,#fed7aa_52%,#fecaca_100%)]",
         key: "text-[#c2410c]",
         meta: "bg-[#fed7aa] text-[#9a3412]",
-        glow: "shadow-[0_12px_26px_-18px_rgba(251,146,60,0.95)]",
+        glow: "shadow-[0_18px_36px_-18px_rgba(234,88,12,1)]",
+        rail: "bg-[linear-gradient(90deg,#fb923c_0%,#f59e0b_40%,#ef4444_100%)]",
+      },
+      {
+        card: "border-[#f59e0b] bg-[linear-gradient(135deg,#fefce8_0%,#fde68a_45%,#fdba74_100%)]",
+        key: "text-[#a16207]",
+        meta: "bg-[#fde68a] text-[#854d0e]",
+        glow: "shadow-[0_18px_36px_-18px_rgba(217,119,6,1)]",
+        rail: "bg-[linear-gradient(90deg,#fbbf24_0%,#f97316_50%,#fb7185_100%)]",
+      },
+      {
+        card: "border-[#f97316] bg-[linear-gradient(135deg,#fff7ed_0%,#fdba74_50%,#fca5a5_100%)]",
+        key: "text-[#9a3412]",
+        meta: "bg-[#fdba74] text-[#7c2d12]",
+        glow: "shadow-[0_18px_36px_-18px_rgba(249,115,22,1)]",
+        rail: "bg-[linear-gradient(90deg,#fb923c_0%,#ea580c_55%,#ef4444_100%)]",
       },
     ],
     done: [
@@ -217,24 +229,28 @@ function getLaneCardPalette(lane: LaneKey, index: number) {
         key: "text-[#15803d]",
         meta: "bg-[#dcfce7] text-[#166534]",
         glow: "shadow-[0_12px_26px_-18px_rgba(34,197,94,0.95)]",
+        rail: "bg-[linear-gradient(90deg,#22c55e_0%,#16a34a_100%)]",
       },
       {
         card: "border-[#a7f3d0] bg-[linear-gradient(135deg,#ecfdf5_0%,#d1fae5_100%)]",
         key: "text-[#047857]",
         meta: "bg-[#d1fae5] text-[#065f46]",
         glow: "shadow-[0_12px_26px_-18px_rgba(16,185,129,0.95)]",
+        rail: "bg-[linear-gradient(90deg,#34d399_0%,#10b981_100%)]",
       },
       {
         card: "border-[#4ade80] bg-[linear-gradient(135deg,#f0fdf4_0%,#bbf7d0_100%)]",
         key: "text-[#15803d]",
         meta: "bg-[#bbf7d0] text-[#166534]",
         glow: "shadow-[0_12px_26px_-18px_rgba(74,222,128,0.95)]",
+        rail: "bg-[linear-gradient(90deg,#4ade80_0%,#22c55e_100%)]",
       },
       {
         card: "border-[#6ee7b7] bg-[linear-gradient(135deg,#ecfdf5_0%,#a7f3d0_100%)]",
         key: "text-[#047857]",
         meta: "bg-[#a7f3d0] text-[#065f46]",
         glow: "shadow-[0_12px_26px_-18px_rgba(52,211,153,0.95)]",
+        rail: "bg-[linear-gradient(90deg,#2dd4bf_0%,#10b981_100%)]",
       },
     ],
     other: [
@@ -243,24 +259,28 @@ function getLaneCardPalette(lane: LaneKey, index: number) {
         key: "text-[#b91c1c]",
         meta: "bg-[#fee2e2] text-[#991b1b]",
         glow: "shadow-[0_12px_26px_-18px_rgba(239,68,68,0.95)]",
+        rail: "bg-[linear-gradient(90deg,#ef4444_0%,#dc2626_100%)]",
       },
       {
         card: "border-[#fed7aa] bg-[linear-gradient(135deg,#fff7ed_0%,#ffedd5_100%)]",
         key: "text-[#c2410c]",
         meta: "bg-[#ffedd5] text-[#9a3412]",
         glow: "shadow-[0_12px_26px_-18px_rgba(251,146,60,0.95)]",
+        rail: "bg-[linear-gradient(90deg,#fb923c_0%,#ea580c_100%)]",
       },
       {
         card: "border-[#fca5a5] bg-[linear-gradient(135deg,#fff1f2_0%,#fecdd3_100%)]",
         key: "text-[#be123c]",
         meta: "bg-[#fecdd3] text-[#9f1239]",
         glow: "shadow-[0_12px_26px_-18px_rgba(244,63,94,0.95)]",
+        rail: "bg-[linear-gradient(90deg,#fb7185_0%,#e11d48_100%)]",
       },
       {
         card: "border-[#fdba74] bg-[linear-gradient(135deg,#fff7ed_0%,#fed7aa_100%)]",
         key: "text-[#b45309]",
         meta: "bg-[#fed7aa] text-[#92400e]",
         glow: "shadow-[0_12px_26px_-18px_rgba(251,146,60,0.95)]",
+        rail: "bg-[linear-gradient(90deg,#fdba74_0%,#f97316_100%)]",
       },
     ],
   };
@@ -396,46 +416,46 @@ export default function JiraPage() {
       key: "backlog",
       title: "Backlog",
       subtitle: "Idea parking lot",
-      accent: "text-[#7c3aed]",
-      bg: "bg-[#f5f3ff]",
-      border: "border-[#ddd6fe]",
-      glow: "shadow-[0_10px_28px_-18px_rgba(124,58,237,0.9)]",
+      accent: "text-[#6b21a8]",
+      bg: "bg-[linear-gradient(135deg,#f5f3ff_0%,#ede9fe_45%,#fae8ff_100%)]",
+      border: "border-[#d8b4fe]",
+      glow: "shadow-[0_14px_32px_-16px_rgba(147,51,234,0.95)]",
     },
     {
       key: "todo",
       title: "To Do",
       subtitle: "Planned next",
-      accent: "text-[#1d4ed8]",
-      bg: "bg-[#eff6ff]",
-      border: "border-[#bfdbfe]",
-      glow: "shadow-[0_10px_28px_-18px_rgba(59,130,246,0.9)]",
+      accent: "text-[#1e3a8a]",
+      bg: "bg-[linear-gradient(135deg,#ecfeff_0%,#dbeafe_40%,#e0e7ff_75%,#ccfbf1_100%)]",
+      border: "border-[#7dd3fc]",
+      glow: "shadow-[0_14px_32px_-16px_rgba(14,116,244,1)]",
     },
     {
       key: "inProgress",
       title: "In Progress",
       subtitle: "Actively moving",
-      accent: "text-[#0f766e]",
-      bg: "bg-[#ecfeff]",
-      border: "border-[#99f6e4]",
-      glow: "shadow-[0_10px_28px_-18px_rgba(20,184,166,0.9)]",
+      accent: "text-[#9a3412]",
+      bg: "bg-[linear-gradient(135deg,#fff7ed_0%,#fdba74_35%,#fde68a_70%,#fecaca_100%)]",
+      border: "border-[#fb923c]",
+      glow: "shadow-[0_14px_32px_-16px_rgba(249,115,22,1)]",
     },
     {
       key: "done",
       title: "Done",
       subtitle: "Completed",
       accent: "text-[#166534]",
-      bg: "bg-[#f0fdf4]",
-      border: "border-[#bbf7d0]",
-      glow: "shadow-[0_10px_28px_-18px_rgba(34,197,94,0.9)]",
+      bg: "bg-[linear-gradient(135deg,#f0fdf4_0%,#dcfce7_45%,#d1fae5_100%)]",
+      border: "border-[#86efac]",
+      glow: "shadow-[0_14px_32px_-16px_rgba(22,163,74,0.95)]",
     },
     {
       key: "other",
       title: "Other",
       subtitle: "Unmapped status",
       accent: "text-[#7c2d12]",
-      bg: "bg-[#fff7ed]",
-      border: "border-[#fed7aa]",
-      glow: "shadow-[0_10px_28px_-18px_rgba(249,115,22,0.9)]",
+      bg: "bg-[linear-gradient(135deg,#fff7ed_0%,#ffedd5_40%,#fee2e2_100%)]",
+      border: "border-[#fdba74]",
+      glow: "shadow-[0_14px_32px_-16px_rgba(234,88,12,0.95)]",
     },
   ];
 
@@ -607,6 +627,8 @@ export default function JiraPage() {
                   {lanes.map((lane) => {
                     const isActive = lane.key === activeLane;
                     const count = classifiedIssues[lane.key].length;
+                    const isHighlightLane =
+                      lane.key === "todo" || lane.key === "inProgress";
                     return (
                       <button
                         key={lane.key}
@@ -616,12 +638,23 @@ export default function JiraPage() {
                           setActiveLanePage(1);
                         }}
                         className={`rounded-2xl border p-3 text-left transition-all duration-200 ${lane.bg} ${lane.border} ${
-                          isActive ? `${lane.glow} scale-[1.02]` : "opacity-75 hover:opacity-100"
+                          isActive
+                            ? `${lane.glow} scale-[1.02]`
+                            : "opacity-80 hover:-translate-y-0.5 hover:opacity-100"
+                        } ${
+                          isHighlightLane && isActive
+                            ? "ring-2 ring-white/80 ring-offset-1 ring-offset-transparent"
+                            : ""
                         }`}
                       >
                         <div className="flex items-center justify-between gap-2">
                           <div>
-                            <p className={`text-sm font-black ${lane.accent}`}>{lane.title}</p>
+                            <p className={`inline-flex items-center gap-1.5 text-sm font-black ${lane.accent}`}>
+                              {lane.title}
+                              {isHighlightLane && isActive ? (
+                                <span className="h-1.5 w-1.5 rounded-full bg-current animate-pulse" />
+                              ) : null}
+                            </p>
                             <p className="text-xs text-[#5f757c]">{lane.subtitle}</p>
                           </div>
                           <span className="rounded-full bg-white px-2.5 py-1 text-xs font-black text-[#21404a]">
@@ -657,8 +690,9 @@ export default function JiraPage() {
                         return (
                           <article
                             key={issue.id}
-                            className={`rounded-xl border p-3 transition hover:-translate-y-0.5 ${palette.card} ${palette.glow}`}
+                            className={`relative overflow-hidden rounded-xl border p-3 transition hover:-translate-y-0.5 ${palette.card} ${palette.glow}`}
                           >
+                            <div className={`pointer-events-none absolute inset-x-0 top-0 h-1 ${palette.rail}`} />
                             <p className={`text-xs font-black ${palette.key}`}>{issue.key}</p>
                             <p className="mt-1 text-sm font-semibold text-[#1d2a2a]">
                               {issue.summary}

@@ -459,11 +459,19 @@ export async function getPublishedBlogsAsync(): Promise<BlogEntry[]> {
     localBlogs,
   );
 
-  if (remoteBlogs.length) {
-    return remoteBlogs.map(normalizeBlogEntry);
-  }
+  const mergedBlogs = [
+    ...remoteBlogs.map(normalizeBlogEntry),
+    ...localBlogs.map(normalizeBlogEntry),
+  ];
 
-  return localBlogs;
+  const dedupedBlogs = Array.from(
+    new Map(mergedBlogs.map((blog) => [blog.slug, blog])).values(),
+  );
+
+  // Keep local cache aligned with the merged result so refreshes are consistent.
+  saveContentCollection("publishedBlogs", dedupedBlogs);
+
+  return dedupedBlogs;
 }
 
 function getMergedBlogBySlug(slug: string) {
@@ -486,8 +494,11 @@ export function incrementBlogView(slug: string) {
 }
 
 export async function incrementBlogViewAsync(slug: string) {
-  const existingBlog = getMergedBlogBySlug(slug);
-  if (!existingBlog) return getPublishedBlogs();
+  const currentBlogs = await getPublishedBlogsAsync();
+  const existingBlog = mergePublishedAndSeedBlogs(currentBlogs).find(
+    (blog) => blog.slug === slug,
+  );
+  if (!existingBlog) return currentBlogs;
 
   const updatedBlog = normalizeBlogEntry({
     ...existingBlog,
@@ -495,7 +506,7 @@ export async function incrementBlogViewAsync(slug: string) {
   });
 
   await savePublishedBlogAsync(updatedBlog);
-  return getPublishedBlogs();
+  return getPublishedBlogsAsync();
 }
 
 export function toggleBlogLike(slug: string, userEmail: string) {

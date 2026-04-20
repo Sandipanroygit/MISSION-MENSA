@@ -72,7 +72,9 @@ export async function getVoiceEntriesAsync() {
     localEntries,
   );
 
-  return mergeSeededVoices(remoteEntries);
+  const mergedEntries = mergeSeededVoices([...localEntries, ...remoteEntries]);
+  saveContentCollection("voiceEntries", mergedEntries);
+  return mergedEntries;
 }
 
 export function getPublishedVoiceEntries() {
@@ -108,7 +110,7 @@ export async function upsertVoiceEntryAsync(entry: VoiceEntry) {
     ...currentEntries.filter((item) => item.id !== entry.id),
   ]);
   await saveVoiceEntriesAsync(updatedEntries);
-  return getVoiceEntries();
+  return mergeSeededVoices([...updatedEntries, ...getVoiceEntries()]);
 }
 
 export function deleteVoiceEntry(id: string) {
@@ -121,5 +123,5 @@ export async function deleteVoiceEntryAsync(id: string) {
   const currentEntries = await getVoiceEntriesAsync();
   const updatedEntries = currentEntries.filter((entry) => entry.id !== id);
   await saveVoiceEntriesAsync(updatedEntries);
-  return getVoiceEntries();
+  return mergeSeededVoices([...updatedEntries, ...getVoiceEntries()]);
 }

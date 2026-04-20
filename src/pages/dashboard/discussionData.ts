@@ -308,11 +308,16 @@ export async function getStoredTopicsAsync() {
     localTopics,
   );
 
-  if (remoteTopics.length) {
-    return mergeDefaultTopics(remoteTopics);
-  }
+  const mergedTopics = mergeDefaultTopics(
+    Array.from(
+      new Map(
+        [...localTopics, ...remoteTopics].map((topic) => [topic.id, topic]),
+      ).values(),
+    ),
+  );
 
-  return mergeDefaultTopics(localTopics);
+  saveContentCollection("discussionTopics", mergedTopics);
+  return mergedTopics;
 }
 
 export function getPublicTopics() {

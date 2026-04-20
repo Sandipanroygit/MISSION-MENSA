@@ -12,7 +12,15 @@ import {
 } from "./feedbackData";
 import { createId, formatDate } from "./discussionData";
 
-const FEEDBACK_ADMIN_EMAIL = "sandipan.roy@indusschool.com";
+const FEEDBACK_ADMIN_EMAILS = new Set([
+  "sandipan.roy@indusschool.com",
+  "sandipanroy@indusschool.com",
+]);
+const FEEDBACK_INBOX_EMAIL = "sandipan.roy@indusschool.com";
+
+function normalizeEmail(email?: string | null) {
+  return email?.trim().toLowerCase() ?? "";
+}
 
 export default function FeedbackPage() {
   const { user } = useAuthContext();
@@ -23,8 +31,8 @@ export default function FeedbackPage() {
     getFeedbackEntries(),
   );
 
-  const isFeedbackAdmin =
-    user?.email?.trim().toLowerCase() === FEEDBACK_ADMIN_EMAIL;
+  const normalizedUserEmail = normalizeEmail(user?.email);
+  const isFeedbackAdmin = FEEDBACK_ADMIN_EMAILS.has(normalizedUserEmail);
 
   useEffect(() => {
     void getFeedbackEntriesAsync().then(setEntries);
@@ -36,10 +44,9 @@ export default function FeedbackPage() {
     }
 
     return entries.filter(
-      (entry) =>
-        entry.authorEmail === user?.email?.trim().toLowerCase(),
+      (entry) => normalizeEmail(entry.authorEmail) === normalizedUserEmail,
     );
-  }, [entries, isFeedbackAdmin, user?.email]);
+  }, [entries, isFeedbackAdmin, normalizedUserEmail]);
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -49,6 +56,7 @@ export default function FeedbackPage() {
       id: createId(),
       authorName: user.name,
       authorEmail: user.email,
+      recipientEmail: FEEDBACK_INBOX_EMAIL,
       subject: subject.trim(),
       message: message.trim(),
       createdAt: new Date().toISOString(),
@@ -159,7 +167,7 @@ export default function FeedbackPage() {
                   {entry.message}
                 </p>
                 {(isFeedbackAdmin ||
-                  entry.authorEmail === user?.email?.trim().toLowerCase()) && (
+                  normalizeEmail(entry.authorEmail) === normalizedUserEmail) && (
                   <div className="mt-4 flex justify-end">
                     <button
                       type="button"
