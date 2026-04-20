@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import ScrollToTop from "@/components/common/ScrolltoTop";
 import {
   getPublishedMeetingMinutesEntries,
@@ -9,6 +9,27 @@ import {
 const heroImage =
   "https://images.pexels.com/photos/3184306/pexels-photo-3184306.jpeg?auto=compress&cs=tinysrgb&w=1600";
 
+const MOM_IMAGES: Record<string, string> = {
+  "mom-blockchain-and-mensa-15th-april-26-docx":
+    "https://images.pexels.com/photos/3184298/pexels-photo-3184298.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  "minutes-of-meeting-docx":
+    "https://images.pexels.com/photos/1181534/pexels-photo-1181534.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  "mom-project-mensa-8th-april-26-docx":
+    "https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  "mom-human-lab-26-mar2026-docx":
+    "https://images.pexels.com/photos/7096/people-woman-coffee-meeting.jpg?auto=compress&cs=tinysrgb&w=1200",
+  "mom-human-lab-23rd-mar-26-docx":
+    "https://images.pexels.com/photos/1181396/pexels-photo-1181396.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  "mom-human-lab-16th-march-2026-docx":
+    "https://images.pexels.com/photos/7176026/pexels-photo-7176026.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  "mom-human-lab-9th-march-26-docx":
+    "https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=1200",
+};
+
+type MinutesBlock =
+  | { type: "paragraph"; text: string }
+  | { type: "bullets"; items: string[] };
+
 function formatMeetingDate(value: string) {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) {
@@ -17,10 +38,80 @@ function formatMeetingDate(value: string) {
   return date.toLocaleDateString();
 }
 
+function getCoverImage(id: string) {
+  return (
+    MOM_IMAGES[id] ??
+    "https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=1200"
+  );
+}
+
+function normalizeText(value: string) {
+  return value
+    .replace(/â€¢/g, "•")
+    .replace(/â€”/g, "—")
+    .replace(/â€“/g, "–")
+    .replace(/â€™/g, "'")
+    .replace(/â€œ/g, '"')
+    .replace(/â€/g, '"');
+}
+
+function splitMinutesBlocks(minutes: string): MinutesBlock[] {
+  const lines = normalizeText(minutes).split(/\r?\n/);
+  const blocks: MinutesBlock[] = [];
+  let currentBullets: string[] = [];
+
+  function flushBullets() {
+    if (currentBullets.length) {
+      blocks.push({ type: "bullets", items: currentBullets });
+      currentBullets = [];
+    }
+  }
+
+  for (const rawLine of lines) {
+    const line = rawLine.trim();
+    if (!line) {
+      flushBullets();
+      continue;
+    }
+
+    if (line.startsWith("- ")) {
+      currentBullets.push(line.slice(2).trim());
+      continue;
+    }
+
+    flushBullets();
+    blocks.push({ type: "paragraph", text: line });
+  }
+
+  flushBullets();
+  return blocks;
+}
+
+function renderFormattedLine(text: string) {
+  const emphasisMatch = text.match(
+    /^(Action Item|Conclusion|Meeting Notes|Key Discussions)\s*:\s*(.*)$/i,
+  );
+  if (emphasisMatch) {
+    return (
+      <>
+        <span className="font-bold">{emphasisMatch[1]}:</span>{" "}
+        <span className="italic">{emphasisMatch[2]}</span>
+      </>
+    );
+  }
+
+  if (/^\d+[\.)]\s+/.test(text)) {
+    return <span className="font-semibold">{text}</span>;
+  }
+
+  return text;
+}
+
 export default function MinutesOfMeetingsPage() {
   const [entries, setEntries] = useState<MeetingMinutesEntry[]>(() =>
     getPublishedMeetingMinutesEntries(),
   );
+  const [expandedIds, setExpandedIds] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     void getPublishedMeetingMinutesEntriesAsync().then(setEntries);
@@ -62,30 +153,90 @@ export default function MinutesOfMeetingsPage() {
             </div>
           ) : (
             <div className="space-y-5">
-              {entries.map((entry) => (
-                <article
-                  key={entry.id}
-                  className="rounded-[1.5rem] border border-[#E7ECE7] bg-[#FCFDFC] p-6"
-                >
-                  <div className="flex flex-wrap items-start justify-between gap-3">
-                    <div>
-                      <h2 className="text-2xl font-semibold text-[#1D2A2A]">
-                        {entry.title}
-                      </h2>
-                      <p className="mt-1 text-sm text-[#6A7673]">
-                        {formatMeetingDate(entry.meetingDate)} • by{" "}
-                        {entry.authorName}
-                      </p>
+              {entries.map((entry) => {
+                const blocks = splitMinutesBlocks(entry.minutes);
+                const isExpanded = Boolean(expandedIds[entry.id]);
+                const visibleBlocks = isExpanded ? blocks : blocks.slice(0, 6);
+                const hasMore = blocks.length > 6;
+
+                return (
+                  <article
+                    key={entry.id}
+                    className="overflow-hidden rounded-[1.6rem] border border-[#E7ECE7] bg-[#FCFDFC] shadow-sm"
+                  >
+                    <div className="grid md:grid-cols-[240px_1fr]">
+                      <div className="relative h-44 md:h-full">
+                        <img
+                          src={getCoverImage(entry.id)}
+                          alt={normalizeText(entry.title)}
+                          className="h-full w-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(13,35,40,0)_0%,rgba(13,35,40,0.5)_100%)]" />
+                      </div>
+
+                      <div className="p-6">
+                        <div className="flex flex-wrap items-start justify-between gap-3">
+                          <div>
+                            <h2 className="text-2xl font-black tracking-tight text-[#122E34] sm:text-[1.8rem]">
+                              {normalizeText(entry.title)}
+                            </h2>
+                            <p className="mt-1 text-sm text-[#5E6F73]">
+                              {formatMeetingDate(entry.meetingDate)} • by{" "}
+                              {entry.authorName}
+                            </p>
+                          </div>
+                          <span className="rounded-full bg-[#E8F5E8] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#285B2A]">
+                            Published
+                          </span>
+                        </div>
+
+                        <div className="mt-4 space-y-3 text-[15px] leading-7 text-[#22383C]">
+                          {visibleBlocks.map((block, blockIndex) => {
+                            if (block.type === "paragraph") {
+                              return (
+                                <p
+                                  key={`${entry.id}-p-${blockIndex}`}
+                                  className="font-medium"
+                                >
+                                  {renderFormattedLine(block.text)}
+                                </p>
+                              );
+                            }
+
+                            return (
+                              <ul
+                                key={`${entry.id}-u-${blockIndex}`}
+                                className="list-disc space-y-1 pl-6 text-[#33474A]"
+                              >
+                                {block.items.map((item, itemIndex) => (
+                                  <li key={`${entry.id}-u-${blockIndex}-${itemIndex}`}>
+                                    {renderFormattedLine(item)}
+                                  </li>
+                                ))}
+                              </ul>
+                            );
+                          })}
+                        </div>
+
+                        {hasMore && (
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setExpandedIds((prev) => ({
+                                ...prev,
+                                [entry.id]: !prev[entry.id],
+                              }))
+                            }
+                            className="mt-5 inline-flex items-center rounded-full border border-[#173B45]/20 bg-white px-4 py-2 text-sm font-semibold text-[#173B45] transition hover:bg-[#F1F7F8]"
+                          >
+                            {isExpanded ? "Read less" : "Read more"}
+                          </button>
+                        )}
+                      </div>
                     </div>
-                    <span className="rounded-full bg-[#E8F5E8] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#285B2A]">
-                      Published
-                    </span>
-                  </div>
-                  <p className="mt-4 whitespace-pre-wrap text-sm leading-7 text-[#32403E]">
-                    {entry.minutes}
-                  </p>
-                </article>
-              ))}
+                  </article>
+                );
+              })}
             </div>
           )}
         </section>

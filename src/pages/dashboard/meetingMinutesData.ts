@@ -5,6 +5,7 @@ import {
   saveContentCollection,
   saveRemoteContentCollection,
 } from "@/backend/contentStore";
+import { SEEDED_MEETING_MINUTES } from "./meetingMinutesSeed";
 
 export interface MeetingMinutesEntry {
   id: string;
@@ -46,17 +47,34 @@ function dedupeMeetingMinutesEntries(entries: Partial<MeetingMinutesEntry>[]) {
     uniqueEntries.set(normalizedEntry.id, normalizedEntry);
   });
 
-  return Array.from(uniqueEntries.values()).sort((a, b) =>
-    b.updatedAt.localeCompare(a.updatedAt),
+  return Array.from(uniqueEntries.values()).sort((a, b) => {
+    const byMeetingDate = b.meetingDate.localeCompare(a.meetingDate);
+    if (byMeetingDate !== 0) {
+      return byMeetingDate;
+    }
+    return b.updatedAt.localeCompare(a.updatedAt);
+  });
+}
+
+function mergeSeededMeetingMinutes(entries: MeetingMinutesEntry[]) {
+  if (!entries.length) {
+    return dedupeMeetingMinutesEntries([...SEEDED_MEETING_MINUTES]);
+  }
+
+  const merged = new Map<string, MeetingMinutesEntry>();
+  SEEDED_MEETING_MINUTES.forEach((entry) => merged.set(entry.id, entry));
+  entries.forEach((entry) =>
+    merged.set(entry.id, normalizeMeetingMinutesEntry(entry)),
   );
+  return dedupeMeetingMinutesEntries(Array.from(merged.values()));
 }
 
 export function getMeetingMinutesEntries() {
   if (!hasPersistedContentCollection("meetingMinutesDrafts")) {
-    return [] as MeetingMinutesEntry[];
+    return mergeSeededMeetingMinutes([]);
   }
 
-  return dedupeMeetingMinutesEntries(
+  return mergeSeededMeetingMinutes(
     readContentCollection<MeetingMinutesEntry>("meetingMinutesDrafts", []),
   );
 }
@@ -68,7 +86,7 @@ export async function getMeetingMinutesEntriesAsync() {
     localEntries,
   );
 
-  return dedupeMeetingMinutesEntries(remoteEntries);
+  return mergeSeededMeetingMinutes(remoteEntries);
 }
 
 export function getPublishedMeetingMinutesEntries() {
