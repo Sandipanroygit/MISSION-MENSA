@@ -11,6 +11,7 @@ const CommunityPage = lazy(() => import("./pages/Community"));
 const AboutMensaPage = lazy(() => import("./pages/AboutMensa"));
 const VoicesOfMensaPage = lazy(() => import("./pages/VoicesOfMensa"));
 const AboutUsPage = lazy(() => import("./pages/Aboutus"));
+const JiraPage = lazy(() => import("./pages/Jira"));
 const MinutesOfMeetingsPage = lazy(() => import("./pages/MinutesOfMeetings"));
 const MinutesOfMeetingReadPage = lazy(
   () => import("./pages/MinutesOfMeetingRead"),
@@ -61,6 +62,7 @@ const AppRoutes = () => {
           <Route path="/programs/:topicId" element={<PublicDiscussionReadPage />} />
           <Route path="/about-mensa" element={<AboutMensaPage />} />
           <Route path="/voices-of-mensa" element={<VoicesOfMensaPage />} />
+          <Route path="/jira" element={<JiraPage />} />
           <Route
             path="/minutes-of-meetings"
             element={<MinutesOfMeetingsPage />}

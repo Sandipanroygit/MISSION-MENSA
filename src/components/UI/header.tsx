@@ -126,6 +126,7 @@ const Header: React.FC = () => {
     { name: "Feedback", href: "/voices-of-mensa", icon: MessagesSquare },
     { name: "Blogs", href: "/about-us", icon: Info },
     { name: "Discussion", href: "/programs", icon: MessageCircle },
+    { name: "Jira", href: "/jira", icon: Info },
     {
       name: "Minutes of Meetings",
       href: "/minutes-of-meetings",
