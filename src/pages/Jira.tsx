@@ -5,7 +5,6 @@ import {
   BarChart3,
   CheckCircle2,
   CircleDotDashed,
-  Clock3,
   Filter,
   ListTodo,
   Search,
@@ -31,12 +30,6 @@ interface JiraIssue {
   updated: string;
   inSprint?: boolean;
   inBacklog?: boolean;
-}
-
-function formatDateTime(value: string) {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return value;
-  return date.toLocaleString();
 }
 
 type LaneKey = "backlog" | "todo" | "inProgress" | "done" | "other";
@@ -164,32 +157,32 @@ function getLaneCardPalette(lane: LaneKey, index: number) {
     ],
     inProgress: [
       {
-        card: "border-[#fdba74] bg-[linear-gradient(135deg,#fff7ed_0%,#ffedd5_45%,#fee2e2_100%)]",
-        key: "text-[#b45309]",
-        meta: "bg-[#ffedd5] text-[#9a3412]",
-        glow: "shadow-[0_18px_36px_-18px_rgba(249,115,22,1)]",
-        rail: "bg-[linear-gradient(90deg,#fb923c_0%,#f97316_55%,#ef4444_100%)]",
+        card: "border-[#7dd3fc] bg-[linear-gradient(130deg,#ecfeff_0%,#dbeafe_55%,#e0e7ff_100%)]",
+        key: "text-[#075985]",
+        meta: "bg-[#cffafe] text-[#0c4a6e]",
+        glow: "shadow-[0_18px_36px_-18px_rgba(14,165,233,1)]",
+        rail: "bg-[linear-gradient(90deg,#06b6d4_0%,#0ea5e9_55%,#2563eb_100%)]",
       },
       {
-        card: "border-[#fb923c] bg-[linear-gradient(135deg,#fff7ed_0%,#fed7aa_52%,#fecaca_100%)]",
-        key: "text-[#c2410c]",
-        meta: "bg-[#fed7aa] text-[#9a3412]",
-        glow: "shadow-[0_18px_36px_-18px_rgba(234,88,12,1)]",
-        rail: "bg-[linear-gradient(90deg,#fb923c_0%,#f59e0b_40%,#ef4444_100%)]",
+        card: "border-[#93c5fd] bg-[linear-gradient(130deg,#eff6ff_0%,#dbeafe_50%,#c7d2fe_100%)]",
+        key: "text-[#1d4ed8]",
+        meta: "bg-[#dbeafe] text-[#1e3a8a]",
+        glow: "shadow-[0_18px_36px_-18px_rgba(37,99,235,1)]",
+        rail: "bg-[linear-gradient(90deg,#38bdf8_0%,#3b82f6_55%,#6366f1_100%)]",
       },
       {
-        card: "border-[#f59e0b] bg-[linear-gradient(135deg,#fefce8_0%,#fde68a_45%,#fdba74_100%)]",
-        key: "text-[#a16207]",
-        meta: "bg-[#fde68a] text-[#854d0e]",
-        glow: "shadow-[0_18px_36px_-18px_rgba(217,119,6,1)]",
-        rail: "bg-[linear-gradient(90deg,#fbbf24_0%,#f97316_50%,#fb7185_100%)]",
+        card: "border-[#60a5fa] bg-[linear-gradient(130deg,#ecfeff_0%,#dbeafe_56%,#dbeafe_100%)]",
+        key: "text-[#1e3a8a]",
+        meta: "bg-[#bfdbfe] text-[#1e3a8a]",
+        glow: "shadow-[0_18px_36px_-18px_rgba(37,99,235,1)]",
+        rail: "bg-[linear-gradient(90deg,#22d3ee_0%,#3b82f6_55%,#4338ca_100%)]",
       },
       {
-        card: "border-[#f97316] bg-[linear-gradient(135deg,#fff7ed_0%,#fdba74_50%,#fca5a5_100%)]",
-        key: "text-[#9a3412]",
-        meta: "bg-[#fdba74] text-[#7c2d12]",
-        glow: "shadow-[0_18px_36px_-18px_rgba(249,115,22,1)]",
-        rail: "bg-[linear-gradient(90deg,#fb923c_0%,#ea580c_55%,#ef4444_100%)]",
+        card: "border-[#67e8f9] bg-[linear-gradient(130deg,#ecfeff_0%,#dbeafe_62%,#e0f2fe_100%)]",
+        key: "text-[#075985]",
+        meta: "bg-[#cffafe] text-[#0c4a6e]",
+        glow: "shadow-[0_18px_36px_-18px_rgba(14,165,233,1)]",
+        rail: "bg-[linear-gradient(90deg,#06b6d4_0%,#0ea5e9_50%,#2563eb_100%)]",
       },
     ],
     done: [
@@ -375,7 +368,6 @@ export default function JiraPage() {
   const lanes: Array<{
     key: LaneKey;
     title: string;
-    subtitle: string;
     accent: string;
     bg: string;
     border: string;
@@ -384,16 +376,14 @@ export default function JiraPage() {
     {
       key: "inProgress",
       title: "In Progress",
-      subtitle: "Actively moving",
-      accent: "text-[#9a3412]",
-      bg: "bg-[linear-gradient(135deg,#fff7ed_0%,#fdba74_35%,#fde68a_70%,#fecaca_100%)]",
-      border: "border-[#fb923c]",
-      glow: "shadow-[0_14px_32px_-16px_rgba(249,115,22,1)]",
+      accent: "text-[#1e3a8a]",
+      bg: "bg-[linear-gradient(130deg,#ecfeff_0%,#dbeafe_60%,#e0e7ff_100%)]",
+      border: "border-[#7dd3fc]",
+      glow: "shadow-[0_14px_32px_-16px_rgba(14,116,144,0.95)]",
     },
     {
       key: "done",
       title: "Done",
-      subtitle: "Completed",
       accent: "text-[#166534]",
       bg: "bg-[linear-gradient(135deg,#f0fdf4_0%,#dcfce7_45%,#d1fae5_100%)]",
       border: "border-[#86efac]",
@@ -552,149 +542,56 @@ export default function JiraPage() {
             </p>
           ) : (
             <div className="space-y-5">
-              <section className="relative overflow-hidden rounded-[1.75rem] border-2 border-[#c7d9df] bg-[linear-gradient(135deg,#fff1f2_0%,#f3f9ff_28%,#ecfdf5_58%,#fff7ed_100%)] p-4 shadow-[0_24px_52px_-30px_rgba(30,64,75,0.72)] sm:p-5">
-                <div className="pointer-events-none absolute -left-20 -top-16 h-52 w-52 rounded-full bg-[#fda4af]/25 blur-3xl" />
-                <div className="pointer-events-none absolute -right-20 top-10 h-56 w-56 rounded-full bg-[#7dd3fc]/25 blur-3xl" />
-                <div className="pointer-events-none absolute bottom-0 left-1/3 h-48 w-48 rounded-full bg-[#86efac]/25 blur-3xl" />
+              <section className="relative overflow-hidden rounded-[1.75rem] border border-[#bcd8d4] bg-[linear-gradient(165deg,#e9fbf7_0%,#eef8ff_55%,#f4fff9_100%)] p-4 shadow-[0_24px_48px_-30px_rgba(34,94,88,0.3)] sm:p-5">
+                <div className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-[#7dd3fc]/25 blur-3xl" />
+                <div className="pointer-events-none absolute -bottom-20 left-1/3 h-44 w-44 rounded-full bg-[#86efac]/25 blur-3xl" />
 
-                <div className="relative mb-4 flex flex-wrap items-center justify-between gap-3">
-                  <div>
-                    <p className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] text-[#3f5f68]">
-                      <Sparkles size={15} className="text-[#0f766e]" />
-                      Classified Board
-                    </p>
-                    <p className="mt-1 text-sm font-semibold text-[#53707a]">
-                      Multicolor board with horizontal rail and vertical lane menu.
-                    </p>
-                  </div>
-                  <span className="rounded-full border border-[#c8dbe0] bg-white/85 px-3 py-1 text-xs font-bold text-[#42606a] shadow-sm">
-                    Organized view
+                <div className="relative mb-4 flex flex-wrap items-center justify-between gap-2">
+                  <p className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.18em] text-[#1f5b5a]">
+                    <Sparkles size={14} className="text-[#0f766e]" />
+                    Classified Board
+                  </p>
+                  <span className="rounded-full border border-[#c9ded9] bg-white px-3 py-1 text-xs font-bold text-[#2f6664]">
+                    {activeLaneIssues.length} active cards
                   </span>
                 </div>
 
-                <div className="mb-4 overflow-x-auto rounded-2xl border border-[#d6e5e8] bg-white/75 p-2 shadow-[0_12px_24px_-22px_rgba(15,50,58,0.95)]">
-                  <div className="flex min-w-max gap-2">
-                    {lanes.map((lane) => {
-                      const isActive = lane.key === activeLane;
-                      const count = classifiedIssues[lane.key].length;
-                      return (
-                        <button
-                          key={`${lane.key}-horizontal`}
-                          type="button"
-                          onClick={() => {
-                            setActiveLane(lane.key);
-                            setActiveLanePage(1);
-                          }}
-                          className={`relative flex min-w-[9.5rem] items-center justify-between gap-2 rounded-xl border px-3 py-2 text-left transition ${lane.bg} ${lane.border} ${
-                            isActive ? "scale-[1.02] shadow-md ring-2 ring-white/85" : "opacity-85 hover:opacity-100"
-                          }`}
-                        >
-                          <span className={`text-sm font-black ${lane.accent}`}>{lane.title}</span>
-                          <span className="rounded-full bg-white px-2 py-0.5 text-xs font-black text-[#21404a]">
-                            {count}
-                          </span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                <div className="relative grid gap-4 xl:grid-cols-[16rem_minmax(0,1fr)]">
-                  <aside className="hidden xl:block rounded-2xl border border-[#d7e6e9] bg-white/85 p-2.5 shadow-[0_14px_30px_-22px_rgba(15,50,58,0.95)]">
-                    <p className="mb-2 px-1 text-[11px] font-black uppercase tracking-[0.16em] text-[#5a747c]">
-                      Vertical Lanes
-                    </p>
-                    <div className="grid gap-2">
-                      {lanes.map((lane) => {
-                        const isActive = lane.key === activeLane;
-                        const count = classifiedIssues[lane.key].length;
-                        return (
-                          <button
-                            key={`${lane.key}-vertical`}
-                            type="button"
-                            onClick={() => {
-                              setActiveLane(lane.key);
-                              setActiveLanePage(1);
-                            }}
-                            className={`rounded-xl border px-3 py-2.5 text-left transition ${lane.bg} ${lane.border} ${
-                              isActive
-                                ? `${lane.glow} ring-2 ring-white/85`
-                                : "opacity-85 hover:-translate-y-0.5 hover:opacity-100"
-                            }`}
-                          >
-                            <div className="flex items-center justify-between gap-2">
-                              <div>
-                                <p className={`text-sm font-black ${lane.accent}`}>{lane.title}</p>
-                                <p className="text-xs text-[#5f757c]">{lane.subtitle}</p>
-                              </div>
-                              <span className="rounded-full bg-white px-2 py-0.5 text-xs font-black text-[#21404a]">
-                                {count}
-                              </span>
-                            </div>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </aside>
-
-                  <div className="rounded-2xl border border-[#d7e6e9] bg-white p-4 shadow-[0_18px_36px_-24px_rgba(15,50,58,1)]">
-                    <div className="mb-3 flex items-center justify-between gap-2 border-b border-[#e2edef] pb-3">
-                      <p className="text-base font-black text-[#17363f]">
-                        {lanes.find((lane) => lane.key === activeLane)?.title} Lane
-                      </p>
-                      <p className="rounded-full bg-[#eef7f8] px-3 py-1 text-xs font-bold text-[#476871]">
-                        {activeLaneIssues.length} issues
-                      </p>
-                    </div>
-
+                <div className="relative grid gap-4 xl:grid-cols-[minmax(0,1fr)_250px]">
+                  <div className="rounded-2xl border border-[#d0e2df] bg-white/85 p-3">
                     {activeLaneIssues.length === 0 ? (
-                      <div className="rounded-xl border border-dashed border-[#cbdde1] bg-[#f8fcfd] p-4 text-sm text-[#698187]">
+                      <div className="rounded-xl border border-dashed border-[#c7dcda] bg-[#f6fbfb] p-4 text-sm text-[#527476]">
                         No issues in this lane.
                       </div>
                     ) : (
-                      <div className="grid gap-3 md:grid-cols-2">
-                        {lanePreviewIssues.map((issue, index) => {
-                          const palette = getLaneCardPalette(
-                            activeLane,
-                            (safePage - 1) * ITEMS_PER_PAGE + index,
-                          );
-                          return (
-                            <article
-                              key={issue.id}
-                              className={`relative overflow-hidden rounded-xl border p-3.5 transition hover:-translate-y-0.5 ${palette.card} ${palette.glow}`}
-                            >
-                              <div className={`pointer-events-none absolute inset-x-0 top-0 h-1 ${palette.rail}`} />
-                              <p className="text-base font-bold leading-snug text-[#1d2a2a]">
-                                {issue.summary}
-                              </p>
-                              <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">
-                                <span className={`rounded-full px-2.5 py-1 font-semibold ${palette.meta}`}>
-                                  {issue.assignee}
-                                </span>
-                                <span className="rounded-full bg-white/90 px-2.5 py-1 font-semibold text-[#395964]">
-                                  {issue.issueType}
-                                </span>
-                              </div>
-                              <div className="mt-2 flex items-center justify-between gap-2 text-xs text-[#54717a]">
-                                <span className="inline-flex items-center gap-1">
-                                  <Clock3 size={12} /> {formatDateTime(issue.updated)}
-                                </span>
-                                <a
-                                  href={`${JIRA_BASE_URL}/browse/${issue.key}`}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  className="inline-flex items-center gap-1 rounded-full border border-[#bfd8de] bg-white px-3 py-1 font-bold text-[#1f5f71] transition hover:bg-[#ecf7f9]"
-                                >
-                                  Open in Jira <ArrowUpRight size={12} />
-                                </a>
-                              </div>
-                            </article>
-                          );
-                        })}
+                      <>
+                        <div className="columns-1 gap-3 sm:columns-2 xl:columns-3">
+                          {lanePreviewIssues.map((issue, index) => {
+                            const palette = getLaneCardPalette(
+                              activeLane,
+                              (safePage - 1) * ITEMS_PER_PAGE + index,
+                            );
+                            return (
+                              <article
+                                key={issue.id}
+                                className={`mb-3 break-inside-avoid relative min-h-[300px] overflow-hidden rounded-xl border p-3.5 transition hover:-translate-y-0.5 ${palette.card} ${palette.glow}`}
+                              >
+                                <div className={`pointer-events-none absolute inset-x-0 top-0 h-1 ${palette.rail}`} />
+                                <p className="text-base font-bold leading-snug text-[#1d2a2a]">
+                                  {issue.summary}
+                                </p>
+                                <div className="mt-4">
+                                  <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${palette.meta}`}>
+                                    {issue.assignee}
+                                  </span>
+                                </div>
+                              </article>
+                            );
+                          })}
+                        </div>
 
                         {totalLanePages > 1 && (
-                          <div className="md:col-span-2 flex justify-center pt-2">
-                            <div className="inline-flex flex-wrap items-center justify-center gap-1 rounded-xl border border-[#bbf7d0] bg-[#f0fdf4] px-2 py-1.5">
+                          <div className="mt-3 flex justify-center">
+                            <div className="inline-flex flex-wrap items-center justify-center gap-1 rounded-xl border border-[#cde1df] bg-[#f1f8f7] px-2 py-1.5">
                               {Array.from({ length: totalLanePages }, (_, index) => index + 1).map(
                                 (pageNumber) => (
                                   <button
@@ -703,8 +600,8 @@ export default function JiraPage() {
                                     onClick={() => setActiveLanePage(pageNumber)}
                                     className={`h-7 min-w-7 rounded-md px-2 text-xs font-semibold transition ${
                                       safePage === pageNumber
-                                        ? "bg-[#16a34a] text-white shadow-sm"
-                                        : "bg-white text-[#36565f] hover:bg-[#dcfce7]"
+                                        ? "bg-[#0f766e] text-white"
+                                        : "bg-white text-[#36565f] hover:bg-[#e8f5f3]"
                                     }`}
                                   >
                                     {pageNumber}
@@ -714,9 +611,43 @@ export default function JiraPage() {
                             </div>
                           </div>
                         )}
-                      </div>
+                      </>
                     )}
                   </div>
+
+                  <aside className="rounded-2xl border border-[#d0e2df] bg-white/85 p-3">
+                    <p className="mb-2 text-xs font-bold uppercase tracking-[0.16em] text-[#4c7070]">
+                      Lanes
+                    </p>
+                    <div className="grid gap-2">
+                      {lanes.map((lane) => {
+                        const isActive = lane.key === activeLane;
+                        const count = classifiedIssues[lane.key].length;
+                        return (
+                          <button
+                            key={`${lane.key}-stack`}
+                            type="button"
+                            onClick={() => {
+                              setActiveLane(lane.key);
+                              setActiveLanePage(1);
+                            }}
+                            className={`rounded-xl border px-3 py-2 text-left transition ${lane.border} ${
+                              isActive
+                                ? `${lane.bg} ${lane.accent} ${lane.glow}`
+                                : "bg-white text-[#3f5f68] hover:bg-[#f3f9fb]"
+                            }`}
+                          >
+                            <div className="flex items-center justify-between gap-2">
+                              <span className="text-sm font-bold">{lane.title}</span>
+                              <span className="rounded-full bg-white px-2 py-0.5 text-xs font-black text-[#21404a]">
+                                {count}
+                              </span>
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </aside>
                 </div>
               </section>
             </div>
