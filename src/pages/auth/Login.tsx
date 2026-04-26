@@ -58,6 +58,8 @@ export default function LoginPage() {
         },
         onError: (error) => {
           const apiErr = getApiError(error);
+          const isNetworkError =
+            error instanceof AxiosError && !error.response;
           const isCredentialError =
             error instanceof AxiosError &&
             (error.response?.status === 401 || error.response?.status === 422);
@@ -70,7 +72,9 @@ export default function LoginPage() {
           }
 
           setServerError(
-            isCredentialError
+            isNetworkError
+              ? "Cannot reach the login server. Please check API URL / backend availability."
+              : isCredentialError
               ? "Email or password is incorrect."
               : apiErr.message,
           );

@@ -16,7 +16,8 @@ export const isAuthenticated = (): boolean => Boolean(getToken());
 // ─── Axios instance ───────────────────────────────────────────────────────────
 
 const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8000",
+  // Use same-origin API routes (e.g. /api/auth/login) without external backend base URL.
+  baseURL: "",
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
