@@ -40,107 +40,176 @@ body {
   width: 100%;
 }
 
-.home-card-stack {
+.landing-page {
+  --landing-bg-top: #f4f8f6;
+  --landing-bg-mid: #ecf5f2;
+  --landing-bg-bottom: #f7f3ea;
+  --landing-stroke: rgba(28, 79, 99, 0.14);
+  --landing-shadow: 0 2rem 4.5rem rgba(16, 57, 69, 0.16);
   position: relative;
-  min-height: 400vh;
+  isolation: isolate;
+  padding: clamp(1rem, 2.6vw, 2.2rem) clamp(0.8rem, 2.2vw, 1.8rem)
+    clamp(2.2rem, 5vw, 4rem);
   background:
-    radial-gradient(circle at 20% 8%, rgba(94, 193, 232, 0.18), transparent 28rem),
-    radial-gradient(circle at 84% 42%, rgba(165, 200, 90, 0.16), transparent 30rem),
-    #eaf5f2;
+    radial-gradient(circle at 12% 6%, rgba(44, 164, 164, 0.22), transparent 28rem),
+    radial-gradient(circle at 86% 16%, rgba(255, 201, 75, 0.22), transparent 24rem),
+    radial-gradient(circle at 74% 64%, rgba(116, 199, 221, 0.2), transparent 24rem),
+    linear-gradient(180deg, var(--landing-bg-top) 0%, var(--landing-bg-mid) 50%, var(--landing-bg-bottom) 100%);
 }
 
-.home-card-panel {
-  position: sticky;
-  top: 0;
-  min-height: 100dvh;
-  padding: clamp(0.5rem, 1.35vw, 1rem);
+.landing-page__ambient {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  background-image:
+    linear-gradient(rgba(47, 127, 149, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(47, 127, 149, 0.06) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: radial-gradient(circle at center, black 42%, transparent 100%);
+  opacity: 0.26;
 }
 
-.home-card-panel-1 {
-  z-index: 1;
+.landing-page__topbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.9rem;
+  width: min(100%, 1280px);
+  margin: 0 auto 1.2rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--landing-stroke);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 0.8rem 2rem rgba(16, 57, 69, 0.08);
 }
 
-.home-card-panel-2 {
-  z-index: 2;
+.landing-page__eyebrow {
+  margin: 0;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #1f4f68;
 }
 
-.home-card-panel-3 {
-  z-index: 3;
+.landing-page__quick-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
 }
 
-.home-card-panel-4 {
-  z-index: 4;
-}
-
-.home-card-shell {
-  height: calc(100dvh - clamp(1rem, 2.7vw, 2rem));
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.72);
-  border-radius: clamp(1rem, 2.25vw, 1.5rem);
-  box-shadow: 0 2rem 5rem rgba(15, 58, 52, 0.22);
+.landing-page__quick-nav a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.34rem 0.72rem;
+  border-radius: 999px;
+  border: 1px solid rgba(47, 127, 149, 0.2);
   background: #ffffff;
+  color: #1f4f68;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: all 240ms ease;
 }
 
-.home-card-shell-hero {
-  height: min(42rem, calc(100dvh - clamp(1rem, 2.7vw, 2rem)));
+.landing-page__quick-nav a:hover {
+  color: #0d3a3f;
+  border-color: rgba(44, 164, 164, 0.45);
+  background: rgba(94, 193, 232, 0.14);
 }
 
-.home-card-shell > section {
+.landing-page__hero-frame,
+.landing-page__section {
+  width: min(100%, 1280px);
+  margin-inline: auto;
+}
+
+.landing-page__hero-shell,
+.landing-page__section-shell {
+  overflow: clip;
+  border: 1px solid var(--landing-stroke);
+  border-radius: clamp(1rem, 2.2vw, 1.8rem);
+  box-shadow: var(--landing-shadow);
+}
+
+.landing-page__hero-shell {
+  border-width: 2px;
+  border-color: rgba(11, 58, 55, 0.66);
+  background: linear-gradient(180deg, #f1faf7 0%, #e4f3ee 55%, #d9ece6 100%);
+}
+
+.landing-page__section-shell {
+  border-width: 2px;
+  border-color: rgba(11, 58, 55, 0.62);
+}
+
+.landing-page__section {
+  margin-top: clamp(1.2rem, 2.5vw, 1.8rem);
+}
+
+.landing-page__section-shell--mint {
+  background: linear-gradient(180deg, #f9fcfb 0%, #edf7f3 100%);
+}
+
+.landing-page__section-shell--sky {
+  background: linear-gradient(180deg, #f6fbfc 0%, #eef8fb 100%);
+}
+
+.landing-page__section-shell--gold {
+  background: linear-gradient(180deg, #fdfaf4 0%, #f8f2e5 100%);
+}
+
+.landing-page__hero-shell > section,
+.landing-page__section-shell > section {
   min-height: 100%;
 }
 
-.home-card-shell animate,
-.home-card-shell animateTransform,
-.home-card-shell animateMotion {
-  display: none;
+.landing-card-frame {
+  position: relative;
+  border-width: 1px;
+  border-style: solid;
+  border-color: rgba(11, 58, 55, 0.62) !important;
+  box-shadow:
+    0 1.1rem 2.2rem rgba(14, 76, 71, 0.12),
+    0 0.25rem 0.8rem rgba(14, 76, 71, 0.1) !important;
 }
 
-.home-card-shell .pt-12 {
-  padding-top: clamp(1rem, 2.2vw, 2.5rem);
+.landing-card-frame::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #b84d2e 0%, #ffc94b 48%, #2ca4a4 100%);
+  opacity: 0.95;
+  pointer-events: none;
 }
 
-.home-card-shell .lg\:pt-20 {
-  padding-top: clamp(1rem, 2.2vw, 2.5rem);
+.hero-stat-card {
+  border-width: 2px !important;
+  border-color: rgba(12, 84, 84, 0.68) !important;
 }
 
-.home-card-shell .py-20 {
-  padding-top: clamp(2rem, 4vw, 3.5rem);
-  padding-bottom: clamp(2rem, 4vw, 3.5rem);
-}
-
-.home-card-shell .lg\:py-12 {
-  padding-top: clamp(1rem, 2.5vw, 2rem);
-  padding-bottom: clamp(1rem, 2.5vw, 2rem);
-}
-
-.home-card-shell .min-h-\[calc\(100vh-6rem\)\] {
-  min-height: calc(100dvh - 9.5rem);
-}
-
-.home-card-shell .h-\[400px\] {
-  height: clamp(24rem, 62dvh, 34rem);
-}
-
-.home-card-shell .sm\:h-\[500px\] {
-  height: clamp(24rem, 62dvh, 34rem);
-}
-
-.home-card-shell .lg\:h-\[550px\] {
-  height: clamp(24rem, 62dvh, 34rem);
-}
-
-.home-card-shell .-top-12 {
-  top: -3rem;
+.hero-stat-card:hover {
+  border-color: rgba(8, 65, 72, 0.86) !important;
 }
 
 @media (max-width: 768px) {
-  .home-card-panel {
-    padding: 0.5rem;
+  .landing-page {
+    padding-inline: 0.55rem;
+    padding-bottom: 1.4rem;
   }
 
-  .home-card-shell {
-    border-radius: 1rem;
-    height: calc(100dvh - 1rem);
+  .landing-page__topbar {
+    padding: 0.65rem 0.75rem;
+    border-radius: 0.95rem;
+    margin-bottom: 0.8rem;
   }
 }
 
@@ -566,3 +635,5 @@ button:focus-visible {
     background-color: #f9f9f9;
   }*/
 }
+
+

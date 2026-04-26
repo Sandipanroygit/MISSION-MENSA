@@ -66,10 +66,10 @@ const WhyFinwitKidsSection: React.FC = () => {
         "A learner-side partner that remembers context and supports growth.",
       surface:
         "bg-[linear-gradient(145deg,#f1f7ff_0%,#d8e8ff_52%,#b8d5ff_100%)]",
-      accent: "bg-gradient-to-r from-[#234f12] via-[#5a8f20] to-[#A5C85A]",
-      iconColor: "bg-[#234f12] text-[#f1f7ff] shadow-[#234f12]/25",
-      glow: "bg-[#A5C85A]/24",
-      labelColor: "text-[#4f7f17]",
+      accent: "bg-gradient-to-r from-[#1f4f68] via-[#2f7f95] to-[#5EC1E8]",
+      iconColor: "bg-[#1f4f68] text-[#f1f7ff] shadow-[#1f4f68]/25",
+      glow: "bg-[#5EC1E8]/24",
+      labelColor: "text-[#2f7f95]",
       ringColor: "ring-[#c8df8a]/80",
     },
     {
@@ -79,15 +79,15 @@ const WhyFinwitKidsSection: React.FC = () => {
         "Peers, mentors, institutions, and communities learning as a system.",
       surface:
         "bg-[linear-gradient(145deg,#fff0ec_0%,#ffd8cc_54%,#ffab92_100%)]",
-      accent: "bg-gradient-to-r from-[#9d2711] via-[#ff4b21] to-[#ff9a70]",
-      iconColor: "bg-[#9d2711] text-[#fff0ec] shadow-[#9d2711]/25",
-      glow: "bg-[#ff4b21]/22",
+      accent: "bg-gradient-to-r from-[#8F4B31] via-[#D6673F] to-[#F0A17F]",
+      iconColor: "bg-[#8F4B31] text-[#fff0ec] shadow-[#8F4B31]/25",
+      glow: "bg-[#D6673F]/22",
       labelColor: "text-[#c1391a]",
       ringColor: "ring-[#ffbea9]/80",
     },
   ];
   return (
-    <section className="py-20 bg-[#FAF7F2] relative overflow-hidden">
+    <section className="relative overflow-hidden bg-[radial-gradient(circle_at_14%_8%,#e4f4ef_0%,#edf7f3_34%,#f7fbfa_100%)] py-20">
       {/* Sleek Animated SVG Background - Why Finwit Kids Theme */}
       <div className="absolute inset-0 w-full h-full pointer-events-none overflow-hidden">
         <svg
@@ -107,7 +107,7 @@ const WhyFinwitKidsSection: React.FC = () => {
             >
               <stop
                 offset="0%"
-                style={{ stopColor: "#8B5FBF", stopOpacity: 0.35 }}
+                style={{ stopColor: "#2F7F95", stopOpacity: 0.35 }}
               />
               <stop
                 offset="100%"
@@ -127,7 +127,7 @@ const WhyFinwitKidsSection: React.FC = () => {
               />
               <stop
                 offset="100%"
-                style={{ stopColor: "#A5C85A", stopOpacity: 0.3 }}
+                style={{ stopColor: "#7fd3e8", stopOpacity: 0.3 }}
               />
             </linearGradient>
             <linearGradient
@@ -139,11 +139,11 @@ const WhyFinwitKidsSection: React.FC = () => {
             >
               <stop
                 offset="0%"
-                style={{ stopColor: "#A855F7", stopOpacity: 0.35 }}
+                style={{ stopColor: "#3C95AC", stopOpacity: 0.35 }}
               />
               <stop
                 offset="100%"
-                style={{ stopColor: "#C084FC", stopOpacity: 0.25 }}
+                style={{ stopColor: "#9CC9D4", stopOpacity: 0.25 }}
               />
             </linearGradient>
             <linearGradient
@@ -165,11 +165,11 @@ const WhyFinwitKidsSection: React.FC = () => {
             <radialGradient id="glowPurple" cx="50%" cy="50%">
               <stop
                 offset="0%"
-                style={{ stopColor: "#8B5FBF", stopOpacity: 0.2 }}
+                style={{ stopColor: "#2F7F95", stopOpacity: 0.2 }}
               />
               <stop
                 offset="100%"
-                style={{ stopColor: "#8B5FBF", stopOpacity: 0 }}
+                style={{ stopColor: "#2F7F95", stopOpacity: 0 }}
               />
             </radialGradient>
             <radialGradient id="glowYellow" cx="50%" cy="50%">
@@ -200,7 +200,7 @@ const WhyFinwitKidsSection: React.FC = () => {
                     height="55"
                     rx="2"
                     fill="url(#moduleGradient)"
-                    stroke="#8B5FBF"
+                    stroke="#2F7F95"
                     strokeWidth="1"
                   >
                     <animate
@@ -225,7 +225,7 @@ const WhyFinwitKidsSection: React.FC = () => {
                     y1={y + 15}
                     x2={x + 30}
                     y2={y + 15}
-                    stroke="#8B5FBF"
+                    stroke="#2F7F95"
                     strokeWidth="1"
                     opacity="0.5"
                   >
@@ -247,7 +247,7 @@ const WhyFinwitKidsSection: React.FC = () => {
                     y1={y + 25}
                     x2={x + 30}
                     y2={y + 25}
-                    stroke="#8B5FBF"
+                    stroke="#2F7F95"
                     strokeWidth="1"
                     opacity="0.5"
                   >
@@ -404,7 +404,7 @@ const WhyFinwitKidsSection: React.FC = () => {
                     y1={y1 + 20}
                     x2={x2 - 10}
                     y2={y2 + 10}
-                    stroke="#A855F7"
+                    stroke="#3C95AC"
                     strokeWidth="2"
                     opacity="0.3"
                     strokeDasharray="4,4"
@@ -437,7 +437,7 @@ const WhyFinwitKidsSection: React.FC = () => {
                     y={y - treeHeight}
                     width="8"
                     height={treeHeight * 0.5}
-                    fill="#A5C85A"
+                    fill="#7fd3e8"
                     opacity="0.6"
                   />
                   {/* Tree foliage */}
@@ -493,7 +493,7 @@ const WhyFinwitKidsSection: React.FC = () => {
                       x - 15
                     },${y - 8} Z`}
                     fill="url(#moduleGradient)"
-                    stroke="#8B5FBF"
+                    stroke="#2F7F95"
                     strokeWidth="1"
                   >
                     <animate
@@ -516,7 +516,7 @@ const WhyFinwitKidsSection: React.FC = () => {
                     y1={y - 8}
                     x2={x}
                     y2={y + 5}
-                    stroke="#8B5FBF"
+                    stroke="#2F7F95"
                     strokeWidth="1.5"
                   >
                     <animate
@@ -532,7 +532,7 @@ const WhyFinwitKidsSection: React.FC = () => {
                       repeatCount="indefinite"
                     />
                   </line>
-                  <circle cx={x} cy={y + 5} r="3" fill="#8B5FBF">
+                  <circle cx={x} cy={y + 5} r="3" fill="#2F7F95">
                     <animate
                       attributeName="cy"
                       values={`${y + 5}; ${y - 45}; ${y + 5}`}
@@ -688,7 +688,7 @@ const WhyFinwitKidsSection: React.FC = () => {
           </path>
           <path
             d="M 0,300 Q 300,250 600,300 T 1200,300"
-            stroke="#A855F7"
+            stroke="#3C95AC"
             strokeWidth="2"
             fill="none"
             opacity="0.25"
@@ -769,7 +769,7 @@ const WhyFinwitKidsSection: React.FC = () => {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div ref={headerRef} className="text-center mb-16">
-          <p className="mb-3 text-[10px] font-bold uppercase tracking-wide text-[#d71912]">
+          <p className="mb-3 text-[10px] font-bold uppercase tracking-wide text-[#B84D2E]">
             Four Pillars of the Programme
           </p>
           <h2
@@ -796,7 +796,7 @@ const WhyFinwitKidsSection: React.FC = () => {
             </span>
           </h2>
           <div
-            className={`w-24 h-1 bg-gradient-to-r from-[#FFC94B] to-[#A5C85A] mx-auto rounded-full transition-all duration-1000 ${
+            className={`w-24 h-1 bg-gradient-to-r from-[#FFC94B] to-[#5EC1E8] mx-auto rounded-full transition-all duration-1000 ${
               isVisible
                 ? "animate-expandWidth opacity-100"
                 : "opacity-0 scale-x-0"
@@ -805,7 +805,7 @@ const WhyFinwitKidsSection: React.FC = () => {
         </div>
 
         <div className="group/collective relative mx-auto max-w-6xl">
-          <div className="relative mx-auto flex min-h-[11rem] max-w-[26rem] flex-col items-center justify-center overflow-hidden rounded-full bg-[radial-gradient(circle_at_30%_25%,#A5C85A_0%,#24602f_46%,#123d22_100%)] px-8 py-7 text-center shadow-2xl shadow-[#234f12]/30 ring-8 ring-white/80 transition duration-700 group-hover/collective:scale-[1.03] group-hover/collective:ring-[#fff4d0]">
+          <div className="relative mx-auto flex min-h-[11rem] max-w-[26rem] flex-col items-center justify-center overflow-hidden rounded-full bg-[radial-gradient(circle_at_30%_25%,#7fd3e8_0%,#2f7f95_46%,#1c4f63_100%)] px-8 py-7 text-center shadow-2xl shadow-[#1c4f63]/30 ring-8 ring-white/80 transition duration-700 group-hover/collective:scale-[1.03] group-hover/collective:ring-[#fff4d0]">
             <div className="absolute inset-0 rounded-full border border-[#d8fff9]/40" />
             <div className="absolute -left-8 -top-8 h-28 w-28 rounded-full bg-[#d8fff9]/25 blur-2xl" />
             <div className="absolute -bottom-10 right-2 h-32 w-32 rounded-full bg-[#FFC94B]/25 blur-2xl" />
@@ -820,13 +820,13 @@ const WhyFinwitKidsSection: React.FC = () => {
             </p>
           </div>
 
-          <div className="mt-8 grid gap-3 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)_auto_minmax(0,1fr)_auto_minmax(0,1fr)] lg:items-stretch">
+          <div className="mt-8 grid gap-3 rounded-3xl bg-[linear-gradient(180deg,#f8fcff_0%,#f0fafc_42%,#f7fbf2_100%)] p-4 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)_auto_minmax(0,1fr)_auto_minmax(0,1fr)] lg:items-stretch">
             {intelligenceComponents.map((component, index) => {
               const IconComponent = component.icon;
               return (
                 <React.Fragment key={component.title}>
                   <div
-                    className={`group/card relative flex min-h-[11.5rem] min-w-0 flex-col overflow-hidden rounded-lg border border-white/85 ${component.surface} p-3 shadow-xl shadow-[#234f12]/12 ring-1 ${component.ringColor} transition duration-700 hover:rotate-[-1.5deg] hover:scale-[1.02] hover:border-white hover:shadow-2xl hover:shadow-[#234f12]/20 sm:p-4 lg:h-full`}
+                    className={`landing-card-frame group/card relative flex min-h-[11.5rem] min-w-0 flex-col overflow-hidden rounded-lg border border-white/85 ${component.surface} p-3 shadow-xl shadow-[#1f4f68]/12 ring-1 ${component.ringColor} transition duration-700 hover:rotate-[-1.5deg] hover:scale-[1.02] hover:border-white hover:shadow-2xl hover:shadow-[#1f4f68]/20 sm:p-4 lg:h-full`}
                     style={{ animationDelay: `${index * 0.16}s` }}
                   >
                     <div className={`absolute inset-x-0 top-0 h-1.5 ${component.accent}`} />
@@ -841,19 +841,19 @@ const WhyFinwitKidsSection: React.FC = () => {
                         <p className={`text-[10px] font-black uppercase tracking-[0.14em] ${component.labelColor}`}>
                           Factor 0{index + 1}
                         </p>
-                        <h3 className="mt-1 text-lg font-black leading-tight text-[#1c260f]">
+                        <h3 className="mt-1 text-lg font-black leading-tight text-[#1f3340]">
                           {component.title}
                         </h3>
                       </div>
                     </div>
-                    <p className="relative mt-3 text-sm leading-relaxed text-[#1c260f]/74">
+                    <p className="relative mt-3 text-sm leading-relaxed text-[#1f3340]/74">
                       {component.description}
                     </p>
                     <div className="absolute inset-0 translate-x-[-120%] bg-gradient-to-r from-transparent via-white/45 to-transparent transition-transform duration-1000 group-hover/card:translate-x-[120%]" />
                   </div>
                   {index < intelligenceComponents.length - 1 ? (
                     <div className="flex items-center justify-center py-1 lg:py-0">
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#ff4b21] text-lg font-black text-white shadow-lg shadow-[#ff4b21]/25 ring-4 ring-white">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#D6673F] text-lg font-black text-white shadow-lg shadow-[#D6673F]/25 ring-4 ring-white">
                         &times;
                       </div>
                     </div>
@@ -870,3 +870,5 @@ const WhyFinwitKidsSection: React.FC = () => {
 };
 
 export default WhyFinwitKidsSection;
+
+

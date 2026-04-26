@@ -14,11 +14,16 @@ export interface FeedbackEntry {
   subject: string;
   message: string;
   createdAt: string;
+  isResolved?: boolean;
+  resolvedAt?: string;
+  resolvedByEmail?: string;
 }
 
 const DEFAULT_FEEDBACK_RECIPIENT = "sandipan.roy@indusschool.com";
 
 function normalizeFeedbackEntry(entry: FeedbackEntry): FeedbackEntry {
+  const normalizedResolvedByEmail = entry.resolvedByEmail?.trim().toLowerCase();
+
   return {
     ...entry,
     authorEmail: entry.authorEmail.trim().toLowerCase(),
@@ -27,6 +32,9 @@ function normalizeFeedbackEntry(entry: FeedbackEntry): FeedbackEntry {
       .toLowerCase(),
     subject: entry.subject.trim(),
     message: entry.message.trim(),
+    isResolved: Boolean(entry.isResolved),
+    resolvedAt: entry.resolvedAt?.trim() || undefined,
+    resolvedByEmail: normalizedResolvedByEmail || undefined,
   };
 }
 
@@ -93,6 +101,27 @@ export async function addFeedbackEntryAsync(entry: FeedbackEntry) {
   const updatedEntries = dedupeFeedbackEntries([
     normalizeFeedbackEntry(entry),
     ...currentEntries,
+  ]);
+  await saveFeedbackEntriesAsync(updatedEntries, { requireRemoteSync: true });
+  return dedupeFeedbackEntries([...updatedEntries, ...getFeedbackEntries()]);
+}
+
+export function upsertFeedbackEntry(entry: FeedbackEntry) {
+  const normalizedEntry = normalizeFeedbackEntry(entry);
+  const updatedEntries = dedupeFeedbackEntries([
+    normalizedEntry,
+    ...getFeedbackEntries().filter((item) => item.id !== normalizedEntry.id),
+  ]);
+  saveFeedbackEntries(updatedEntries);
+  return updatedEntries;
+}
+
+export async function upsertFeedbackEntryAsync(entry: FeedbackEntry) {
+  const normalizedEntry = normalizeFeedbackEntry(entry);
+  const currentEntries = await getFeedbackEntriesAsync();
+  const updatedEntries = dedupeFeedbackEntries([
+    normalizedEntry,
+    ...currentEntries.filter((item) => item.id !== normalizedEntry.id),
   ]);
   await saveFeedbackEntriesAsync(updatedEntries, { requireRemoteSync: true });
   return dedupeFeedbackEntries([...updatedEntries, ...getFeedbackEntries()]);

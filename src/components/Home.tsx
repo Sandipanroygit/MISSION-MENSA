@@ -5,24 +5,29 @@ import WhyFinwitKidsSection from "@/components/Landing/WhyFinwitKids";
 
 const Home = () => {
   return (
-    <main className="home-card-stack">
-      <section className="home-card-panel home-card-panel-1">
-        <div className="home-card-shell home-card-shell-hero">
+    <main className="landing-page">
+      <div className="landing-page__ambient" aria-hidden="true" />
+
+      <section className="landing-page__hero-frame">
+        <div className="landing-page__hero-shell">
           <HeroSection />
         </div>
       </section>
-      <section className="home-card-panel home-card-panel-2">
-        <div className="home-card-shell">
+
+      <section id="collective-intelligence" className="landing-page__section">
+        <div className="landing-page__section-shell landing-page__section-shell--mint">
           <WhyFinwitKidsSection />
         </div>
       </section>
-      <section className="home-card-panel home-card-panel-3">
-        <div className="home-card-shell">
+
+      <section id="programme-navigation" className="landing-page__section">
+        <div className="landing-page__section-shell landing-page__section-shell--sky">
           <HowItWorksSection />
         </div>
       </section>
-      <section className="home-card-panel home-card-panel-4">
-        <div className="home-card-shell">
+
+      <section id="talent-acquisition" className="landing-page__section">
+        <div className="landing-page__section-shell landing-page__section-shell--gold">
           <TalentAcquisitionSection />
         </div>
       </section>

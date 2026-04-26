@@ -7,6 +7,7 @@ import {
   deleteVoiceEntryAsync,
   getVoiceEntries,
   getVoiceEntriesAsync,
+  saveVoiceEntries,
   type VoiceAudience,
   type VoiceEntry,
   upsertVoiceEntry,
@@ -82,8 +83,9 @@ export default function VoicesDraftPage() {
       isPublished,
     };
 
-    const updatedEntries = upsertVoiceEntry(entry);
-    setEntries(updatedEntries);
+    const previousEntries = entries;
+    const optimisticEntries = upsertVoiceEntry(entry);
+    setEntries(optimisticEntries);
     try {
       const syncedEntries = await upsertVoiceEntryAsync(entry);
       setEntries(syncedEntries);
@@ -94,6 +96,8 @@ export default function VoicesDraftPage() {
       );
       resetForm();
     } catch {
+      setEntries(previousEntries);
+      saveVoiceEntries(previousEntries);
       setSaveMessage("Supabase sync failed. Entry not confirmed. Please retry.");
     }
   }
@@ -109,6 +113,7 @@ export default function VoicesDraftPage() {
   }
 
   async function handleDelete(id: string) {
+    const previousEntries = entries;
     const updatedEntries = deleteVoiceEntry(id);
     setEntries(updatedEntries);
     if (editingId === id) {
@@ -119,6 +124,8 @@ export default function VoicesDraftPage() {
       setEntries(syncedEntries);
       setSaveMessage("Entry deleted and synced.");
     } catch {
+      setEntries(previousEntries);
+      saveVoiceEntries(previousEntries);
       setSaveMessage("Supabase sync failed while deleting. Please retry.");
     }
   }

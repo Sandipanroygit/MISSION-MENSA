@@ -30,16 +30,16 @@ const assessmentSchools = [
 
 const TalentAcquisitionSection: React.FC = () => {
   return (
-    <section className="relative flex min-h-full items-center overflow-hidden bg-[#FAF7F2] py-3 lg:py-4">
+    <section className="relative flex min-h-full items-center overflow-hidden bg-[radial-gradient(circle_at_82%_14%,#e3f3ee_0%,#edf7f3_38%,#f8fbfa_100%)] py-4 lg:py-6">
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute -left-24 top-16 h-72 w-72 rounded-full bg-[#2CA4A4]/15 blur-3xl" />
         <div className="absolute bottom-10 right-0 h-80 w-80 rounded-full bg-[#FFC94B]/20 blur-3xl" />
-        <div className="absolute right-1/4 top-1/3 h-56 w-56 rounded-full bg-[#A5C85A]/16 blur-3xl" />
+        <div className="absolute right-1/4 top-1/3 h-56 w-56 rounded-full bg-[#74C7DD]/16 blur-3xl" />
       </div>
 
       <div className="relative mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mb-3 text-center animate-fadeInUp">
-          <p className="mb-2 text-[10px] font-bold uppercase tracking-wide text-[#d71912]">
+          <p className="mb-2 text-[10px] font-bold uppercase tracking-wide text-[#B84D2E]">
             Assessment Phase 1
           </p>
           <h2 className="mb-2 text-2xl font-bold text-[#2F3E3E] sm:text-3xl lg:text-4xl">
@@ -48,17 +48,17 @@ const TalentAcquisitionSection: React.FC = () => {
               Recruitment
             </span>
           </h2>
-          <div className="mx-auto h-1 w-24 rounded-full bg-gradient-to-r from-[#FFC94B] to-[#A5C85A]" />
+          <div className="mx-auto h-1 w-24 rounded-full bg-gradient-to-r from-[#FFC94B] to-[#74C7DD]" />
         </div>
 
-        <div className="group relative overflow-hidden rounded-lg border border-[#d7eee8] bg-white p-4 shadow-xl shadow-[#2CA4A4]/10 transition-all duration-700 hover:-translate-y-1 hover:scale-[1.005] hover:shadow-2xl">
-          <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-[#d71912] via-[#FFC94B] to-[#2CA4A4] transition-all duration-500 group-hover:h-2.5" />
+        <div className="landing-card-frame group relative overflow-hidden rounded-lg border border-[#d7eee8] bg-white p-4 shadow-xl shadow-[#2CA4A4]/10 transition-all duration-700 hover:-translate-y-1 hover:scale-[1.005] hover:shadow-2xl">
+          <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-[#B84D2E] via-[#FFC94B] to-[#2CA4A4] transition-all duration-500 group-hover:h-2.5" />
           <div className="absolute -right-20 -top-20 h-56 w-56 rounded-full bg-[#5EC1E8]/18 blur-3xl transition-transform duration-700 group-hover:scale-125" />
           <div className="absolute -bottom-24 left-10 h-56 w-56 rounded-full bg-[#FFC94B]/18 blur-3xl transition-transform duration-700 group-hover:scale-125" />
 
           <div className="relative grid gap-3 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
             <div>
-              <p className="text-sm font-black uppercase tracking-[0.18em] text-[#d71912] sm:text-base">
+              <p className="text-sm font-black uppercase tracking-[0.18em] text-[#B84D2E] sm:text-base">
                 Assessment Phase 1
               </p>
             </div>
@@ -71,7 +71,7 @@ const TalentAcquisitionSection: React.FC = () => {
               ].map(([value, label]) => (
                 <div
                   key={label}
-                  className="rounded-lg border border-[#d7eee8] bg-[#f7fbfa] p-2.5 text-[#123d22] shadow-lg shadow-[#2CA4A4]/8"
+                  className="landing-card-frame rounded-lg border border-[#d7eee8] bg-[#f7fbfa] p-2.5 text-[#1f3340] shadow-lg shadow-[#2CA4A4]/8"
                 >
                   <p className="font-serif text-2xl font-black">{value}</p>
                   <p className="mt-1 text-[10px] font-black uppercase tracking-[0.14em] text-[#5c6b63]">
@@ -86,7 +86,7 @@ const TalentAcquisitionSection: React.FC = () => {
             {assessmentSchools.map((school) => (
               <article
                 key={school.name}
-                className="group/school relative overflow-hidden rounded-lg border border-[#e3efed] bg-white shadow-xl shadow-[#2CA4A4]/10 transition duration-500 hover:-translate-y-1 hover:shadow-2xl"
+                className="landing-card-frame group/school relative overflow-hidden rounded-lg border border-[#e3efed] bg-white shadow-xl shadow-[#2CA4A4]/10 transition duration-500 hover:-translate-y-1 hover:shadow-2xl"
               >
                 {school.stack ? (
                   <div className="relative h-72 overflow-hidden bg-[#eef7f4] p-2 sm:h-80">
@@ -107,7 +107,7 @@ const TalentAcquisitionSection: React.FC = () => {
                           className="h-full w-full object-cover transition duration-700 group-hover/school:scale-105"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-70" />
-                        <span className="absolute left-1.5 top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-[#FFC94B] text-[10px] font-black text-[#123d22] shadow-md">
+                        <span className="absolute left-1.5 top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-[#FFC94B] text-[10px] font-black text-[#1f3340] shadow-md">
                           {index + 1}
                         </span>
                       </div>
@@ -169,3 +169,5 @@ const TalentAcquisitionSection: React.FC = () => {
 };
 
 export default TalentAcquisitionSection;
+
+

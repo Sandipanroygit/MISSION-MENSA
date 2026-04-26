@@ -10,7 +10,7 @@ const DOTS = ["#FFC94B", "#A5C85A", "#5EC1E8", "#8B5FBF"] as const;
 export default function AuthLayout({ children }: Props) {
   return (
     <div className="flex min-h-screen">
-      <div className="relative hidden overflow-hidden bg-[radial-gradient(circle_at_top_left,_#60D3D7_0%,_#227C86_38%,_#113B45_100%)] p-12 lg:flex lg:w-5/12 lg:flex-col lg:justify-between">
+      <div className="relative hidden overflow-hidden bg-[radial-gradient(circle_at_top_left,_#60D3D7_0%,_#227C86_38%,_#113B45_100%)] p-12 lg:flex lg:w-5/12 lg:flex-col lg:justify-start lg:gap-16">
         <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(125deg,rgba(255,255,255,0.18)_0%,rgba(255,255,255,0)_32%,rgba(255,201,75,0.16)_68%,rgba(165,200,90,0.12)_100%)]" />
         <div className="pointer-events-none absolute -left-16 -top-20 h-80 w-80 animate-[authFloat_14s_ease-in-out_infinite] rounded-full bg-[#5EC1E8]/30 blur-2xl" />
         <div className="pointer-events-none absolute right-[-5rem] top-20 h-72 w-72 animate-[authFloat_16s_ease-in-out_infinite_reverse] rounded-full bg-[#FFC94B]/20 blur-2xl" />

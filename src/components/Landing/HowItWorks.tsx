@@ -25,7 +25,7 @@ const HowItWorksSection: React.FC = () => {
       title: "Project Plan",
       description:
         "Live roadmap showing phases, milestones, and ownership.",
-      color: "from-[#FFC94B] to-[#A5C85A]",
+      color: "from-[#FFC94B] to-[#74C7DD]",
       bgColor: "bg-gradient-to-br from-[#FFC94B] to-[#FBBF24]",
       hoverColor: "group-hover:from-[#FBBF24] group-hover:to-[#FFC94B]",
       textColor: "text-white",
@@ -36,9 +36,9 @@ const HowItWorksSection: React.FC = () => {
       title: "Discussions",
       description:
         "An open forum to share experiences, challenges, and ideas.",
-      color: "from-[#8B5FBF] to-[#2CA4A4]",
-      bgColor: "bg-gradient-to-br from-[#8B5FBF] to-[#A855F7]",
-      hoverColor: "group-hover:from-[#A855F7] group-hover:to-[#8B5FBF]",
+      color: "from-[#2F7F95] to-[#2CA4A4]",
+      bgColor: "bg-gradient-to-br from-[#2F7F95] to-[#3C95AC]",
+      hoverColor: "group-hover:from-[#3C95AC] group-hover:to-[#2F7F95]",
       textColor: "text-white",
       href: "/programs",
     },
@@ -56,10 +56,10 @@ const HowItWorksSection: React.FC = () => {
   }
 
   return (
-    <section className="py-20 bg-[#FAF7F2] relative overflow-hidden">
+    <section className="relative overflow-hidden bg-[radial-gradient(circle_at_88%_10%,#e4f3ee_0%,#edf7f3_36%,#f8fbfa_100%)] py-20">
       {slideTarget ? (
         <div className="fixed inset-0 z-[9999] pointer-events-none overflow-hidden">
-          <div className="h-full w-full animate-pageSlideToLeft bg-[linear-gradient(90deg,#2CA4A4_0%,#5EC1E8_48%,#A5C85A_100%)]" />
+          <div className="h-full w-full animate-pageSlideToLeft bg-[linear-gradient(90deg,#2CA4A4_0%,#5EC1E8_48%,#74C7DD_100%)]" />
         </div>
       ) : null}
       {/* Animated SVG Background - Spans Entire Component */}
@@ -95,7 +95,7 @@ const HowItWorksSection: React.FC = () => {
               />
               <stop
                 offset="100%"
-                style={{ stopColor: "#A5C85A", stopOpacity: 0.35 }}
+                style={{ stopColor: "#74C7DD", stopOpacity: 0.35 }}
               />
             </linearGradient>
             <linearGradient
@@ -107,11 +107,11 @@ const HowItWorksSection: React.FC = () => {
             >
               <stop
                 offset="0%"
-                style={{ stopColor: "#8B5FBF", stopOpacity: 0.4 }}
+                style={{ stopColor: "#2F7F95", stopOpacity: 0.4 }}
               />
               <stop
                 offset="100%"
-                style={{ stopColor: "#A855F7", stopOpacity: 0.3 }}
+                style={{ stopColor: "#3C95AC", stopOpacity: 0.3 }}
               />
             </linearGradient>
             <radialGradient id="glowTeal" cx="50%" cy="50%">
@@ -137,11 +137,11 @@ const HowItWorksSection: React.FC = () => {
             <radialGradient id="glowPurple" cx="50%" cy="50%">
               <stop
                 offset="0%"
-                style={{ stopColor: "#8B5FBF", stopOpacity: 0.25 }}
+                style={{ stopColor: "#2F7F95", stopOpacity: 0.25 }}
               />
               <stop
                 offset="100%"
-                style={{ stopColor: "#8B5FBF", stopOpacity: 0 }}
+                style={{ stopColor: "#2F7F95", stopOpacity: 0 }}
               />
             </radialGradient>
           </defs>
@@ -272,9 +272,9 @@ const HowItWorksSection: React.FC = () => {
             const colors = [
               "#FFC94B",
               "#5EC1E8",
-              "#A5C85A",
-              "#EC4899",
-              "#8B5FBF",
+              "#74C7DD",
+              "#E46E47",
+              "#2F7F95",
               "#2CA4A4",
             ];
             const color = colors[i % colors.length];
@@ -346,7 +346,7 @@ const HowItWorksSection: React.FC = () => {
               repeatCount="indefinite"
             />
           </circle>
-          <circle cx="1050" cy="200" r="85" fill="#A5C85A" opacity="0.2">
+          <circle cx="1050" cy="200" r="85" fill="#74C7DD" opacity="0.2">
             <animate
               attributeName="r"
               values="85;110;85"
@@ -370,8 +370,8 @@ const HowItWorksSection: React.FC = () => {
                   } C ${x + 6} ${y - 30} ${x + 15} ${y - 24} ${x + 15} ${
                     y - 15
                   } C ${x + 15} ${y - 15} ${x} ${y} ${x} ${y + 15} Z`}
-                  fill="#EC4899"
-                  stroke="#EC4899"
+                  fill="#E46E47"
+                  stroke="#E46E47"
                   strokeWidth="1.5"
                 >
                   <animate
@@ -447,7 +447,7 @@ const HowItWorksSection: React.FC = () => {
           </path>
           <path
             d="M 0,200 Q 200,150 400,200 T 800,200 T 1200,200"
-            stroke="#A5C85A"
+            stroke="#74C7DD"
             strokeWidth="2.5"
             fill="none"
             opacity="0.3"
@@ -539,7 +539,7 @@ const HowItWorksSection: React.FC = () => {
                 cx={cx}
                 cy={cy}
                 r="4"
-                fill="#8B5FBF"
+                fill="#2F7F95"
                 opacity="0.4"
               >
                 <animate
@@ -655,7 +655,7 @@ const HowItWorksSection: React.FC = () => {
               <g key={`arrow-${i}`} opacity="0.4">
                 <path
                   d={`M0,${y} L100,${y} M80,${y - 15} L100,${y} L80,${y + 15}`}
-                  stroke="#A5C85A"
+                  stroke="#74C7DD"
                   strokeWidth="4"
                   fill="none"
                   strokeLinecap="round"
@@ -695,7 +695,7 @@ const HowItWorksSection: React.FC = () => {
               repeatCount="indefinite"
             />
           </circle>
-          <circle cx="600" cy="100" r="90" fill="#EC4899" opacity="0.12">
+          <circle cx="600" cy="100" r="90" fill="#E46E47" opacity="0.12">
             <animate
               attributeName="r"
               values="90;115;90"
@@ -711,7 +711,7 @@ const HowItWorksSection: React.FC = () => {
         <div className="mb-14">
           {/* Section Header */}
           <div className="text-center mb-16 animate-fadeInUp">
-            <p className="mb-3 text-[10px] font-bold uppercase tracking-wide text-[#d71912]">
+            <p className="mb-3 text-[10px] font-bold uppercase tracking-wide text-[#B84D2E]">
               Explore Our Work
             </p>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#2F3E3E] mb-6">
@@ -720,7 +720,7 @@ const HowItWorksSection: React.FC = () => {
                 programme
               </span>
             </h2>
-            <div className="w-24 h-1 bg-gradient-to-r from-[#FFC94B] to-[#A5C85A] mx-auto rounded-full"></div>
+            <div className="w-24 h-1 bg-gradient-to-r from-[#FFC94B] to-[#74C7DD] mx-auto rounded-full"></div>
           </div>
 
           {/* Steps Grid */}
@@ -739,7 +739,7 @@ const HowItWorksSection: React.FC = () => {
                     onClick={() => handleCardClick(step.href)}
                     disabled={!step.href}
                     aria-label={step.href ? `Open ${step.title}` : undefined}
-                    className={`relative block w-full text-left ${step.bgColor} ${step.hoverColor} min-h-[20rem] rounded-lg p-8 shadow-xl shadow-[#234f12]/15 hover:shadow-2xl transition-all duration-700 transform hover:scale-105 hover:-translate-y-2 overflow-hidden ${
+                    className={`landing-card-frame relative block w-full text-left ${step.bgColor} ${step.hoverColor} min-h-[20rem] rounded-lg p-8 shadow-xl shadow-[#1F4F68]/15 hover:shadow-2xl transition-all duration-700 transform hover:scale-105 hover:-translate-y-2 overflow-hidden ${
                       step.href
                         ? "cursor-pointer"
                         : "cursor-default disabled:opacity-100"
@@ -875,3 +875,5 @@ const HowItWorksSection: React.FC = () => {
 };
 
 export default HowItWorksSection;
+
+

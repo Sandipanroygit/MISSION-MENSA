@@ -1,0 +1,222 @@
+[
+  {
+    "id": "mm-math-001",
+    "difficulty": "medium",
+    "type": "multiple_choice",
+    "topic": "percentages",
+    "question": "A school bookstore marks a notebook up by 25% over cost and then offers a 10% discount on the marked price. What is the final selling price if the cost price is Rs.240?",
+    "options": ["Rs.264", "Rs.270", "Rs.276", "Rs.300"],
+    "correctOption": "Rs.270",
+    "formatting": "single-answer",
+    "source_inspiration": "https://www.khanacademy.org/math/algebra-home/alg-modeling"
+  },
+  {
+    "id": "mm-math-002",
+    "difficulty": "medium",
+    "type": "multiple_choice",
+    "topic": "ratio_and_proportion",
+    "question": "The ratio of boys to girls in a club is 7:5. After 8 girls join, the ratio becomes 7:6. How many boys are there?",
+    "options": ["42", "48", "56", "63"],
+    "correctOption": "56",
+    "formatting": "single-answer",
+    "source_inspiration": "https://www.khanacademy.org/math/pre-algebra/pre-algebra-ratios-rates"
+  },
+  {
+    "id": "mm-math-003",
+    "difficulty": "hard",
+    "type": "multiple_choice",
+    "topic": "work_rate",
+    "question": "Machine A completes a job in 12 hours and Machine B in 18 hours. They work together for 4 hours, then A stops. How much additional time does B need to finish the remaining work?",
+    "options": ["4 hours", "5 hours", "6 hours", "7 hours"],
+    "correctOption": "5 hours",
+    "formatting": "single-answer",
+    "source_inspiration": "https://www.khanacademy.org/math/algebra-home/alg-modeling/alg-rate-time-distance"
+  },
+  {
+    "id": "mm-math-004",
+    "difficulty": "hard",
+    "type": "multiple_choice",
+    "topic": "probability",
+    "question": "A bag contains 5 red, 4 blue, and 3 green balls. Two balls are drawn without replacement. What is the probability that both are blue?",
+    "options": ["1/11", "1/9", "2/11", "3/22"],
+    "correctOption": "1/11",
+    "formatting": "single-answer",
+    "source_inspiration": "https://www.khanacademy.org/math/statistics-probability/probability-library"
+  },
+  {
+    "id": "mm-math-005",
+    "difficulty": "medium",
+    "type": "multiple_choice",
+    "topic": "linear_equations",
+    "question": "If 3x - 2y = 7 and x + y = 8, what is the value of x?",
+    "options": ["3", "4", "5", "6"],
+    "correctOption": "4",
+    "formatting": "single-answer",
+    "source_inspiration": "https://www.khanacademy.org/math/algebra/systems-of-linear-equations"
+  },
+  {
+    "id": "mm-math-006",
+    "difficulty": "hard",
+    "type": "multiple_choice",
+    "topic": "sequence_patterns",
+    "question": "A sequence is defined by a1 = 3 and a(n+1) = 2a(n) + 1. What is a4?",
+    "options": ["23", "31", "39", "47"],
+    "correctOption": "31",
+    "formatting": "single-answer",
+    "source_inspiration": "https://www.khanacademy.org/math/algebra2/sequences-and-series"
+  },
+  {
+    "id": "mm-math-007",
+    "difficulty": "medium",
+    "type": "multiple_choice",
+    "topic": "speed_distance",
+    "question": "A car travels the first 120 km at 60 km/h and the next 180 km at 90 km/h. What is the average speed for the entire trip?",
+    "options": ["72 km/h", "75 km/h", "78 km/h", "80 km/h"],
+    "correctOption": "75 km/h",
+    "formatting": "single-answer",
+    "source_inspiration": "https://www.khanacademy.org/math/algebra-home/alg-modeling/alg-rate-time-distance"
+  },
+  {
+    "id": "mm-math-008",
+    "difficulty": "hard",
+    "type": "multiple_choice",
+    "topic": "geometry_area",
+    "question": "A rectangle has perimeter 54 cm. If its length is 3 cm more than twice its breadth, what is its area?",
+    "options": ["140 cm2", "162 cm2", "176 cm2", "180 cm2"],
+    "correctOption": "162 cm2",
+    "formatting": "single-answer",
+    "source_inspiration": "https://www.khanacademy.org/math/geometry/hs-geo-foundations"
+  },
+  {
+    "id": "mm-math-009",
+    "difficulty": "medium",
+    "type": "multiple_choice",
+    "topic": "integers",
+    "question": "The sum of three consecutive odd integers is 123. What is the largest integer?",
+    "options": ["39", "41", "43", "45"],
+    "correctOption": "43",
+    "formatting": "single-answer",
+    "source_inspiration": "https://www.khanacademy.org/math/algebra/x2f8bb11595b61c86:forms-of-linear-equations"
+  },
+  {
+    "id": "mm-math-010",
+    "difficulty": "hard",
+    "type": "multiple_choice",
+    "topic": "data_interpretation",
+    "question": "A class has 40 students. In a test, the average score is 68. If the top 10 students average 86, what is the average of the remaining 30 students?",
+    "options": ["60", "62", "64", "66"],
+    "correctOption": "62",
+    "formatting": "single-answer",
+    "source_inspiration": "https://www.mathcounts.org/resources/problem-week-archive"
+  },
+  {
+    "id": "mm-reason-001",
+    "difficulty": "medium",
+    "type": "multiple_choice",
+    "topic": "logical_ordering",
+    "question": "Five students P, Q, R, S, T stand in a row. Q is left of R but right of P. S is right of R and left of T. Who is in the middle?",
+    "options": ["Q", "R", "S", "T"],
+    "correctOption": "R",
+    "formatting": "single-answer",
+    "source_inspiration": "https://www.mathcounts.org/resources/problem-week-archive"
+  },
+  {
+    "id": "mm-reason-002",
+    "difficulty": "hard",
+    "type": "multiple_choice",
+    "topic": "arrangements",
+    "question": "How many 4-digit numbers can be formed from digits 1,2,3,4,5 without repetition if the number must be even and greater than 3000?",
+    "options": ["24", "30", "36", "42"],
+    "correctOption": "30",
+    "formatting": "single-answer",
+    "source_inspiration": "https://www.khanacademy.org/math/statistics-probability/counting-permutations-and-combinations"
+  },
+  {
+    "id": "mm-reason-003",
+    "difficulty": "medium",
+    "type": "multiple_choice",
+    "topic": "set_logic",
+    "question": "In a group of 100 students, 58 like Math, 47 like Science, and 21 like both. How many like neither Math nor Science?",
+    "options": ["10", "12", "14", "16"],
+    "correctOption": "16",
+    "formatting": "single-answer",
+    "source_inspiration": "https://www.khanacademy.org/math/statistics-probability/probability-library"
+  },
+  {
+    "id": "mm-reason-004",
+    "difficulty": "hard",
+    "type": "multiple_choice",
+    "topic": "clock_angle",
+    "question": "At what time between 3:00 and 4:00 are the hour and minute hands exactly 90 degrees apart for the first time?",
+    "options": ["3:16 4/11", "3:21 9/11", "3:27 3/11", "3:32 8/11"],
+    "correctOption": "3:16 4/11",
+    "formatting": "single-answer",
+    "source_inspiration": "https://www.mathcounts.org/resources/problem-week-archive"
+  },
+  {
+    "id": "mm-reason-005",
+    "difficulty": "medium",
+    "type": "multiple_choice",
+    "topic": "coding_decoding",
+    "question": "If MISSION is coded as NJTTJPO, then SCHOOL is coded as:",
+    "options": ["TDIPPM", "TDIQPM", "RBGNNK", "TDHQPM"],
+    "correctOption": "TDIPPM",
+    "formatting": "single-answer",
+    "source_inspiration": "https://www.khanacademy.org/math/algebra-home/alg-modeling"
+  },
+  {
+    "id": "mm-image-001",
+    "difficulty": "medium",
+    "type": "multiple_choice",
+    "topic": "image_based_geometry",
+    "question": "[Image Prompt] A bar chart shows monthly attendance: Jan 120, Feb 140, Mar 160, Apr 180. What is the percentage increase from Jan to Apr?",
+    "options": ["40%", "45%", "50%", "60%"],
+    "correctOption": "50%",
+    "formatting": "image-with-text-stem",
+    "source_inspiration": "https://www.khanacademy.org/math/statistics-probability"
+  },
+  {
+    "id": "mm-image-002",
+    "difficulty": "hard",
+    "type": "multiple_choice",
+    "topic": "image_based_data_interpretation",
+    "question": "[Image Prompt] A pie chart shows expenses: Rent 30%, Food 25%, Transport 15%, Utilities 10%, Savings 20%. If monthly income is Rs.80,000, how much more is spent on Rent than Utilities?",
+    "options": ["Rs.12,000", "Rs.14,000", "Rs.16,000", "Rs.18,000"],
+    "correctOption": "Rs.16,000",
+    "formatting": "image-with-text-stem",
+    "source_inspiration": "https://www.khanacademy.org/math/algebra-home/alg-modeling"
+  },
+  {
+    "id": "mm-image-003",
+    "difficulty": "hard",
+    "type": "multiple_choice",
+    "topic": "image_based_coordinate_geometry",
+    "question": "[Image Prompt] On a coordinate grid, points A(2,3), B(8,3), C(8,9), D(2,9) form a rectangle. What is the diagonal length AC?",
+    "options": ["6", "6sqrt(2)", "8", "10"],
+    "correctOption": "6sqrt(2)",
+    "formatting": "image-with-text-stem",
+    "source_inspiration": "https://www.khanacademy.org/math/geometry/hs-geo-analytic-geometry"
+  },
+  {
+    "id": "mm-image-004",
+    "difficulty": "medium",
+    "type": "multiple_choice",
+    "topic": "image_based_sequences",
+    "question": "[Image Prompt] A pattern of matchstick squares grows as 1 square = 4 sticks, 2 squares in a row = 7 sticks, 3 squares = 10 sticks. How many sticks are needed for 15 squares in a row?",
+    "options": ["43", "44", "45", "46"],
+    "correctOption": "46",
+    "formatting": "image-with-text-stem",
+    "source_inspiration": "https://www.mathcounts.org/resources/problem-week-archive"
+  },
+  {
+    "id": "mm-image-005",
+    "difficulty": "hard",
+    "type": "multiple_choice",
+    "topic": "image_based_statistics",
+    "question": "[Image Prompt] A line graph of daily temperatures reads: Mon 24C, Tue 28C, Wed 32C, Thu 30C, Fri 26C. What is the standard mean (average) for the week?",
+    "options": ["27.2C", "28C", "28.4C", "29C"],
+    "correctOption": "28C",
+    "formatting": "image-with-text-stem",
+    "source_inspiration": "https://www.khanacademy.org/math/statistics-probability"
+  }
+]

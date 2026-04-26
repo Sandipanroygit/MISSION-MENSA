@@ -168,7 +168,7 @@ export default function FeedbackPage() {
                       {entry.subject}
                     </h3>
                     <p className="mt-1 text-sm text-[#6A7673]">
-                      {entry.authorName} Â· {entry.authorEmail}
+                      {entry.authorName} · {entry.authorEmail}
                     </p>
                   </div>
                   <p className="text-xs font-medium text-[#7A8682]">
