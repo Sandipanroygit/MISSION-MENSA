@@ -573,13 +573,13 @@ export default function JiraPage() {
                             return (
                               <article
                                 key={issue.id}
-                                className={`mb-3 break-inside-avoid relative min-h-[300px] overflow-hidden rounded-xl border p-3.5 transition hover:-translate-y-0.5 ${palette.card} ${palette.glow}`}
+                                className={`mb-3 break-inside-avoid relative flex min-h-[300px] flex-col overflow-hidden rounded-xl border p-3.5 transition hover:-translate-y-0.5 ${palette.card} ${palette.glow}`}
                               >
                                 <div className={`pointer-events-none absolute inset-x-0 top-0 h-1 ${palette.rail}`} />
                                 <p className="text-base font-bold leading-snug text-[#1d2a2a]">
                                   {issue.summary}
                                 </p>
-                                <div className="mt-4">
+                                <div className="mt-auto pt-4 text-left">
                                   <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${palette.meta}`}>
                                     {issue.assignee}
                                   </span>
