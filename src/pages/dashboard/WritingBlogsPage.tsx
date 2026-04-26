@@ -12,6 +12,7 @@ import {
   type BlogEntry,
 } from "./blogData";
 import { getBlogDraftByEmail, getBlogDraftByEmailAsync } from "./blogDraftData";
+import { confirmPermanentDelete } from "@/utils/confirmDelete";
 
 export default function WritingBlogsPage() {
   const location = useLocation();
@@ -83,6 +84,7 @@ export default function WritingBlogsPage() {
   }, [saveSuccessMessage, savedDraft]);
 
   function handleDeleteBlog(slug: string) {
+    if (!confirmPermanentDelete()) return;
     deletePublishedBlog(slug);
     setVisibleBlogs(mergePublishedAndSeedBlogs(getPublishedBlogs()));
     void deletePublishedBlogAsync(slug).then((publishedBlogs) => {

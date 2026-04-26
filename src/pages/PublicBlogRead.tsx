@@ -31,6 +31,7 @@ import {
 } from "./dashboard/blogData";
 import ScrollToTop from "@/components/common/ScrolltoTop";
 import InlineRichText from "@/components/common/InlineRichText";
+import { confirmPermanentDelete } from "@/utils/confirmDelete";
 
 function getViewTrackerKey(email?: string | null) {
   return `mission-mensa-blog-viewed:${
@@ -356,6 +357,7 @@ export default function PublicBlogReadPage() {
 
   function handleDeleteComment(commentId: string) {
     if (!user?.email) return;
+    if (!confirmPermanentDelete()) return;
 
     const updatedBlog = deleteBlogComment(blog.slug, commentId, user.email);
     if (updatedBlog) {

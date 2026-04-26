@@ -11,6 +11,7 @@ import {
   upsertMeetingMinutesEntry,
   upsertMeetingMinutesEntryAsync,
 } from "./meetingMinutesData";
+import { confirmPermanentDelete } from "@/utils/confirmDelete";
 
 const emptyForm = {
   title: "",
@@ -98,6 +99,7 @@ export default function MinutesOfMeetingsDraftPage() {
   }
 
   function handleDelete(id: string) {
+    if (!confirmPermanentDelete()) return;
     const updatedEntries = deleteMeetingMinutesEntry(id);
     setEntries(updatedEntries);
     if (editingId === id) {

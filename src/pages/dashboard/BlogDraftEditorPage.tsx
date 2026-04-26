@@ -47,6 +47,7 @@ import {
   savePublishedBlog,
   savePublishedBlogAsync,
 } from "./blogData";
+import { confirmPermanentDelete } from "@/utils/confirmDelete";
 
 const fontFamilies = [
   { label: "Modern Sans", value: "Arial, sans-serif" },
@@ -1848,13 +1849,13 @@ export default function BlogDraftEditorPage() {
                         <div className="absolute left-0 top-8 w-48 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-lg">
                           <button type="button" onClick={() => runTableAction((table, cell) => addTableRow(table, cell, false))} className="block w-full px-3 py-2 text-left text-xs hover:bg-[#F3FAFA]">Add row above</button>
                           <button type="button" onClick={() => runTableAction((table, cell) => addTableRow(table, cell, true))} className="block w-full px-3 py-2 text-left text-xs hover:bg-[#F3FAFA]">Add row below</button>
-                          <button type="button" onClick={() => runTableAction((table, cell) => deleteTableRow(table, cell))} className="block w-full px-3 py-2 text-left text-xs hover:bg-[#FFF4F4]">Delete row</button>
+                          <button type="button" onClick={() => { if (!confirmPermanentDelete()) return; runTableAction((table, cell) => deleteTableRow(table, cell)); }} className="block w-full px-3 py-2 text-left text-xs hover:bg-[#FFF4F4]">Delete row</button>
                           <button type="button" onClick={() => runTableAction((table, cell) => addTableColumn(table, cell, false))} className="block w-full px-3 py-2 text-left text-xs hover:bg-[#F3FAFA]">Add column left</button>
                           <button type="button" onClick={() => runTableAction((table, cell) => addTableColumn(table, cell, true))} className="block w-full px-3 py-2 text-left text-xs hover:bg-[#F3FAFA]">Add column right</button>
-                          <button type="button" onClick={() => runTableAction((table, cell) => deleteTableColumn(table, cell))} className="block w-full px-3 py-2 text-left text-xs hover:bg-[#FFF4F4]">Delete column</button>
+                          <button type="button" onClick={() => { if (!confirmPermanentDelete()) return; runTableAction((table, cell) => deleteTableColumn(table, cell)); }} className="block w-full px-3 py-2 text-left text-xs hover:bg-[#FFF4F4]">Delete column</button>
                           <button type="button" onClick={() => runTableAction((table, cell) => setRowHeight(table, cell))} className="block w-full px-3 py-2 text-left text-xs hover:bg-[#F3FAFA]">Set row height...</button>
                           <button type="button" onClick={() => runTableAction((table) => setCellPadding(table))} className="block w-full px-3 py-2 text-left text-xs hover:bg-[#F3FAFA]">Set cell padding...</button>
-                          <button type="button" onClick={() => runTableAction((table) => deleteWholeTable(table))} className="block w-full px-3 py-2 text-left text-xs font-semibold text-[#9A3D3D] hover:bg-[#FFF4F4]">Delete table</button>
+                          <button type="button" onClick={() => { if (!confirmPermanentDelete()) return; runTableAction((table) => deleteWholeTable(table)); }} className="block w-full px-3 py-2 text-left text-xs font-semibold text-[#9A3D3D] hover:bg-[#FFF4F4]">Delete table</button>
                         </div>
                       )}
                     </div>

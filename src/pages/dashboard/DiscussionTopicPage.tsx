@@ -16,6 +16,7 @@ import {
   type DiscussionComment,
   type DiscussionTopic,
 } from "./discussionData";
+import { confirmPermanentDelete } from "@/utils/confirmDelete";
 
 function renderMedia(media: DiscussionMedia) {
   if (media.type === "image") {
@@ -151,6 +152,7 @@ export default function DiscussionTopicPage() {
     if (!selectedTopic || !isOwner) {
       return;
     }
+    if (!confirmPermanentDelete()) return;
 
     const updatedTopics = topics.filter((topic) => topic.id !== selectedTopic.id);
     const previousTopics = topics;
@@ -245,6 +247,7 @@ export default function DiscussionTopicPage() {
     if (!user || !selectedTopic) {
       return;
     }
+    if (!confirmPermanentDelete()) return;
 
     const previousTopics = topics;
     const updatedTopics = topics.map((topic) =>

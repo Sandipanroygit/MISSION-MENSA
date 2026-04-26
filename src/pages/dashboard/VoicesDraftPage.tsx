@@ -13,6 +13,7 @@ import {
   upsertVoiceEntry,
   upsertVoiceEntryAsync,
 } from "./voiceData";
+import { confirmPermanentDelete } from "@/utils/confirmDelete";
 
 const VOICES_ADMIN_EMAIL = "sandipan.roy@indusschool.com";
 
@@ -113,6 +114,7 @@ export default function VoicesDraftPage() {
   }
 
   async function handleDelete(id: string) {
+    if (!confirmPermanentDelete()) return;
     const previousEntries = entries;
     const updatedEntries = deleteVoiceEntry(id);
     setEntries(updatedEntries);

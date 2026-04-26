@@ -1,18 +1,6 @@
 {
   "rewrites": [
     {
-      "source": "/api/jira/issues",
-      "destination": "/api/jira/issues"
-    },
-    {
-      "source": "/api/auth/(.*)",
-      "destination": "/api/auth/$1"
-    },
-    {
-      "source": "/api/me",
-      "destination": "/api/me"
-    },
-    {
       "source": "/((?!api/).*)",
       "destination": "/index.html"
     }

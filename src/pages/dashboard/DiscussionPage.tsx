@@ -16,6 +16,7 @@ import {
   type DiscussionMedia,
   type DiscussionTopic,
 } from "./discussionData";
+import { confirmPermanentDelete } from "@/utils/confirmDelete";
 
 export default function DiscussionPage() {
   const { user } = useAuthContext();
@@ -81,6 +82,7 @@ function removeAttachment(id: string) {
   }
 
   async function handleDeleteTopic(topicId: string) {
+    if (!confirmPermanentDelete()) return;
     const previousTopics = topics;
     const updatedTopics = topics.filter((topic) => topic.id !== topicId);
     setTopics(updatedTopics);

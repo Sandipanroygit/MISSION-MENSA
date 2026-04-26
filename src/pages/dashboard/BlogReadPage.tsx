@@ -31,6 +31,7 @@ import {
   type BlogTableBlock,
   type BlogYoutubeBlock,
 } from "./blogData";
+import { confirmPermanentDelete } from "@/utils/confirmDelete";
 
 function getViewTrackerKey(email?: string | null) {
   return `mission-mensa-blog-viewed:${
@@ -328,6 +329,7 @@ export default function BlogReadPage() {
   );
 
   function handleDeleteBlog() {
+    if (!confirmPermanentDelete()) return;
     deletePublishedBlog(blog.slug);
     void deletePublishedBlogAsync(blog.slug).finally(() => {
       navigate("/dashboard/writing-blogs");
@@ -366,6 +368,7 @@ export default function BlogReadPage() {
 
   function handleDeleteComment(commentId: string) {
     if (!user?.email) return;
+    if (!confirmPermanentDelete()) return;
 
     const updatedBlog = deleteBlogComment(blog.slug, commentId, user.email);
     if (updatedBlog) {

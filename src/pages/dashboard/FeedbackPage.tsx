@@ -1,4 +1,4 @@
-import { MessageSquareText, Send } from "lucide-react";
+﻿import { MessageSquareText, Send } from "lucide-react";
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { useAuthContext } from "@/context/AuthContext";
 import {
@@ -11,6 +11,7 @@ import {
   type FeedbackEntry,
 } from "./feedbackData";
 import { createId, formatDate } from "./discussionData";
+import { confirmPermanentDelete } from "@/utils/confirmDelete";
 
 const FEEDBACK_ADMIN_EMAILS = new Set([
   "sandipan.roy@indusschool.com",
@@ -78,6 +79,7 @@ export default function FeedbackPage() {
   }
 
   async function handleDelete(entryId: string) {
+    if (!confirmPermanentDelete()) return;
     const updatedEntries = deleteFeedbackEntry(entryId);
     setEntries(updatedEntries);
     try {
@@ -168,7 +170,7 @@ export default function FeedbackPage() {
                       {entry.subject}
                     </h3>
                     <p className="mt-1 text-sm text-[#6A7673]">
-                      {entry.authorName} � {entry.authorEmail}
+                      {entry.authorName} · {entry.authorEmail}
                     </p>
                   </div>
                   <p className="text-xs font-medium text-[#7A8682]">
@@ -209,3 +211,4 @@ export default function FeedbackPage() {
     </div>
   );
 }
+

@@ -17,6 +17,7 @@ import {
   type DiscussionMedia,
   type DiscussionTopic,
 } from "./dashboard/discussionData";
+import { confirmPermanentDelete } from "@/utils/confirmDelete";
 
 function renderMedia(media: DiscussionMedia) {
   if (media.type === "image") {
@@ -142,6 +143,7 @@ export default function PublicDiscussionReadPage() {
     if (!user || !selectedTopic) {
       return;
     }
+    if (!confirmPermanentDelete()) return;
 
     const updatedTopics = topics.map((topic) =>
       topic.id === selectedTopic.id
