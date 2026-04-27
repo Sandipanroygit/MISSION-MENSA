@@ -20,6 +20,7 @@ const PublicBlogReadPage = lazy(() => import("./pages/PublicBlogRead"));
 const PublicDiscussionReadPage = lazy(() => import("./pages/PublicDiscussionRead"));
 const ContactUs = lazy(() => import("./pages/ContactUs"));
 const PricingPage = lazy(() => import("./pages/Pricing"));
+const ProgressPage = lazy(() => import("./pages/Progress"));
 const LearningPlans = lazy(() => import("./components/LearningPlan"));
 const Error404Page = lazy(() => import("./components/common/Error404"));
 
@@ -58,6 +59,7 @@ const AppRoutes = () => {
       <Routes>
         <Route element={<RootLayout />}>
           <Route path="/" element={<Home />} />
+          <Route path="/progress" element={<ProgressPage />} />
           <Route path="/programs" element={<ProgramsPage />} />
           <Route path="/programs/:topicId" element={<PublicDiscussionReadPage />} />
           <Route path="/about-mensa" element={<AboutMensaPage />} />

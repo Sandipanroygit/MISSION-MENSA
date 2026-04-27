@@ -3,6 +3,7 @@ import {
   Menu,
   X,
   Home,
+  BarChart3,
   Info,
   MessageCircle,
   MessagesSquare,
@@ -122,6 +123,7 @@ const Header: React.FC = () => {
 
   const mainNavItems = [
     { name: "Home", href: "/", icon: Home },
+    { name: "Progress", href: "/progress", icon: BarChart3 },
     { name: "About Mensa", href: "/about-mensa", icon: Info },
     { name: "Feedback", href: "/voices-of-mensa", icon: MessagesSquare },
     { name: "Blogs", href: "/about-us", icon: Info },
