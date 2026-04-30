@@ -90,12 +90,26 @@ export async function getMeetingMinutesEntriesAsync() {
 }
 
 export function getPublishedMeetingMinutesEntries() {
-  return getMeetingMinutesEntries().filter((entry) => entry.isPublished);
+  const publishedEntries = getMeetingMinutesEntries().filter(
+    (entry) => entry.isPublished,
+  );
+
+  if (publishedEntries.length > 0) {
+    return publishedEntries;
+  }
+
+  return SEEDED_MEETING_MINUTES.filter((entry) => entry.isPublished);
 }
 
 export async function getPublishedMeetingMinutesEntriesAsync() {
   const entries = await getMeetingMinutesEntriesAsync();
-  return entries.filter((entry) => entry.isPublished);
+  const publishedEntries = entries.filter((entry) => entry.isPublished);
+
+  if (publishedEntries.length > 0) {
+    return publishedEntries;
+  }
+
+  return SEEDED_MEETING_MINUTES.filter((entry) => entry.isPublished);
 }
 
 export function saveMeetingMinutesEntries(entries: MeetingMinutesEntry[]) {

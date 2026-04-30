@@ -2,6 +2,98 @@ import type { MeetingMinutesEntry } from "./meetingMinutesData";
 
 export const SEEDED_MEETING_MINUTES: MeetingMinutesEntry[] = [
   {
+    id: "mom-mensa-project-28th-april-26-docx",
+    title: "MOM- Mensa Project 28th April 26",
+    meetingDate: "2026-04-28",
+    minutes: `MOM- Mensa Project 28th April 26
+
+1. Grade placement policy for Mensa students
+- Current Grade 8 students move to Grade 9.
+- Grade 8 students with IQ 135-140 may be moved directly to Grade 10.
+- Current Grade 9 students move to Grade 10.
+- The team emphasized at least three years of preparation before final board-level outcomes.
+Action Item: Mr. Shiv Lal to assess remaining Grade 8 and Grade 9 admissions by 15th May 2026.
+
+2. Board pathway decision
+- NIOS remains the primary board pathway due to alignment and implementation simplicity.
+
+3. Curriculum and mentoring model
+- Mensa learners require stimulation beyond routine classrooms.
+- Mentor capability must include emotional and psychological support for gifted learners.
+Action Item: Dr. Shruti to visit IISc/NIAS and recommend a gifted-education model by 30th April 2026.
+
+4. Curriculum structure
+- Core NIOS subjects confirmed: English, Science & Technology, Math, Business Studies, and Economics.
+- 70/30 (or flexible) split between formal curriculum and entrepreneurship was discussed.
+
+5. Teaching model and student pathways
+- First-year assessment will identify learner inclination.
+- Students can be streamed toward JEE/NEET preparation or entrepreneurship pathways after foundational evaluation.
+
+6. Design thinking and entrepreneurship orientation
+- Design thinking is mandatory for all students.
+- Social-emotional readiness is a prerequisite for entrepreneurship.
+Action Item: Ms. Srividya to present a two-humans-plus-AI operational model by 4th May 2026.
+
+7. Nation-building and research emphasis
+- Team discussed reducing talent flight through entrepreneurship and creation-economy pathways.
+- Research depth was identified as equally critical alongside startup orientation.
+Action Item: Dr. Shruti to present a research-capability model for Mensa by 30th April 2026.
+
+8. Next meeting focus
+- Preparation-path timeline feasibility.
+- Agentic AI teaching model readiness.
+- Realism of dual JEE/NEET + startup goals.
+- Design thinking delivery ownership and accountability.`,
+    authorName: "Mission MENSA Team",
+    authorEmail: "team@missionmensa.org",
+    createdAt: "2026-04-28T09:00:00.000Z",
+    updatedAt: "2026-04-28T09:00:00.000Z",
+    isPublished: true,
+  },
+  {
+    id: "mom-mensa-project-24th-april-26-docx",
+    title: "MOM- Mensa Project 24th April 26",
+    meetingDate: "2026-04-24",
+    minutes: `MOM- Mensa Project 24th April 26
+
+1. Strategic vision and scale-up model
+- Vision discussed: expand Mensa Schools across districts with priority to lower-GDP regions.
+Action Item: Mr. Shiv Lal to prepare district-wise GDP analysis for rollout prioritization.
+Deadline: 4th May 2026.
+
+2. Proposal for constituency-level implementation
+- CEO to present Mensa implementation model in a political constituency context.
+Action Item: Mr. Shiv Lal to prepare a proposal deck defining required support and commitments.
+Deadline: 4th May 2026.
+
+3. Core infrastructure requirements
+- Human and non-human infrastructure needs were reviewed for scale implementation.
+- Roles include project leadership, AI architecture capability, and operations support.
+
+4. Brochure development
+- Two brochure tracks finalized:
+- Mensa Concept Brochure (vision, philosophy, purpose).
+- Operational Brochure (prototype, implementation, processes).
+Action Item: Mr. Shiv Lal to submit first draft of both brochures.
+Deadline: 11th May 2026.
+
+5. Logo and identity work
+- Mensa Project logo to be prepared and reviewed with leadership.
+Action Item: Mr. Shiv Lal to design and present logo draft.
+Deadline: 7th May 2026.
+
+6. Future Science Center
+- Separate concept/design needed for Future Science Center initiative.
+Action Item: Dr. Akshaya to present the Future Science Center design.
+Deadline: 1st May 2026.`,
+    authorName: "Mission MENSA Team",
+    authorEmail: "team@missionmensa.org",
+    createdAt: "2026-04-24T09:00:00.000Z",
+    updatedAt: "2026-04-24T09:00:00.000Z",
+    isPublished: true,
+  },
+  {
     id: 'mom-blockchain-and-mensa-15th-april-26-docx',
     title: 'MOM- Blockchain and Mensa Project15th April 26',
     meetingDate: '2026-04-15',
