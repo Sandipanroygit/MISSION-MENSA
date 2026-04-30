@@ -71,13 +71,13 @@ const progressItems: ProgressItem[] = [
   },
   {
     task: "Students selection update",
-    owner: "Shruti",
-    status: "pending",
+    owner: "Shivlal Sir",
+    status: "in progress",
   },
   {
     task: "NGO visits update",
-    owner: "Shruti",
-    status: "pending",
+    owner: "Shivlal Sir",
+    status: "in progress",
   },
   {
     task: "Gap analysis plan and gap assessment readiness",
